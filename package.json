@@ -18,10 +18,14 @@
   "homepage": "https://github.com/WAT36/CCNotifier#readme",
   "devDependencies": {
     "@types/node": "^20.14.2",
+    "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
   },
   "dependencies": {
     "@prisma/client": "^5.15.0",
+    "axios": "^1.7.2",
+    "crypto": "^1.0.1",
+    "dotenv": "^16.4.5",
     "prisma": "^5.15.0"
   }
 }
