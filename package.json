@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/WAT36/CCNotifier/issues"
   },
-  "homepage": "https://github.com/WAT36/CCNotifier#readme"
+  "homepage": "https://github.com/WAT36/CCNotifier#readme",
+  "devDependencies": {
+    "@types/node": "^20.14.2",
+    "typescript": "^5.4.5"
+  }
 }
