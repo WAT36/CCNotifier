@@ -1,0 +1,19 @@
+{
+  "name": "ccnotifier",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WAT36/CCNotifier.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/WAT36/CCNotifier/issues"
+  },
+  "homepage": "https://github.com/WAT36/CCNotifier#readme"
+}
