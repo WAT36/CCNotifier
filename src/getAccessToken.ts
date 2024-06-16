@@ -40,5 +40,3 @@ export const getAccessToken = async () => {
       });
   });
 };
-
-getAccessToken();
