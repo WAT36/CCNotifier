@@ -18,6 +18,7 @@
   "homepage": "https://github.com/WAT36/CCNotifier#readme",
   "devDependencies": {
     "@types/node": "^20.14.2",
+    "ts-node": "^10.9.2",
     "tsx": "^4.15.7",
     "typescript": "^5.4.5"
   },
