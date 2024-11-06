@@ -10,7 +10,7 @@ datasource db {
 
 model transaction {
   id               String   @id
-  brand            String   @unique
+  brand            String
   buysell          String
   amount           Float
   rate             Float
