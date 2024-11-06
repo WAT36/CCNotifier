@@ -8,9 +8,12 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-model balance {
-  symbol         String   @unique
-  amount         Float
-  conversionRate Float
-  updated_at     DateTime @default(now()) @db.Timestamp(6)
+model transaction {
+  id               String   @id
+  brand            String   @unique
+  buysell          String
+  amount           Float
+  rate             Float
+  payment          Float
+  transaction_date DateTime @db.Timestamp(6)
 }
