@@ -49,7 +49,7 @@ try {
             brand,
             buysell,
             amount: +amount.split(" ")[0].replaceAll(",", ""),
-            rate: parseFloat(rate.split(" ")[0]),
+            rate: parseFloat(rate.split(" ")[0].replaceAll(",", "")),
             payment: +payment.split(" ")[0].replaceAll(",", ""),
             transaction_date: new Date(transaction_date),
           },
