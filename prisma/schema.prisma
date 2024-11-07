@@ -23,3 +23,14 @@ model transaction {
 view brand {
   name String @unique
 }
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view latest_transaction {
+  id               String    @id
+  brand            String    @unique
+  buysell          String
+  amount           Float
+  rate             Float
+  payment          Float
+  transaction_date DateTime? @db.Timestamp(6)
+}
