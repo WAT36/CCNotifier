@@ -45,3 +45,9 @@ view latest_sell_transaction {
   payment          Float
   transaction_date DateTime @db.Timestamp(6)
 }
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view now_bet {
+  brand String @unique
+  bet   Float
+}
