@@ -44,6 +44,4 @@ view latest_sell_transaction {
   rate             Float
   payment          Float
   transaction_date DateTime @db.Timestamp(6)
-
-  @@ignore
 }
