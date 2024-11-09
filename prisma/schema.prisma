@@ -19,6 +19,33 @@ model transaction {
   transaction_date DateTime @db.Timestamp(6)
 }
 
+model tradeHistory {
+  id                          Int      @id @default(autoincrement())
+  trade_date                  DateTime @db.Timestamp(6)
+  settlement_category         String
+  yen_payment                 Float
+  order_id                    String
+  contract_id                 String
+  position_id                 String
+  brand                       String
+  order_type                  String
+  trade_category              String
+  buysell_category            String
+  ioc_category                String
+  contract_amount             Float
+  contract_rate               Float
+  contract_payment            Float
+  order_commission            Float
+  leverage_commission         Float
+  deposit_withdrawal_category String
+  deposit_withdrawal_amount   Float
+  givetake_category           String
+  givetake_amount             Float
+  sending_commission          Float
+  sender                      String
+  transaction_id              String
+}
+
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 view brand {
   name String @unique
