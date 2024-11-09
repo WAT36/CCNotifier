@@ -9,18 +9,7 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-model transaction {
-  id               String   @id
-  brand            String
-  buysell          String
-  amount           Float
-  rate             Float
-  payment          Float
-  transaction_date DateTime @db.Timestamp(6)
-}
-
 model tradeHistory {
-  id                          Int      @id @default(autoincrement())
   trade_date                  DateTime @db.Timestamp(6)
   settlement_category         String
   yen_payment                 Float
@@ -44,6 +33,7 @@ model tradeHistory {
   sending_commission          Float
   sender                      String
   transaction_id              String
+  id                          Int      @id @default(autoincrement())
 }
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
@@ -52,29 +42,36 @@ view brand {
 }
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-view latest_transaction {
-  id               String   @id
-  brand            String   @unique
-  buysell          String
-  amount           Float
-  rate             Float
-  payment          Float
-  transaction_date DateTime @db.Timestamp(6)
+view latest_shop_trade {
+  id                  Int      @unique
+  brand               String
+  settlement_category String
+  buysell_category    String
+  yen_payment         Float
+  contract_amount     Float
+  contract_rate       Float
+  contract_payment    Float
+  trade_date          DateTime @db.Timestamp(6)
 }
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-view latest_sell_transaction {
-  id               String   @id
-  brand            String   @unique
-  buysell          String
-  amount           Float
-  rate             Float
-  payment          Float
-  transaction_date DateTime @db.Timestamp(6)
+view latest_shop_sell_trade {
+  id                  Int      @unique
+  brand               String
+  settlement_category String
+  buysell_category    String
+  yen_payment         Float
+  contract_amount     Float
+  contract_rate       Float
+  contract_payment    Float
+  trade_date          DateTime @db.Timestamp(6)
 }
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 view now_bet {
-  brand String @unique
-  bet   Float
+  brand           String @unique
+  contract_amount Float
+  givetake_amount Float
+  now_amount      Float
+  yen_bet         Float
 }
