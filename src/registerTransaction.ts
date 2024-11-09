@@ -11,6 +11,9 @@ export const prisma: PrismaClient = new PrismaClient();
  * 売買日時	銘柄名	売買区分	約定数量	約定レート	約定代金	約定ID
  * 例
  * 2024/03/02 11:11:47	ETH	買	0.01701744 ETH	528,869 円	9,000 円	891129837
+ *
+ * 実行方法は
+ * npx ts-node src/registerTransaction.ts （入力ファイルのパス）
  */
 
 // 引数チェック
