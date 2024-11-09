@@ -1,6 +1,6 @@
 SELECT
-  t.brand AS name
+  th.brand AS name
 FROM
-  transaction t
+  "tradeHistory" th
 GROUP BY
-  t.brand;
+  th.brand;
