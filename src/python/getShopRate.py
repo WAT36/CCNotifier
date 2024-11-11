@@ -9,6 +9,25 @@ from bs4 import BeautifulSoup
 import os
 import os.path
 from dotenv import load_dotenv
+import sys
+
+# 引数チェック
+args = sys.argv
+if len(args) != 3:
+    print("Error: Usage:{0} brand bid/ask".format(args[0]))
+    sys.exit(1)
+
+brand = args[1]
+bid_ask = args[2]
+
+brand_name_list = ['btc']
+if brand not in brand_name_list:
+    print("Error: brand must be in {0}".format(brand_name_list))
+    sys.exit(1)
+if bid_ask not in ['bid','ask']:
+    print("Error: you must input bid or ask. not {0}".format(bid_ask))
+    sys.exit(1)
+
 
 # .envファイルの内容を読み込見込む
 dotenv_path = os.path.join(os.path.dirname(__file__), '../../.env')
@@ -18,9 +37,8 @@ load_dotenv(dotenv_path)
 options = Options()
 options.add_argument('--headless')
 driver = webdriver.Firefox(options=options)
-# driver = webdriver.Firefox()    # ウインドウを表示させる時
 
-url = os.environ.get('SHOP_URL_PAGE')
+url = os.environ.get('SHOP_URL_PAGE').format(brand)
 
 driver.get(url)
 result = None
@@ -32,7 +50,7 @@ for i in range(10):
     
     # 解析し取得
     soup = BeautifulSoup(html, "html.parser")
-    tag_list = soup.find_all("p", class_="l-brand__rate__information__text jsc-price-bid")
+    tag_list = soup.find_all("p" if bid_ask == 'bid' else 'td', class_="l-brand__rate__information__text jsc-price-{0}".format(bid_ask))
     if len(tag_list)==0:
         # 値を取得できなかった場合は次へ
         continue
@@ -44,7 +62,7 @@ for i in range(10):
         else:
             continue
 else:
-    print("can not extracted!! try again.")
+    #print("can not extracted!! try again.")
     result = None
 
 driver.quit()
