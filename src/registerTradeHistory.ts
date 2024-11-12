@@ -18,7 +18,7 @@ export const prisma: PrismaClient = new PrismaClient();
 // 引数チェック
 if (process.argv.length !== 3) {
   console.error(
-    "Error: Usage: npx ts-node src/quiz.uploader.ts (Input file name)"
+    "Error: Usage: npx ts-node src/registerTradeHistory.ts (Input file name)"
   );
   process.exit(1);
 }
