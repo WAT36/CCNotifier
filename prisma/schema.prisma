@@ -37,11 +37,11 @@ model tradeHistory {
 }
 
 model brandBidAsk {
-  brand            String   @unique @db.VarChar(3)
-  bid_price        Float
-  ask_price        Float
-  bid_updated_time DateTime @db.Timestamp(6)
-  ask_updated_time DateTime @db.Timestamp(6)
+  brand            String    @unique @db.VarChar(3)
+  bid_price        Float?
+  ask_price        Float?
+  bid_updated_time DateTime? @db.Timestamp(6)
+  ask_updated_time DateTime? @db.Timestamp(6)
 }
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
