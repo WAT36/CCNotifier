@@ -5,6 +5,9 @@ import time
 
 # htmlの解析とデータフレームへ
 from bs4 import BeautifulSoup
+import re
+import pandas as pd
+import numpy as np
 
 import os
 import os.path
@@ -20,7 +23,7 @@ if len(args) != 3:
 brand = args[1]
 bid_ask = args[2]
 
-brand_name_list = ['btc']
+brand_name_list = ['btc','eth']
 if brand not in brand_name_list:
     print("Error: brand must be in {0}".format(brand_name_list))
     sys.exit(1)
@@ -62,9 +65,22 @@ for i in range(10):
         else:
             continue
 else:
-    #print("can not extracted!! try again.")
+    print("can not extracted!! try again.")
     result = None
 
 driver.quit()
+
+csv_file = 'current_data.csv'
+if result is not None:
+    if os.path.isfile(csv_file):
+        df_new = pd.read_csv(csv_file, index_col=0)
+        df_new.at[brand,bid_ask] = result
+        df_new.to_csv(csv_file)
+    else:
+        df = pd.DataFrame(np.arange(2).reshape(1, 2),
+                columns=['bid', 'ask'],
+                index=[brand])
+        df.at[brand,bid_ask]=result
+        df.to_csv(csv_file)
 
 print(result)

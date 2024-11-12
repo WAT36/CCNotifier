@@ -1,6 +1,7 @@
 node_modules
 .env*
 file/
+*.csv
 
 # prisma
 migration_lock.toml
