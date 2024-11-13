@@ -1,6 +1,7 @@
 import axios from "axios";
 import * as dotenv from "dotenv";
-dotenv.config();
+import * as path from "path";
+dotenv.config({ path: path.join(__dirname, "../../.env") });
 
 export const getRate = async () => {
   const endPoint = process.env.API_PUBLIC_ENDPONT || "";

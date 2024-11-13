@@ -1,7 +1,8 @@
 import axios from "axios";
 import crypto from "crypto";
 import * as dotenv from "dotenv";
-dotenv.config();
+import * as path from "path";
+dotenv.config({ path: path.join(__dirname, "../../.env") });
 
 export const getAssets = async () => {
   const apiKey = process.env.API_KEY || "";

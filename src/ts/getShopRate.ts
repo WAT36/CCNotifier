@@ -1,7 +1,8 @@
 import superagent from "superagent";
 import * as cheerio from "cheerio";
 import * as dotenv from "dotenv";
-dotenv.config();
+import * as path from "path";
+dotenv.config({ path: path.join(__dirname, "../../.env") });
 
 class Crowller {
   private url = process.env.SHOP_URL_PAGE || "";
