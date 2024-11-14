@@ -77,6 +77,14 @@ view latest_shop_sell_trade {
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 view now_yen_bet {
-  brand   String  @unique
-  yen_bet Decimal
+  brand   String @unique
+  yen_bet Float
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view now_amount {
+  brand           String  @unique
+  contract_amount Decimal @db.Decimal
+  givetake_amount Decimal @db.Decimal
+  now_amount      Decimal @db.Decimal
 }
