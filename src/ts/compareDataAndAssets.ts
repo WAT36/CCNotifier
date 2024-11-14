@@ -12,9 +12,9 @@ type assetsDataType = {
 (async function compareDataAndAssets() {
   const assetsData = ((await getAssets()).data as assetsDataType[]).reduce(
     (previousValue, currentValue) => {
-      return { ...previousValue, [currentValue.symbol]: +currentValue.amount };
+      return { ...previousValue, [currentValue.symbol]: currentValue.amount };
     },
-    {} as { [key: string]: number }
+    {} as { [key: string]: string }
   );
   //console.log(assetsData);
 
@@ -31,8 +31,11 @@ type assetsDataType = {
       },
     })
   ).reduce((previousValue, currentValue) => {
-    return { ...previousValue, [currentValue.brand]: currentValue.now_amount };
-  }, {} as { [key: string]: number });
+    return {
+      ...previousValue,
+      [currentValue.brand]: String(currentValue.now_amount),
+    };
+  }, {} as { [key: string]: string });
   //console.log(registeredAmount);
 
   for (let key in assetsData) {
