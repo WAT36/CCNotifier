@@ -30,7 +30,7 @@ export const getAssets = async () => {
     axios
       .get(endPoint + path, options)
       .then(function (response) {
-        console.log(response.data);
+        //console.log(response.data);
         // response.dataに実際のデータが入っている
         let result: string = response.data;
         resolve(result);
