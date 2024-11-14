@@ -12,7 +12,7 @@ datasource db {
 model tradeHistory {
   trade_date                  DateTime @db.Timestamp(6)
   settlement_category         String
-  yen_payment                 Float
+  yen_payment                 Decimal
   order_id                    String
   contract_id                 String
   position_id                 String
@@ -21,16 +21,16 @@ model tradeHistory {
   trade_category              String
   buysell_category            String
   ioc_category                String
-  contract_amount             Float
-  contract_rate               Float
-  contract_payment            Float
-  order_commission            Float
-  leverage_commission         Float
+  contract_amount             Decimal
+  contract_rate               Decimal
+  contract_payment            Decimal
+  order_commission            Decimal
+  leverage_commission         Decimal
   deposit_withdrawal_category String
-  deposit_withdrawal_amount   Float
+  deposit_withdrawal_amount   Decimal
   givetake_category           String
-  givetake_amount             Float
-  sending_commission          Float
+  givetake_amount             Decimal
+  sending_commission          Decimal
   sender                      String
   transaction_id              String
   id                          Int      @id @default(autoincrement())
@@ -38,8 +38,8 @@ model tradeHistory {
 
 model brandBidAsk {
   brand            String    @unique @db.VarChar(3)
-  bid_price        Float?
-  ask_price        Float?
+  bid_price        Decimal?
+  ask_price        Decimal?
   bid_updated_time DateTime? @db.Timestamp(6)
   ask_updated_time DateTime? @db.Timestamp(6)
 }
@@ -55,10 +55,10 @@ view latest_shop_trade {
   brand               String
   settlement_category String
   buysell_category    String
-  yen_payment         Float
-  contract_amount     Float
-  contract_rate       Float
-  contract_payment    Float
+  yen_payment         Decimal
+  contract_amount     Decimal
+  contract_rate       Decimal
+  contract_payment    Decimal
   trade_date          DateTime @db.Timestamp(6)
 }
 
@@ -68,18 +68,18 @@ view latest_shop_sell_trade {
   brand               String
   settlement_category String
   buysell_category    String
-  yen_payment         Float
-  contract_amount     Float
-  contract_rate       Float
-  contract_payment    Float
+  yen_payment         Decimal
+  contract_amount     Decimal
+  contract_rate       Decimal
+  contract_payment    Decimal
   trade_date          DateTime @db.Timestamp(6)
 }
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 view now_bet {
-  brand           String @unique
-  contract_amount Float
-  givetake_amount Float
-  now_amount      Float
-  yen_bet         Float
+  brand           String  @unique
+  contract_amount Decimal
+  givetake_amount Decimal
+  now_amount      Decimal
+  yen_bet         Decimal
 }
