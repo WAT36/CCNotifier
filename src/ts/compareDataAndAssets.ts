@@ -19,7 +19,7 @@ type assetsDataType = {
   //console.log(assetsData);
 
   const registeredAmount = (
-    await prisma.now_bet.findMany({
+    await prisma.now_amount.findMany({
       select: {
         brand: true,
         now_amount: true,
@@ -33,7 +33,7 @@ type assetsDataType = {
   ).reduce((previousValue, currentValue) => {
     return {
       ...previousValue,
-      [currentValue.brand]: String(currentValue.now_amount),
+      [currentValue.brand]: String(currentValue.now_amount.toDP(8)),
     };
   }, {} as { [key: string]: string });
   //console.log(registeredAmount);
