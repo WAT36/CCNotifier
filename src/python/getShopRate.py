@@ -65,7 +65,7 @@ for i in range(10):
         else:
             continue
 else:
-    print("can not extracted!! try again.")
+    print("")
     result = None
 
 driver.quit()

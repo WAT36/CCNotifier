@@ -12,7 +12,7 @@ export const prisma: PrismaClient = new PrismaClient();
 // 引数チェック
 if (process.argv.length !== 5) {
   console.error(
-    "Error: Usage: npx ts-node src/updateBrandBidAsk.ts brand bid/ask (value)"
+    `Error: Usage: npx ts-node src/updateBrandBidAsk.ts brand bid/ask (value). not (${process.argv})`
   );
   process.exit(1);
 }
