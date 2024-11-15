@@ -34,5 +34,6 @@ if [ $rc -ne 0 ]; then
   exit 1
 fi
 
+echo "--- Completed!! ${BRAND}-${BIDASK}     ---"
 cd $PWD
 exit 0
