@@ -70,18 +70,5 @@ else:
 
 driver.quit()
 
-# csv_file = 'current_data.csv'
-# if result is not None:
-#     if os.path.isfile(csv_file):
-#         df_new = pd.read_csv(csv_file, index_col=0)
-#         df_new.at[brand,bid_ask] = result
-#         df_new.to_csv(csv_file)
-#     else:
-#         df = pd.DataFrame(np.arange(2).reshape(1, 2),
-#                 columns=['bid', 'ask'],
-#                 index=[brand])
-#         df.at[brand,bid_ask]=result
-#         df.to_csv(csv_file)
-
 # 値を返す
 sys.stdout.write(result if result is not None else '')
