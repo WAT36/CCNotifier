@@ -46,13 +46,21 @@ model brandBidAsk {
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 view brand {
-  name String @unique
+  name                        String                  @unique
+  now_yen_bet                 now_yen_bet?            @relation(fields: [now_yen_betBrand], references: [brand])
+  now_amount                  now_amount?             @relation(fields: [now_amountBrand], references: [brand])
+  latest_shop_trade           latest_shop_trade?      @relation(fields: [latest_shop_tradeBrand], references: [brand])
+  latest_shop_sell_trade      latest_shop_sell_trade? @relation(fields: [latest_shop_sell_tradeBrand], references: [brand])
+  now_yen_betBrand            String?
+  now_amountBrand             String?
+  latest_shop_tradeBrand      String?
+  latest_shop_sell_tradeBrand String?
 }
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 view latest_shop_trade {
-  id                  Int      @unique
-  brand               String
+  id                  Int
+  brand               String   @unique
   settlement_category String
   buysell_category    String
   yen_payment         Decimal
@@ -60,12 +68,13 @@ view latest_shop_trade {
   contract_rate       Decimal
   contract_payment    Decimal
   trade_date          DateTime @db.Timestamp(6)
+  brand_master        brand[]
 }
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 view latest_shop_sell_trade {
-  id                  Int      @unique
-  brand               String
+  id                  Int
+  brand               String   @unique
   settlement_category String
   buysell_category    String
   yen_payment         Decimal
@@ -73,12 +82,14 @@ view latest_shop_sell_trade {
   contract_rate       Decimal
   contract_payment    Decimal
   trade_date          DateTime @db.Timestamp(6)
+  brand_master        brand[]
 }
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 view now_yen_bet {
-  brand   String @unique
-  yen_bet Float
+  brand        String  @unique
+  yen_bet      Float
+  brand_master brand[]
 }
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
@@ -87,4 +98,5 @@ view now_amount {
   contract_amount Decimal @db.Decimal
   givetake_amount Decimal @db.Decimal
   now_amount      Decimal @db.Decimal
+  brand_master    brand[]
 }
