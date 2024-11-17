@@ -2,6 +2,13 @@ import { getAssets } from "./getAssets";
 import { PrismaClient } from "@prisma/client";
 export const prisma: PrismaClient = new PrismaClient();
 
+/**
+ * DBにある現保有資産と資産取得APIの結果を比較し、違う場合はアラートを出す
+ *
+ * 実行方法は
+ * npx ts-node src/compareDataAndAssets.ts
+ */
+
 type assetsDataType = {
   amount: string;
   available: string;
