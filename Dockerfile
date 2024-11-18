@@ -1,14 +1,19 @@
-FROM python:3.8.20
-RUN apt-get update && apt-get install -y --no-install-recommends firefox-esr
-RUN apt-get update && apt-get install -y wget bzip2 libxtst6 libgtk-3-0 libx11-xcb-dev libdbus-glib-1-2 libxt6 libpci-dev && rm -rf /var/lib/apt/lists/*
+# OS: Debian Buster
+# # Node.js: 14.4.0
+# FROM node:20-alpine
 
-WORKDIR /src
-COPY ./src/python /src
-COPY ./requirements.txt /src
-COPY ./.env /
+FROM ubuntu:latest
+RUN apt-get update
+RUN apt-get install nodejs -y
+RUN apt-get install npm -y
+RUN update-alternatives --install /usr/bin/node node /usr/bin/nodejs 10
 
-# upgrade pip command
-RUN pip install --upgrade pip 
+# Create app directory
+WORKDIR /usr/src
+COPY ./src/ts ./src/ts
 
-# install python lib 
-RUN pip install -r requirements.txt
+# Install app dependencies (package.json and package-lock.json)
+COPY package*.json ./
+RUN npm install
+
+CMD npm run start:test
