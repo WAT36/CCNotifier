@@ -1,12 +1,4 @@
-# OS: Debian Buster
-# # Node.js: 14.4.0
-# FROM node:20-alpine
-
-FROM ubuntu:latest
-RUN apt-get update
-RUN apt-get install nodejs -y
-RUN apt-get install npm -y
-RUN update-alternatives --install /usr/bin/node node /usr/bin/nodejs 10
+FROM node:20-alpine
 
 # Create app directory
 WORKDIR /usr/src
