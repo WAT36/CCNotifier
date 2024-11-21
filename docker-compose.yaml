@@ -1,0 +1,12 @@
+version: "3"
+services:
+  ccnotofier:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: "ccnotifier_batch"
+    environment:
+      - SHOP_URL_PAGE=${SHOP_URL_PAGE}
+      - DATABASE_URL=${DATABASE_URL}
+    ports:
+      - 4000:4000
