@@ -24,4 +24,5 @@ RUN pip install --upgrade pip
 # install python lib 
 RUN pip install -r requirements.txt
 
-CMD ["./src/allUpdateBrandBidAsk.sh"]
+#CMD ["./src/allUpdateBrandBidAsk.sh"]
+CMD ["./src/dockerTest.sh"]
