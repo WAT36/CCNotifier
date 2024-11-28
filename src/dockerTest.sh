@@ -1,3 +1,7 @@
 #!/bin/bash
 
-echo "Hello! Docker Workd!!!"
+pwd
+
+ls
+
+npx ts-node ts/getRate.ts
