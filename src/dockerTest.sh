@@ -1,7 +1,8 @@
 #!/bin/bash
 
 pwd
-
+echo '---'
 ls
+echo '---'
 
-npx ts-node ts/getRate.ts
+npx ts-node src/ts/getRate.ts
