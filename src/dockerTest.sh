@@ -6,4 +6,5 @@ ls
 echo '---'
 
 # npx ts-node src/ts/getRate.ts
-npx ts-node src/ts/updateBrandBidAsk.ts btc bid
+# npx ts-node src/ts/updateBrandBidAsk.ts btc bid
+src/updateBrandBidAsk.sh btc bid
