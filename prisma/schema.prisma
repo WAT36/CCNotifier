@@ -37,7 +37,7 @@ model tradeHistory {
 }
 
 model brandBidAsk {
-  brand            String    @unique @db.VarChar(3)
+  brand            String    @unique @db.VarChar(4)
   bid_price        Decimal?
   ask_price        Decimal?
   bid_updated_time DateTime? @db.Timestamp(6)
