@@ -14,6 +14,17 @@ import os.path
 from dotenv import load_dotenv
 import sys
 
+# 文字列が数字かを判定する関数
+def is_num(s):
+    try:
+        if s.isdigit():
+            return True
+        float(s)
+    except ValueError:
+        return False
+    else:
+        return True
+
 # 引数チェック
 args = sys.argv
 if len(args) != 3:
@@ -46,7 +57,7 @@ url = os.environ.get('SHOP_URL_PAGE').format(brand)
 driver.get(url)
 result = None
 # 何回か実行して取得する（１回では取れないことがあるため）
-for i in range(16):
+for i in range(20):
     time.sleep(1)
     # ページソースを取得
     html = driver.page_source
@@ -59,7 +70,7 @@ for i in range(16):
         continue
     else:
         result = tag_list[0].text.strip().replace(',','')
-        if result.isdigit():
+        if is_num(result):
             # 値を取得できたらそこで終了
             break
         else:
