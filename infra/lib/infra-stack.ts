@@ -4,6 +4,9 @@ import * as ecr from "aws-cdk-lib/aws-ecr";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as batch from "aws-cdk-lib/aws-batch";
+import * as dotenv from "dotenv";
+
+dotenv.config();
 
 export class InfraStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -69,6 +72,11 @@ export class InfraStack extends cdk.Stack {
       service: ec2.InterfaceVpcEndpointAwsService.ECS_TELEMETRY,
       securityGroups: [vpcEndpointSecurityGroup],
     });
+    new ec2.InterfaceVpcEndpoint(this, "CCNotifierVPCEndpoint-SSM", {
+      vpc,
+      service: ec2.InterfaceVpcEndpointAwsService.SSM,
+      securityGroups: [vpcEndpointSecurityGroup],
+    });
     new ec2.InterfaceVpcEndpoint(
       this,
       "CCNotifierVPCEndpoint-CLOUDWATCH_LOGS",
@@ -94,6 +102,7 @@ export class InfraStack extends cdk.Stack {
           iam.ManagedPolicy.fromAwsManagedPolicyName(
             "service-role/AmazonECSTaskExecutionRolePolicy"
           ),
+          iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonSSMReadOnlyAccess"),
         ],
       }
     );
@@ -164,6 +173,20 @@ export class InfraStack extends cdk.Stack {
         fargatePlatformConfiguration: {
           platformVersion: "LATEST",
         },
+        secrets: [
+          {
+            name: "API_PUBLIC_ENDPONT",
+            valueFrom: process.env.API_PUBLIC_ENDPONT || "",
+          },
+          {
+            name: "DATABASE_URL",
+            valueFrom: process.env.DATABASE_URL || "",
+          },
+          {
+            name: "SHOP_URL_PAGE",
+            valueFrom: process.env.SHOP_URL_PAGE || "",
+          },
+        ],
       },
       platformCapabilities: ["FARGATE"],
     });
