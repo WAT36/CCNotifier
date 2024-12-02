@@ -30,12 +30,60 @@ export class InfraStack extends cdk.Stack {
     // securityGroup
     const batchSecurityGroup = new ec2.SecurityGroup(
       this,
-      "BatchSecurityGroup",
+      "CCNotifierBatchSecurityGroup",
       { vpc }
     );
+    const vpcEndpointSecurityGroup = new ec2.SecurityGroup(
+      this,
+      "CCNotifierVPCEndpointSecurityGroup",
+      { vpc }
+    );
+    vpcEndpointSecurityGroup.addIngressRule(
+      batchSecurityGroup,
+      ec2.Port.tcp(443)
+    );
+
+    // vpc endpoint
+    new ec2.InterfaceVpcEndpoint(this, "CCNotifierVPCEndpoint-ECR", {
+      vpc,
+      service: ec2.InterfaceVpcEndpointAwsService.ECR,
+      securityGroups: [vpcEndpointSecurityGroup],
+    });
+    new ec2.InterfaceVpcEndpoint(this, "CCNotifierVPCEndpoint-ECR_DOCKER", {
+      vpc,
+      service: ec2.InterfaceVpcEndpointAwsService.ECR_DOCKER,
+      securityGroups: [vpcEndpointSecurityGroup],
+    });
+    new ec2.InterfaceVpcEndpoint(this, "CCNotifierVPCEndpoint-ECS", {
+      vpc,
+      service: ec2.InterfaceVpcEndpointAwsService.ECS,
+      securityGroups: [vpcEndpointSecurityGroup],
+    });
+    new ec2.InterfaceVpcEndpoint(this, "CCNotifierVPCEndpoint-ECS_AGENT", {
+      vpc,
+      service: ec2.InterfaceVpcEndpointAwsService.ECS_AGENT,
+      securityGroups: [vpcEndpointSecurityGroup],
+    });
+    new ec2.InterfaceVpcEndpoint(this, "CCNotifierVPCEndpoint-ECS_TELEMETRY", {
+      vpc,
+      service: ec2.InterfaceVpcEndpointAwsService.ECS_TELEMETRY,
+      securityGroups: [vpcEndpointSecurityGroup],
+    });
+    new ec2.InterfaceVpcEndpoint(
+      this,
+      "CCNotifierVPCEndpoint-CLOUDWATCH_LOGS",
+      {
+        vpc,
+        service: ec2.InterfaceVpcEndpointAwsService.CLOUDWATCH_LOGS,
+        securityGroups: [vpcEndpointSecurityGroup],
+      }
+    );
+    new ec2.GatewayVpcEndpoint(this, "CCNotifierVPCEndpoint-S3", {
+      vpc,
+      service: ec2.GatewayVpcEndpointAwsService.S3,
+    });
 
     // IAM Role
-
     const batchTaskExecutionRole = new iam.Role(
       this,
       " CCNotifierBatchTaskExecutionRole",
