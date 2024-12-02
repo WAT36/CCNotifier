@@ -2,6 +2,7 @@ import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
 import * as ecr from "aws-cdk-lib/aws-ecr";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
+import * as iam from "aws-cdk-lib/aws-iam";
 import * as batch from "aws-cdk-lib/aws-batch";
 
 export class InfraStack extends cdk.Stack {
@@ -9,7 +10,7 @@ export class InfraStack extends cdk.Stack {
     super(scope, id, props);
 
     // ECR repository
-    new ecr.Repository(this, "CCNotifierRepository", {
+    const repository = new ecr.Repository(this, "CCNotifierRepository", {
       repositoryName: "ccnotifier",
     });
 
@@ -32,6 +33,27 @@ export class InfraStack extends cdk.Stack {
       "BatchSecurityGroup",
       { vpc }
     );
+
+    // IAM Role
+
+    const batchTaskExecutionRole = new iam.Role(
+      this,
+      " CCNotifierBatchTaskExecutionRole",
+      {
+        roleName: "CCNotifierBatchTaskExecutionRole",
+        assumedBy: new iam.ServicePrincipal("ecs-tasks.amazonaws.com"),
+        managedPolicies: [
+          iam.ManagedPolicy.fromAwsManagedPolicyName(
+            "service-role/AmazonECSTaskExecutionRolePolicy"
+          ),
+        ],
+      }
+    );
+
+    const batchTaskRole = new iam.Role(this, "CCNotifierBatchTaskRole", {
+      roleName: "CCNotifierBatchTaskRole",
+      assumedBy: new iam.ServicePrincipal("ecs-tasks.amazonaws.com"),
+    });
 
     // Batch
     // Compute Environment
@@ -60,6 +82,42 @@ export class InfraStack extends cdk.Stack {
           computeEnvironment: batchComputeEnvironment.attrComputeEnvironmentArn,
         },
       ],
+    });
+
+    // Job definition
+    new batch.CfnJobDefinition(this, "CCNotifierBatchJobDefinition", {
+      type: "container",
+      jobDefinitionName: "CCNotifierBatchJobDefinition",
+      retryStrategy: {
+        attempts: 1,
+        evaluateOnExit: [],
+      },
+      containerProperties: {
+        image: repository.repositoryUri,
+        jobRoleArn: batchTaskRole.roleArn,
+        executionRoleArn: batchTaskExecutionRole.roleArn,
+        user: "root",
+        resourceRequirements: [
+          {
+            value: "1",
+            type: "VCPU",
+          },
+          {
+            value: "2048",
+            type: "MEMORY",
+          },
+        ],
+        logConfiguration: {
+          logDriver: "awslogs",
+        },
+        networkConfiguration: {
+          assignPublicIp: "ENABLED",
+        },
+        fargatePlatformConfiguration: {
+          platformVersion: "LATEST",
+        },
+      },
+      platformCapabilities: ["FARGATE"],
     });
   }
 }
