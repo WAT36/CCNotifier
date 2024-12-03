@@ -175,6 +175,14 @@ export class InfraStack extends cdk.Stack {
         },
         secrets: [
           {
+            name: "API_KEY",
+            valueFrom: process.env.API_KEY || "",
+          },
+          {
+            name: "API_SECRET_KEY",
+            valueFrom: process.env.API_SECRET_KEY || "",
+          },
+          {
             name: "API_ENDPONT",
             valueFrom: process.env.API_ENDPONT || "",
           },

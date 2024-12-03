@@ -17,14 +17,12 @@ type assetsDataType = {
 };
 
 (async function compareDataAndAssets() {
-  console.log((await getAssets()).data);
   const assetsData = ((await getAssets()).data as assetsDataType[]).reduce(
     (previousValue, currentValue) => {
       return { ...previousValue, [currentValue.symbol]: currentValue.amount };
     },
     {} as { [key: string]: string }
   );
-  //console.log(assetsData);
 
   const registeredAmount = (
     await prisma.now_amount.findMany({
