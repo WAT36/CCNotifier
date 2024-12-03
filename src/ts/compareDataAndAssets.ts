@@ -17,7 +17,8 @@ type assetsDataType = {
 };
 
 (async function compareDataAndAssets() {
-  const assetsData = ((await getAssets()) as assetsDataType[]).reduce(
+  console.log((await getAssets()).data);
+  const assetsData = ((await getAssets()).data as assetsDataType[]).reduce(
     (previousValue, currentValue) => {
       return { ...previousValue, [currentValue.symbol]: currentValue.amount };
     },
