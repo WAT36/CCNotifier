@@ -25,4 +25,4 @@ RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
 #CMD ["./src/allUpdateBrandBidAsk.sh"]
-CMD ["./src/dockerTest.sh"]
+CMD ["./src/entrypoint.sh"]
