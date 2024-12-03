@@ -69,13 +69,16 @@ const brand = process.argv[2].toUpperCase();
       brandData.latest_shop_trade.contract_rate;
     // 今の売却レート
     const nowSellRate = brandData.brandBidAsk?.ask_price;
-    // 今の売却レート
+    // 今の買値レート
     const nowBuyRate = brandData.brandBidAsk?.bid_price;
 
+    let isTime = false;
     if (!nowAmount || nowAmount === new Decimal(0)) {
-      console.log("保有数量0です");
+      console.log(`${brand}:保有数量0です`);
+      isTime = true;
     } else if (!yenBet) {
-      console.log("全く買っていません");
+      console.log(`${brand}:全く買っていません`);
+      isTime = true;
     }
 
     if (
@@ -84,11 +87,31 @@ const brand = process.argv[2].toUpperCase();
       yenBet &&
       nowSellRate.toNumber() * nowAmount.toNumber() > yenBet
     ) {
-      console.log("売り時です！！");
+      console.log(
+        `${brand}:売り時です！！\t(　全売値 ${
+          nowSellRate.toNumber() * nowAmount.toNumber()
+        } 円\t>\t掛値 ${yenBet} 円,\t${
+          nowSellRate.toNumber() * nowAmount.toNumber() - yenBet
+        }円得)`
+      );
+      isTime = true;
     }
 
-    if (lastBuyRate && nowBuyRate && lastBuyRate > nowBuyRate) {
-      console.log("買い時です！！");
+    if (
+      lastBuyRate &&
+      nowBuyRate &&
+      lastBuyRate.toNumber() > nowBuyRate.toNumber()
+    ) {
+      console.log(
+        `${brand}:買い時です！！\t(最終買値 ${lastBuyRate} 円\t>\t現在買値 ${nowBuyRate} 円)`
+      );
+      isTime = true;
+    }
+
+    if (!isTime) {
+      console.log(
+        `${brand}:特に売り買い時ではありません\t(売却価格 ${nowSellRate} 円,\t購入価格 ${nowBuyRate} 円)`
+      );
     }
   } catch (error) {
     console.error("データの登録に失敗しました:", error);
