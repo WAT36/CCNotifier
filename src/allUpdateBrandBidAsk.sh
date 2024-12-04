@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source ./config.sh
+source src/config.sh
 
 PWD=`pwd`
 DIR=`dirname $0`
