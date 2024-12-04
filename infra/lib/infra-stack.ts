@@ -4,6 +4,8 @@ import * as ecr from "aws-cdk-lib/aws-ecr";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as batch from "aws-cdk-lib/aws-batch";
+import * as events from "aws-cdk-lib/aws-events";
+import * as targets from "aws-cdk-lib/aws-events-targets";
 import * as dotenv from "dotenv";
 
 dotenv.config();
@@ -130,7 +132,7 @@ export class InfraStack extends cdk.Stack {
     );
 
     // Job queue
-    new batch.CfnJobQueue(this, "CCNotifierBatchJobQueue", {
+    const jobQueue = new batch.CfnJobQueue(this, "CCNotifierBatchJobQueue", {
       jobQueueName: "CCNotifierBatchJobQueue",
       priority: 1,
       computeEnvironmentOrder: [
@@ -142,65 +144,91 @@ export class InfraStack extends cdk.Stack {
     });
 
     // Job definition
-    new batch.CfnJobDefinition(this, "CCNotifierBatchJobDefinition", {
-      type: "container",
-      jobDefinitionName: "CCNotifierBatchJobDefinition",
-      retryStrategy: {
-        attempts: 1,
-        evaluateOnExit: [],
-      },
-      containerProperties: {
-        image: repository.repositoryUri,
-        jobRoleArn: batchTaskRole.roleArn,
-        executionRoleArn: batchTaskExecutionRole.roleArn,
-        user: "root",
-        resourceRequirements: [
-          {
-            value: "1",
-            type: "VCPU",
-          },
-          {
-            value: "2048",
-            type: "MEMORY",
-          },
-        ],
-        logConfiguration: {
-          logDriver: "awslogs",
+    const jobDefinition = new batch.CfnJobDefinition(
+      this,
+      "CCNotifierBatchJobDefinition",
+      {
+        type: "container",
+        jobDefinitionName: "CCNotifierBatchJobDefinition",
+        retryStrategy: {
+          attempts: 1,
+          evaluateOnExit: [],
         },
-        networkConfiguration: {
-          assignPublicIp: "ENABLED",
+        containerProperties: {
+          image: repository.repositoryUri,
+          jobRoleArn: batchTaskRole.roleArn,
+          executionRoleArn: batchTaskExecutionRole.roleArn,
+          user: "root",
+          resourceRequirements: [
+            {
+              value: "1",
+              type: "VCPU",
+            },
+            {
+              value: "2048",
+              type: "MEMORY",
+            },
+          ],
+          logConfiguration: {
+            logDriver: "awslogs",
+          },
+          networkConfiguration: {
+            assignPublicIp: "ENABLED",
+          },
+          fargatePlatformConfiguration: {
+            platformVersion: "LATEST",
+          },
+          secrets: [
+            {
+              name: "API_KEY",
+              valueFrom: process.env.API_KEY || "",
+            },
+            {
+              name: "API_SECRET_KEY",
+              valueFrom: process.env.API_SECRET_KEY || "",
+            },
+            {
+              name: "API_ENDPONT",
+              valueFrom: process.env.API_ENDPONT || "",
+            },
+            {
+              name: "API_PUBLIC_ENDPONT",
+              valueFrom: process.env.API_PUBLIC_ENDPONT || "",
+            },
+            {
+              name: "DATABASE_URL",
+              valueFrom: process.env.DATABASE_URL || "",
+            },
+            {
+              name: "SHOP_URL_PAGE",
+              valueFrom: process.env.SHOP_URL_PAGE || "",
+            },
+          ],
         },
-        fargatePlatformConfiguration: {
-          platformVersion: "LATEST",
-        },
-        secrets: [
-          {
-            name: "API_KEY",
-            valueFrom: process.env.API_KEY || "",
-          },
-          {
-            name: "API_SECRET_KEY",
-            valueFrom: process.env.API_SECRET_KEY || "",
-          },
-          {
-            name: "API_ENDPONT",
-            valueFrom: process.env.API_ENDPONT || "",
-          },
-          {
-            name: "API_PUBLIC_ENDPONT",
-            valueFrom: process.env.API_PUBLIC_ENDPONT || "",
-          },
-          {
-            name: "DATABASE_URL",
-            valueFrom: process.env.DATABASE_URL || "",
-          },
-          {
-            name: "SHOP_URL_PAGE",
-            valueFrom: process.env.SHOP_URL_PAGE || "",
-          },
-        ],
-      },
-      platformCapabilities: ["FARGATE"],
+        platformCapabilities: ["FARGATE"],
+      }
+    );
+
+    // EventBridge
+    new events.Rule(this, "CCNotifierBatchEvent", {
+      ruleName: "CCNotifierBatchEvent",
+      schedule: events.Schedule.cron({
+        month: "12",
+        day: "4",
+        hour: "20",
+        minute: "0",
+      }),
+      targets: [
+        new targets.BatchJob(
+          jobQueue.attrJobQueueArn,
+          jobQueue,
+          `arn:aws:batch:${cdk.Stack.of(this).region}:${
+            cdk.Stack.of(this).account
+          }:job-definition/${jobDefinition.jobDefinitionName}`,
+          jobDefinition,
+          {}
+        ),
+      ],
     });
   }
 }
