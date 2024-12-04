@@ -144,6 +144,57 @@ export class InfraStack extends cdk.Stack {
     });
 
     // Job definition
+    const batchContainerProperties = {
+      image: repository.repositoryUri,
+      jobRoleArn: batchTaskRole.roleArn,
+      executionRoleArn: batchTaskExecutionRole.roleArn,
+      user: "root",
+      resourceRequirements: [
+        {
+          value: "1",
+          type: "VCPU",
+        },
+        {
+          value: "2048",
+          type: "MEMORY",
+        },
+      ],
+      logConfiguration: {
+        logDriver: "awslogs",
+      },
+      networkConfiguration: {
+        assignPublicIp: "ENABLED",
+      },
+      fargatePlatformConfiguration: {
+        platformVersion: "LATEST",
+      },
+      secrets: [
+        {
+          name: "API_KEY",
+          valueFrom: process.env.API_KEY || "",
+        },
+        {
+          name: "API_SECRET_KEY",
+          valueFrom: process.env.API_SECRET_KEY || "",
+        },
+        {
+          name: "API_ENDPONT",
+          valueFrom: process.env.API_ENDPONT || "",
+        },
+        {
+          name: "API_PUBLIC_ENDPONT",
+          valueFrom: process.env.API_PUBLIC_ENDPONT || "",
+        },
+        {
+          name: "DATABASE_URL",
+          valueFrom: process.env.DATABASE_URL || "",
+        },
+        {
+          name: "SHOP_URL_PAGE",
+          valueFrom: process.env.SHOP_URL_PAGE || "",
+        },
+      ],
+    };
     const jobDefinition = new batch.CfnJobDefinition(
       this,
       "CCNotifierBatchJobDefinition",
@@ -155,53 +206,27 @@ export class InfraStack extends cdk.Stack {
           evaluateOnExit: [],
         },
         containerProperties: {
-          image: repository.repositoryUri,
-          jobRoleArn: batchTaskRole.roleArn,
-          executionRoleArn: batchTaskExecutionRole.roleArn,
-          user: "root",
-          resourceRequirements: [
+          ...batchContainerProperties,
+        },
+        platformCapabilities: ["FARGATE"],
+      }
+    );
+    const allUpdateJobDefinition = new batch.CfnJobDefinition(
+      this,
+      "CCNotifierAllUpdateBatchJobDefinition",
+      {
+        type: "container",
+        jobDefinitionName: "CCNotifierAllUpdateBatchJobDefinition",
+        retryStrategy: {
+          attempts: 1,
+          evaluateOnExit: [],
+        },
+        containerProperties: {
+          ...batchContainerProperties,
+          environment: [
             {
-              value: "1",
-              type: "VCPU",
-            },
-            {
-              value: "2048",
-              type: "MEMORY",
-            },
-          ],
-          logConfiguration: {
-            logDriver: "awslogs",
-          },
-          networkConfiguration: {
-            assignPublicIp: "ENABLED",
-          },
-          fargatePlatformConfiguration: {
-            platformVersion: "LATEST",
-          },
-          secrets: [
-            {
-              name: "API_KEY",
-              valueFrom: process.env.API_KEY || "",
-            },
-            {
-              name: "API_SECRET_KEY",
-              valueFrom: process.env.API_SECRET_KEY || "",
-            },
-            {
-              name: "API_ENDPONT",
-              valueFrom: process.env.API_ENDPONT || "",
-            },
-            {
-              name: "API_PUBLIC_ENDPONT",
-              valueFrom: process.env.API_PUBLIC_ENDPONT || "",
-            },
-            {
-              name: "DATABASE_URL",
-              valueFrom: process.env.DATABASE_URL || "",
-            },
-            {
-              name: "SHOP_URL_PAGE",
-              valueFrom: process.env.SHOP_URL_PAGE || "",
+              name: "ALLUPDATE",
+              value: "on",
             },
           ],
         },
@@ -226,6 +251,26 @@ export class InfraStack extends cdk.Stack {
             cdk.Stack.of(this).account
           }:job-definition/${jobDefinition.jobDefinitionName}`,
           jobDefinition,
+          {}
+        ),
+      ],
+    });
+    new events.Rule(this, "CCNotifierAllUpdateBatchEvent", {
+      ruleName: "CCNotifierAllUpdateBatchEvent",
+      schedule: events.Schedule.cron({
+        month: "12",
+        day: "4",
+        hour: "20",
+        minute: "0",
+      }),
+      targets: [
+        new targets.BatchJob(
+          jobQueue.attrJobQueueArn,
+          jobQueue,
+          `arn:aws:batch:${cdk.Stack.of(this).region}:${
+            cdk.Stack.of(this).account
+          }:job-definition/${allUpdateJobDefinition.jobDefinitionName}`,
+          allUpdateJobDefinition,
           {}
         ),
       ],
