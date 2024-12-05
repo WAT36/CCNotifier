@@ -11,7 +11,13 @@ async function entrypoint() {
 
   // send data
   const requestData =
-    compareResult.join("\n") + "\n" + allCheckResult.join("\n");
+    "--- compare NG ---\n" +
+    (compareResult.ng.length === 0
+      ? "全て相違なし！\n"
+      : compareResult.ng.join("\n")) +
+    "---            ---\n" +
+    "--- sell check ---\n" +
+    allCheckResult.join("\n");
   await postWebhook(requestData);
 }
 

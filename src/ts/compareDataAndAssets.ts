@@ -43,18 +43,22 @@ export async function compareDataAndAssets() {
     };
   }, {} as { [key: string]: string });
 
-  const result = [];
+  const result = {
+    ok: [] as string[],
+    ng: [] as string[],
+  };
   for (let key in assetsData) {
     let message = "";
     if (key in registeredAmount && assetsData[key] !== registeredAmount[key]) {
       message = `'${key}' is wrong\tnow:${assetsData[key]},\tDB:${registeredAmount[key]}`;
+      result.ng.push(message);
     } else if (
       key in registeredAmount &&
       assetsData[key] === registeredAmount[key]
     ) {
       message = `'${key}' is OK.\t(${assetsData[key]})`;
+      result.ok.push(message);
     }
-    result.push(message);
   }
 
   return result;
