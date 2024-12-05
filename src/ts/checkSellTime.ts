@@ -56,47 +56,35 @@ export const checkSellTime = async (brand: string) => {
     // 今の買値レート
     const nowBuyRate = brandData.brandBidAsk?.bid_price;
 
-    let isTime = false;
+    // メッセージ
+    let message = "";
     if (!nowAmount || nowAmount === new Decimal(0)) {
-      console.log(`${brand}:保有数量0です`);
-      isTime = true;
+      message = `${brand}:保有数量0です`;
     } else if (!yenBet) {
-      console.log(`${brand}:全く買っていません`);
-      isTime = true;
-    }
-
-    if (
+      message = `${brand}:全く買っていません`;
+    } else if (
       nowSellRate &&
       nowAmount &&
       yenBet &&
       nowSellRate.toNumber() * nowAmount.toNumber() > yenBet
     ) {
-      console.log(
-        `${brand}:売り時です！！\t(　全売値 ${
-          nowSellRate.toNumber() * nowAmount.toNumber()
-        } 円\t>\t掛値 ${yenBet} 円,\t${
-          nowSellRate.toNumber() * nowAmount.toNumber() - yenBet
-        }円得)`
-      );
-      isTime = true;
-    }
-
-    if (
+      message = `${brand}:売り時です！！\t(　全売値 ${
+        nowSellRate.toNumber() * nowAmount.toNumber()
+      } 円\t>\t掛値 ${yenBet} 円,\t${
+        nowSellRate.toNumber() * nowAmount.toNumber() - yenBet
+      }円得)`;
+    } else if (
       lastBuyRate &&
       nowBuyRate &&
       lastBuyRate.toNumber() > nowBuyRate.toNumber()
     ) {
-      console.log(
-        `${brand}:買い時です！！\t(最終買値 ${lastBuyRate} 円\t>\t現在買値 ${nowBuyRate} 円)`
-      );
-      isTime = true;
+      message = `${brand}:買い時です！！\t(最終買値 ${lastBuyRate} 円\t>\t現在買値 ${nowBuyRate} 円)`;
+    } else {
+      message = `${brand}:特に売り買い時ではありません\t(売却価格 ${nowSellRate} 円,\t購入価格 ${nowBuyRate} 円)`;
     }
 
-    if (!isTime) {
-      console.log(
-        `${brand}:特に売り買い時ではありません\t(売却価格 ${nowSellRate} 円,\t購入価格 ${nowBuyRate} 円)`
-      );
-    }
+    console.log(message);
+    return message;
   } catch (error) {
     console.error("データの登録に失敗しました:", error);
   }
