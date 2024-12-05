@@ -193,6 +193,10 @@ export class InfraStack extends cdk.Stack {
           name: "SHOP_URL_PAGE",
           valueFrom: process.env.SHOP_URL_PAGE || "",
         },
+        {
+          name: "WEBHOOK_URL",
+          valueFrom: process.env.WEBHOOK_URL || "",
+        },
       ],
     };
     const jobDefinition = new batch.CfnJobDefinition(
