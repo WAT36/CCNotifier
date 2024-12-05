@@ -39,14 +39,21 @@ try {
       path.resolve(__dirname, inputFilePath),
       "utf8"
     );
+    let passed = 0;
     const line = data.split(/\n/);
     await prisma.$transaction(
       async (prisma) => {
         for (let i = 0; i < line.length; i++) {
           if (i === 0) {
+            passed++;
             continue;
           }
           const l = line[i];
+          if (!l || l === "") {
+            //空行ならパス
+            passed++;
+            continue;
+          }
           const item = l.split(",");
           const [
             trade_date,
@@ -108,7 +115,7 @@ try {
         timeout: 20000, // default: 5000
       }
     );
-    console.log(`${line.length} data registered!!`);
+    console.log(`${line.length - passed} data registered!!`);
   } catch (error) {
     console.error("ファイルの読み込みに・登録に失敗しました:", error);
   }
