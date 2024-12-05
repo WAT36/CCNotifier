@@ -16,7 +16,7 @@ type assetsDataType = {
   symbol: string;
 };
 
-(async function compareDataAndAssets() {
+export async function compareDataAndAssets() {
   const assetsData = ((await getAssets()).data as assetsDataType[]).reduce(
     (previousValue, currentValue) => {
       return { ...previousValue, [currentValue.symbol]: currentValue.amount };
@@ -42,18 +42,22 @@ type assetsDataType = {
       [currentValue.brand]: String(currentValue.now_amount.toDP(8)),
     };
   }, {} as { [key: string]: string });
-  //console.log(registeredAmount);
 
+  const result = [];
   for (let key in assetsData) {
+    let message = "";
     if (key in registeredAmount && assetsData[key] !== registeredAmount[key]) {
-      console.log(
-        `'${key}' is wrong\tnow:${assetsData[key]},\tDB:${registeredAmount[key]}`
-      );
+      message = `'${key}' is wrong\tnow:${assetsData[key]},\tDB:${registeredAmount[key]}`;
     } else if (
       key in registeredAmount &&
       assetsData[key] === registeredAmount[key]
     ) {
-      console.log(`'${key}' is OK.\t(${assetsData[key]})`);
+      message = `'${key}' is OK.\t(${assetsData[key]})`;
     }
+    result.push(message);
   }
-})();
+
+  return result;
+}
+
+compareDataAndAssets();

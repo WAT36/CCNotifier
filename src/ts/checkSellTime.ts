@@ -83,7 +83,6 @@ export const checkSellTime = async (brand: string) => {
       message = `${brand}:特に売り買い時ではありません\t(売却価格 ${nowSellRate} 円,\t購入価格 ${nowBuyRate} 円)`;
     }
 
-    console.log(message);
     return message;
   } catch (error) {
     console.error("データの登録に失敗しました:", error);
