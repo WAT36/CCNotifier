@@ -15,4 +15,4 @@ npx ts-node src/ts/compareDataAndAssets.ts
 
 # check sell time
 echo '---'
-src/allCheckSellTime.sh
+npx ts-node src/ts/allCheckSellTime.ts
