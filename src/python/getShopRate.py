@@ -34,7 +34,7 @@ if len(args) != 3:
 brand = args[1]
 bid_ask = args[2]
 
-brand_name_list = ['btc','eth','bch','ltc','xrp','xlm','bat','xtz','qtum','dot','atom','ada','mkr','dai','link','doge','sol','fil','sand','chz']
+brand_name_list = ['btc','eth','bch','ltc','xrp','xlm','bat','xtz','qtum','dot','atom','ada','mkr','dai','link','doge','sol','fil','sand','chz','avax']
 if brand not in brand_name_list:
     print("Error: brand must be in {0}".format(brand_name_list))
     sys.exit(1)

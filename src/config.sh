@@ -21,6 +21,7 @@ BRANDS=(
     "fil"
     "sand"
     "chz"
+    "avax"
 )
 
 BIDASK=(
