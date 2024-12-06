@@ -57,7 +57,7 @@ url = os.environ.get('SHOP_URL_PAGE').format(brand)
 driver.get(url)
 result = None
 # 何回か実行して取得する（１回では取れないことがあるため）
-for i in range(20):
+for i in range(5):
     time.sleep(1)
     # ページソースを取得
     html = driver.page_source
