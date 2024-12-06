@@ -79,7 +79,9 @@ export const checkSellTime = async (brand: string) => {
       const allSoldValueYen = nowSellRate.toNumber() * nowAmount.toNumber();
       const gainsYen = allSoldValueYen - yenBet;
       const gainsGrowthRate = ((gainsYen / yenBet) * 100).toFixed(2);
-      message = `${brand}:売り時です！！\t(　全売値 ${allSoldValueYen} 円\t>\t掛値 ${yenBet} 円,\t${gainsYen}円得,\t伸び率 ${gainsGrowthRate}%)`;
+      message = `${brand}:売り時です！！\t(　全売値 ${allSoldValueYen} 円\t>\t掛値 ${yenBet} 円,\t${gainsYen.toFixed(
+        2
+      )}円得,\t伸び率 ${gainsGrowthRate}%)`;
     } else if (
       lastBuyRate &&
       nowBuyRate &&
