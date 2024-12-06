@@ -24,6 +24,7 @@ export type CheckSellResult = {
   buy?: {
     lastBuyRate: number; // 最後に買った時のレート
     nowBuyRate: number; // 現在の購入レート
+    lastBuyYen: number; // 最後に買った時の円
     comparisonRate: number; // 最後に買った時のレート、現在の購入レートの比率
   };
   stay?: {
@@ -56,6 +57,7 @@ export const checkSellTime = async (
           select: {
             buysell_category: true,
             contract_rate: true,
+            contract_payment: true,
           },
         },
         brandBidAsk: {
@@ -86,10 +88,14 @@ export const checkSellTime = async (
     const lastBuyRate =
       brandData.latest_shop_trade?.buysell_category === "買" &&
       brandData.latest_shop_trade.contract_rate;
+    // 最後に買った時の額
+    const lastBuyYen =
+      brandData.latest_shop_trade?.buysell_category === "買" &&
+      brandData.latest_shop_trade.contract_payment;
     // 今の売却レート
-    const nowSellRate = brandData.brandBidAsk?.ask_price;
+    const nowSellRate = brandData.brandBidAsk?.bid_price;
     // 今の買値レート
-    const nowBuyRate = brandData.brandBidAsk?.bid_price;
+    const nowBuyRate = brandData.brandBidAsk?.ask_price;
 
     // 判定結果
     const result: CheckSellResult = {
@@ -118,6 +124,7 @@ export const checkSellTime = async (
     } else if (
       lastBuyRate &&
       nowBuyRate &&
+      lastBuyYen &&
       lastBuyRate.toNumber() > nowBuyRate.toNumber()
     ) {
       const comparisonRate =
@@ -126,6 +133,7 @@ export const checkSellTime = async (
       result.buy = {
         lastBuyRate: lastBuyRate.toNumber(),
         nowBuyRate: nowBuyRate.toNumber(),
+        lastBuyYen: lastBuyYen.toNumber(),
         comparisonRate,
       };
     } else {

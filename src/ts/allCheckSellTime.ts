@@ -64,7 +64,8 @@ export async function allCheckSellTime() {
             brand,
             buy.lastBuyRate,
             buy.nowBuyRate,
-            buy.comparisonRate
+            buy.comparisonRate,
+            buy.lastBuyYen
           )
         : "";
     });
