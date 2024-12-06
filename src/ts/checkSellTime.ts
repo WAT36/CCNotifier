@@ -10,7 +10,31 @@ export const prisma: PrismaClient = new PrismaClient();
  * npx ts-node src/checkSellTime.ts 銘柄名
  */
 
-export const checkSellTime = async (brand: string) => {
+export type CheckSellResult = {
+  brand: string;
+  recommend?: "none" | "sell" | "buy" | "stay" | "error";
+  sell?: {
+    allSoldValueYen: number; // 全部売った時の円
+    gainsYen: number; // 全部売った時の利益円
+    gainsGrowthRate: number; // 全部売った時の円、現在掛けている円の比率
+    nowSellRate: number; // 現在の売却レート
+    nowAmount: number; //  現在の保有量
+    yenBet: number; //  現在掛けている円
+  };
+  buy?: {
+    lastBuyRate: number; // 最後に買った時のレート
+    nowBuyRate: number; // 現在の購入レート
+    comparisonRate: number; // 最後に買った時のレート、現在の購入レートの比率
+  };
+  stay?: {
+    nowSellRate: number; // 現在の売却レート
+    nowBuyRate: number; // 現在の購入レート
+  };
+};
+
+export const checkSellTime = async (
+  brand: string
+): Promise<CheckSellResult> => {
   try {
     // 銘柄のデータ取得
     const brandData = await prisma.brand.findUnique({
@@ -48,7 +72,10 @@ export const checkSellTime = async (brand: string) => {
 
     if (!brandData) {
       console.error("銘柄のデータがありません");
-      return;
+      return {
+        brand,
+        recommend: "error",
+      };
     }
 
     // 現在掛けている円
@@ -64,12 +91,12 @@ export const checkSellTime = async (brand: string) => {
     // 今の買値レート
     const nowBuyRate = brandData.brandBidAsk?.bid_price;
 
-    // メッセージ
-    let message = "";
-    if (!nowAmount || nowAmount === new Decimal(0)) {
-      message = `${brand}:保有数量0です`;
-    } else if (!yenBet) {
-      message = `${brand}:全く買っていません`;
+    // 判定結果
+    const result: CheckSellResult = {
+      brand,
+    };
+    if (!nowAmount || nowAmount === new Decimal(0) || !yenBet) {
+      result.recommend = "none";
     } else if (
       nowSellRate &&
       nowAmount &&
@@ -79,22 +106,43 @@ export const checkSellTime = async (brand: string) => {
       const allSoldValueYen = nowSellRate.toNumber() * nowAmount.toNumber();
       const gainsYen = allSoldValueYen - yenBet;
       const gainsGrowthRate = ((gainsYen / yenBet) * 100).toFixed(2);
-      message = `${brand}:売り時です！！\t(　全売値 ${allSoldValueYen} 円\t>\t掛値 ${yenBet} 円,\t${gainsYen.toFixed(
-        2
-      )}円得,\t伸び率 ${gainsGrowthRate}%)`;
+      result.recommend = "sell";
+      result.sell = {
+        allSoldValueYen,
+        gainsYen,
+        gainsGrowthRate: Number(gainsGrowthRate),
+        nowSellRate: nowSellRate.toNumber(),
+        nowAmount: nowAmount.toNumber(),
+        yenBet,
+      };
     } else if (
       lastBuyRate &&
       nowBuyRate &&
       lastBuyRate.toNumber() > nowBuyRate.toNumber()
     ) {
-      message = `${brand}:買い時です！！\t(最終買値 ${lastBuyRate} 円\t>\t現在買値 ${nowBuyRate} 円)`;
+      const comparisonRate =
+        (nowBuyRate.toNumber() / lastBuyRate.toNumber() - 1) * 100;
+      result.recommend = "buy";
+      result.buy = {
+        lastBuyRate: lastBuyRate.toNumber(),
+        nowBuyRate: nowBuyRate.toNumber(),
+        comparisonRate,
+      };
     } else {
-      message = `${brand}:特に売り買い時ではありません\t(売却価格 ${nowSellRate} 円,\t購入価格 ${nowBuyRate} 円)`;
+      result.recommend = "stay";
+      result.stay = {
+        nowSellRate: nowSellRate?.toNumber() || -1,
+        nowBuyRate: nowBuyRate?.toNumber() || -1,
+      };
     }
 
-    return message;
+    return result;
   } catch (error) {
     console.error("データの登録に失敗しました:", error);
+    return {
+      brand,
+      recommend: "error",
+    };
   }
 };
 
