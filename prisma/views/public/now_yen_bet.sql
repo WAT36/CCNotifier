@@ -22,9 +22,14 @@ FROM
               LEFT JOIN latest_shop_sell_trade lst ON ((th.brand = lst.brand))
             )
           WHERE
-            (th.trade_date > lst.trade_date)
+            (
+              (th.trade_date > lst.trade_date)
+              OR (lst.trade_date IS NULL)
+            )
         ) after_sell
       GROUP BY
         after_sell.brand
     ) nr ON ((b.name = nr.brand))
-  );
+  )
+ORDER BY
+  b.name;
