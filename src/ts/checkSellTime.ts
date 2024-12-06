@@ -2,6 +2,14 @@ import { PrismaClient } from "@prisma/client";
 import { Decimal } from "@prisma/client/runtime/library";
 export const prisma: PrismaClient = new PrismaClient();
 
+/**
+ * 銘柄が売り時かを確認する
+ * 事前にtradeHistory、brandBidAskテーブルに最新データを登録しておくこと
+ *
+ * 実行方法は
+ * npx ts-node src/checkSellTime.ts 銘柄名
+ */
+
 export const checkSellTime = async (brand: string) => {
   try {
     // 銘柄のデータ取得
@@ -68,11 +76,10 @@ export const checkSellTime = async (brand: string) => {
       yenBet &&
       nowSellRate.toNumber() * nowAmount.toNumber() > yenBet
     ) {
-      message = `${brand}:売り時です！！\t(　全売値 ${
-        nowSellRate.toNumber() * nowAmount.toNumber()
-      } 円\t>\t掛値 ${yenBet} 円,\t${
-        nowSellRate.toNumber() * nowAmount.toNumber() - yenBet
-      }円得)`;
+      const allSoldValueYen = nowSellRate.toNumber() * nowAmount.toNumber();
+      const gainsYen = allSoldValueYen - yenBet;
+      const gainsGrowthRate = ((gainsYen / yenBet) * 100).toFixed(2);
+      message = `${brand}:売り時です！！\t(　全売値 ${allSoldValueYen} 円\t>\t掛値 ${yenBet} 円,\t${gainsYen}円得,\t伸び率 ${gainsGrowthRate}%)`;
     } else if (
       lastBuyRate &&
       nowBuyRate &&
@@ -88,3 +95,11 @@ export const checkSellTime = async (brand: string) => {
     console.error("データの登録に失敗しました:", error);
   }
 };
+
+// 引数チェック
+if (process.argv[1] === __filename && process.argv.length !== 3) {
+  console.error("Error: Usage: npx ts-node src/checkSellTime.ts brand");
+  process.exit(1);
+} else if (process.argv[1] === __filename) {
+  checkSellTime(process.argv[2].toUpperCase());
+}
