@@ -33,7 +33,7 @@ export const messageTemplate = {
     gainsYen: number,
     gainsGrowthRate: number
   ) =>
-    `${brand}:売り時です！！\t(　全売値 ${allSoldValueYen} 円\t>\t掛値 ${yenBet} 円,\t${gainsYen.toFixed(
+    `${brand}:\t(　全売値 ${allSoldValueYen} 円\t>\t掛値 ${yenBet} 円,\t${gainsYen.toFixed(
       2
     )}円得,\t伸び率 ${gainsGrowthRate}%)`,
   BUY: (
@@ -43,7 +43,7 @@ export const messageTemplate = {
     comparisonRate: number,
     lastBuyYen: number
   ) =>
-    `${brand}:買い時です！！\t(最終買値 ${lastBuyRate} 円\t>\t現在買値 ${nowBuyRate} 円,\t比率 ${comparisonRate.toFixed(
+    `${brand}:\t(最終買値 ${lastBuyRate} 円\t>\t現在買値 ${nowBuyRate} 円,\t比率 ${comparisonRate.toFixed(
       2
     )}%,\t(最後の購入額:${lastBuyYen}円))`,
   STAY: (brand: string, nowSellRate: number, nowBuyRate: number) =>
