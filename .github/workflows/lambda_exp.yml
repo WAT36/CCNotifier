@@ -1,0 +1,42 @@
+name: ECR Deploy
+on:
+  push:
+    branches:
+      - lambda_experiment
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main # リポジトリをチェックアウト
+
+      # AWS認証
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      # - name: Prepare .env file
+      #   run: |
+      #     aws ssm get-parameter --name /github/*** --output json | jq -r .Parameter.Value > .env
+      #     cut -d= -f2 .env  | xargs -I arg echo ::add-mask::arg
+      #     cat .env >> "$GITHUB_ENV"
+
+      # ECR ログイン
+      - uses: aws-actions/amazon-ecr-login@v1
+        id: login-ecr
+
+      # Docker イメージを build・push する
+      - name: build and push docker image to ecr
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: "ccnotifier_for_lambda"
+        run: |
+          docker build . --tag ${{ env.REGISTRY }}/${{ env.REPOSITORY }}
+          docker push ${{ env.REGISTRY }}/${{ env.REPOSITORY }}
+
+
+
+
