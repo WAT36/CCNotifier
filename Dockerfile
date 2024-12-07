@@ -1,5 +1,5 @@
 # python
-FROM python:3.8.20
+FROM public.ecr.aws/lambda/python:3.8
 RUN apt-get update && apt-get install -y --no-install-recommends firefox-esr
 RUN apt-get update && apt-get install -y wget bzip2 libxtst6 libgtk-3-0 libx11-xcb-dev libdbus-glib-1-2 libxt6 libpci-dev && rm -rf /var/lib/apt/lists/*
 
@@ -25,5 +25,5 @@ RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
 # CMD ["./src/entrypoint.sh"]
-COPY ./src/python/app.py /var/task/
+COPY ./src/python/app.py ${LAMBDA_TASK_ROOT}
 CMD [ "app.handler" ]
