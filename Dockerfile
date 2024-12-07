@@ -25,4 +25,5 @@ RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
 # CMD ["./src/entrypoint.sh"]
-CMD [ "src/app.handler" ]
+COPY ./src/python/app.py /var/task/
+CMD [ "app.handler" ]
