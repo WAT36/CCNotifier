@@ -25,4 +25,4 @@ RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
 # CMD ["./src/entrypoint.sh"]
-CMD [ "app.handler" ]
+CMD [ "src/app.handler" ]
