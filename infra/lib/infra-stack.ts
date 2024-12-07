@@ -262,10 +262,8 @@ export class InfraStack extends cdk.Stack {
     new events.Rule(this, "CCNotifierAllUpdateBatchEvent", {
       ruleName: "CCNotifierAllUpdateBatchEvent",
       schedule: events.Schedule.cron({
-        month: "12",
-        day: "4",
-        hour: "20",
-        minute: "0",
+        hour: "0-15/3,21",
+        minute: "2",
       }),
       targets: [
         new targets.BatchJob(
