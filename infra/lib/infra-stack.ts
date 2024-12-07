@@ -19,6 +19,15 @@ export class InfraStack extends cdk.Stack {
       repositoryName: "ccnotifier",
     });
 
+    // ECR repository
+    const lambdaExperimentRepository = new ecr.Repository(
+      this,
+      "CCNotifierRepositoryForLambda",
+      {
+        repositoryName: "ccnotifier_for_lambda",
+      }
+    );
+
     // VPC
     const vpc = new ec2.Vpc(this, "CCNotifierVPC", {
       ipAddresses: ec2.IpAddresses.cidr("10.0.0.0/16"),
@@ -239,26 +248,6 @@ export class InfraStack extends cdk.Stack {
     );
 
     // EventBridge
-    new events.Rule(this, "CCNotifierBatchEvent", {
-      ruleName: "CCNotifierBatchEvent",
-      schedule: events.Schedule.cron({
-        month: "12",
-        day: "4",
-        hour: "20",
-        minute: "0",
-      }),
-      targets: [
-        new targets.BatchJob(
-          jobQueue.attrJobQueueArn,
-          jobQueue,
-          `arn:aws:batch:${cdk.Stack.of(this).region}:${
-            cdk.Stack.of(this).account
-          }:job-definition/${jobDefinition.jobDefinitionName}`,
-          jobDefinition,
-          {}
-        ),
-      ],
-    });
     new events.Rule(this, "CCNotifierAllUpdateBatchEvent", {
       ruleName: "CCNotifierAllUpdateBatchEvent",
       schedule: events.Schedule.cron({
