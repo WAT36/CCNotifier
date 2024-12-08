@@ -3,7 +3,6 @@ FROM public.ecr.aws/lambda/python:3.8
 # install  firefox(firefox-esr?)
 ENV HOME="/tmp"
 RUN yum -y update
-RUN cat /etc/os-release
 RUN yum install -y amazon-linux-extras
 RUN yum install -y Xvfb
 RUN PYTHON=python2 amazon-linux-extras install firefox -y
@@ -20,6 +19,4 @@ RUN pip install --upgrade pip
 # install python lib 
 RUN pip install -r requirements.txt
 
-RUN pwd
-RUN ls
 CMD [ "app.handler" ]
