@@ -2,3 +2,4 @@ selenium
 bs4
 python-dotenv
 supabase
+urllib3==1.26.6
