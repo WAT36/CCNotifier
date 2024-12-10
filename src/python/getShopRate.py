@@ -51,6 +51,7 @@ def get_shop_rate(brand,bid_ask):
     # options.add_argument('--disable-gpu')
     # options.add_argument("--profile /tmp/profile")
     options = Options()
+    options.timeouts = { 'script': 5000,'pageLoad': 5000,'implicit': 5000 }
     options.add_argument('--headless')
     driver = webdriver.Firefox(options=options)
     url = os.environ.get('SHOP_URL_PAGE').format(brand)
