@@ -56,24 +56,33 @@ def get_shop_rate(brand,bid_ask):
     # options.timeouts = { 'script': 5000,'pageLoad': 5000,'implicit': 5000 }
     # options.add_argument('--headless')
     # driver = webdriver.Firefox(options=options)
+    print('a')
     print("MOZ_HEADLESS:"+os.environ.get('MOZ_HEADLESS'))
+    print('b')
     url = os.environ.get('SHOP_URL_PAGE').format(brand)
+    print('c')
 
     path_driver = os.environ.get("LAMBDA_TASK_ROOT") + "/geckodriver" # 当スクリプトファイルと同じ場所に"geckodriver.exe"を配置
+    print('d')
     service = selenium.webdriver.firefox.service.Service(executable_path=path_driver) # "geckodriver.exe"(Firefoxドライバ)がある場所を指定
+    print('e')
     driver = selenium.webdriver.Firefox(service=service)
+    print('f')
 
     driver.get(url)
+    print('g')
     result = None
     # 何回か実行して取得する（１回では取れないことがあるため）
     for i in range(5):
+        print('h,'+i)
         time.sleep(1)
         # ページソースを取得
         html = driver.page_source
-        
+        print('i,'+i)        
         # 解析し取得
         soup = BeautifulSoup(html, "html.parser")
         tag_list = soup.find_all("p" if bid_ask == 'bid' else 'td', class_="l-brand__rate__information__text jsc-price-{0}".format(bid_ask))
+        print('j,'+i,tag_list)
         if len(tag_list)==0:
             # 値を取得できなかった場合は次へ
             continue
@@ -87,7 +96,7 @@ def get_shop_rate(brand,bid_ask):
     else:
         print("")
         result = None
-
+    print('k')
     driver.quit()
 
     # 値を返す
