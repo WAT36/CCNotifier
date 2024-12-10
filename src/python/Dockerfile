@@ -11,10 +11,9 @@ RUN yum install -y wget bzip2 libxtst6 libgtk-3-0 libx11-xcb-dev libdbus-glib-1-
 RUN wget https://github.com/mozilla/geckodriver/releases/download/v0.32.2/geckodriver-v0.32.2-linux64.tar.gz
 RUN yum -y install tar 
 RUN tar -xf geckodriver-v0.32.2-linux64.tar.gz
-RUN mv geckodriver /usr/local/bin/
-RUN export MOZ_HEADLESS=1
-RUN export HOME=/tmp/profile
-ENV HOME="/tmp"
+#RUN mv geckodriver /usr/local/bin/
+ENV MOZ_HEADLESS=1
+# RUN export HOME=/tmp/profile
 
 WORKDIR ${LAMBDA_TASK_ROOT}
 

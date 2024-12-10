@@ -1,6 +1,8 @@
 # Selenuim+Firefox
-from selenium import webdriver
-from selenium.webdriver.firefox.options import Options
+# from selenium import webdriver
+# from selenium.webdriver.firefox.options import Options
+import selenium
+import selenium.webdriver
 import time
 
 # htmlの解析とデータフレームへ
@@ -50,11 +52,16 @@ def get_shop_rate(brand,bid_ask):
     # options.add_argument("--headless")
     # options.add_argument('--disable-gpu')
     # options.add_argument("--profile /tmp/profile")
-    options = Options()
-    options.timeouts = { 'script': 5000,'pageLoad': 5000,'implicit': 5000 }
-    options.add_argument('--headless')
-    driver = webdriver.Firefox(options=options)
+    # options = Options()
+    # options.timeouts = { 'script': 5000,'pageLoad': 5000,'implicit': 5000 }
+    # options.add_argument('--headless')
+    # driver = webdriver.Firefox(options=options)
+    print("MOZ_HEADLESS:"+os.environ.get('MOZ_HEADLESS'))
     url = os.environ.get('SHOP_URL_PAGE').format(brand)
+
+    path_driver = r"./geckodriver" # 当スクリプトファイルと同じ場所に"geckodriver.exe"を配置
+    service = selenium.webdriver.firefox.service.Service(executable_path=path_driver) # "geckodriver.exe"(Firefoxドライバ)がある場所を指定
+    driver = selenium.webdriver.Firefox(service=service)
 
     driver.get(url)
     result = None
