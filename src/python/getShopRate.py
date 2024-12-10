@@ -53,7 +53,7 @@ def get_shop_rate(brand,bid_ask):
     # options = Options()
     # options.add_argument('--headless')
     driver = webdriver.Firefox(options=options)
-
+    driver.implicitly_wait(300)
     url = os.environ.get('SHOP_URL_PAGE').format(brand)
 
     driver.get(url)
