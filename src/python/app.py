@@ -1,4 +1,5 @@
 import json
+import time
 from getShopRate import get_shop_rate
 
 def handler(event, context):
@@ -7,7 +8,12 @@ def handler(event, context):
     for brand in brands:
         brand_result = {}
         for ope in ['bid','ask']:
+            start = time.time()
+            print('Start!! {0}-{1}'.format(brand,ope))
             price = get_shop_rate(brand,ope)
+            print('End...  {0}-{1}'.format(brand,ope))
+            end = time.time()
+            print('時間:'+end-start)
             brand_result[ope] = price
         result[brand] =  brand_result
 

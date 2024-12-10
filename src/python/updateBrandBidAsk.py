@@ -6,10 +6,6 @@ from supabase import create_client, Client
 import datetime
 
 def update_brand_bidask(brand,bidask,value):
-    # .envファイルの内容を読み込見込む
-    dotenv_path = os.path.join(os.path.dirname(__file__), '../../.env')
-    load_dotenv(dotenv_path)
-
     # データベースとのコネクション確立
     url: str = os.environ.get("PYTHON_DB_URL")
     key: str = os.environ.get("PYTHON_DB_KEY")
@@ -27,6 +23,10 @@ if __name__ == "__main__":
         print("Error: Usage: {0} brand bid/ask (value). not ({0})".format(sys.argv))
         sys.exit(1)
     
+    # .envファイルの内容を読み込見込む
+    dotenv_path = os.path.join(os.path.dirname(__file__), '../../.env')
+    load_dotenv(dotenv_path)
+
     brand = sys.argv[1].upper()
     bidAsk = sys.argv[2]
     value = sys.argv[3]
