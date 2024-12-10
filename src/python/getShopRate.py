@@ -35,8 +35,23 @@ def get_shop_rate(brand,bid_ask):
         sys.exit(1)
 
     # Firefox オプションを設定　ウインドウ非表示モード（--headless）
+    if not os.path.exists("/tmp/profile"):
+        os.makedirs("/tmp/profile")
+
     options = Options()
-    options.add_argument('--headless')
+    options.set_preference("pdfjs.disabled", True)
+    options.set_preference("browser.download.folderList", 2)
+    options.set_preference("browser.download.manager.useWindow", False)
+
+    if not os.path.exists("/tmp/portal_downloads"):
+        os.makedirs("/tmp/portal_downloads")
+    options.set_preference("browser.download.dir", os.path.abspath("/tmp/portal_downloads"))
+    options.set_preference("browser.helperApps.neverAsk.saveToDisk","application/pdf, application/force-download")
+    options.add_argument("--headless")
+    options.add_argument('--disable-gpu')
+    options.add_argument("--profile /tmp/profile")
+    # options = Options()
+    # options.add_argument('--headless')
     driver = webdriver.Firefox(options=options)
 
     url = os.environ.get('SHOP_URL_PAGE').format(brand)

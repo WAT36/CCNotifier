@@ -24,6 +24,6 @@ COPY ./ ./
 RUN pip install --upgrade pip 
 
 # install python lib 
-RUN pip install -r requirements.txt
+RUN pip install -r requirements.txt --target "${{LAMBDA_TASK_ROOT}}"
 
 CMD [ "app.handler" ]
