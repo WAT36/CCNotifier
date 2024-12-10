@@ -59,7 +59,7 @@ def get_shop_rate(brand,bid_ask):
     print("MOZ_HEADLESS:"+os.environ.get('MOZ_HEADLESS'))
     url = os.environ.get('SHOP_URL_PAGE').format(brand)
 
-    path_driver = r"./geckodriver" # 当スクリプトファイルと同じ場所に"geckodriver.exe"を配置
+    path_driver = os.environ.get("LAMBDA_TASK_ROOT") + "/geckodriver" # 当スクリプトファイルと同じ場所に"geckodriver.exe"を配置
     service = selenium.webdriver.firefox.service.Service(executable_path=path_driver) # "geckodriver.exe"(Firefoxドライバ)がある場所を指定
     driver = selenium.webdriver.Firefox(service=service)
 
