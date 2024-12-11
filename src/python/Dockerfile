@@ -25,4 +25,7 @@ RUN pip install --upgrade pip
 # install python lib 
 RUN pip install -r requirements.txt
 
+# test
+RUN pip install pings
+
 CMD [ "app.handler" ]
