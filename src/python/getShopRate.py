@@ -62,7 +62,7 @@ def get_shop_rate(brand,bid_ask):
     url = os.environ.get('SHOP_URL_PAGE').format(brand)
     print('c')
 
-    path_driver = os.environ.get("LAMBDA_TASK_ROOT") + "/geckodriver.exe" # 当スクリプトファイルと同じ場所に"geckodriver.exe"を配置
+    path_driver = os.environ.get("LAMBDA_TASK_ROOT") + "/geckodriver" # 当スクリプトファイルと同じ場所に"geckodriver.exe"を配置
     print('d')
     service = selenium.webdriver.firefox.service.Service(executable_path=path_driver) # "geckodriver.exe"(Firefoxドライバ)がある場所を指定
     print('e')
