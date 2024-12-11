@@ -1,8 +1,11 @@
 import json
 import time
+import os
 from getShopRate import get_shop_rate
 
 def handler(event, context):
+    print(os.getcwd()) #pwd
+    print(os.listdir()) #ls
     result = {}
     brands = ['btc']
     for brand in brands:
