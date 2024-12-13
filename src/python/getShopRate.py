@@ -79,14 +79,14 @@ def get_shop_rate(brand,bid_ask):
 
     print('a')
     p = pings.Ping() # Pingオブジェクト作成
-    res = p.ping("example.com") 
+    res = p.ping("example.com",timeout=180000) 
 
     if res.is_reached():
         # 監視対象への接続ができた
-        print("ping OK")
+        print("ping OK. {response.avg_rtt}ms")
     else:
         # 監視対象への接続ができなかった
-        print("ping NG")
+        print("ping NG. timeout")
     #print("MOZ_HEADLESS:"+os.environ.get('MOZ_HEADLESS'))
     print('b')
     url = os.environ.get('SHOP_URL_PAGE').format(brand)
