@@ -16,7 +16,7 @@ from dotenv import load_dotenv
 import sys
 
 from constant import BRAND_NAME_LIST
-import pings
+import ping3
 
 # 文字列が数字かを判定する関数
 def is_num(s):
@@ -78,15 +78,16 @@ def get_shop_rate(brand,bid_ask):
     options.add_argument("--remote-debugging-port=9222")
 
     print('a')
-    p = pings.Ping() # Pingオブジェクト作成
-    res = p.ping("example.com",timeout=180000) 
-
-    if res.is_reached():
-        # 監視対象への接続ができた
-        print("ping OK. {response.avg_rtt}ms")
+    try:
+        res = ping3.ping("example.com",timeout=180000,unit='ms') 
+    except ping3.errors.Timeout:
+        print(f'Host : NOT reachable (Timeout)')
+    except ping3.errors.TimeToLiveExpired:
+        print(f'Host : NOT reachable (TTL)')
+    except ping3.errors.PingError:
+        print(f'Host : NOT reachable (Error)')
     else:
-        # 監視対象への接続ができなかった
-        print("ping NG. timeout")
+        print(f'Host : is reachable     :{res}(ms)')
     #print("MOZ_HEADLESS:"+os.environ.get('MOZ_HEADLESS'))
     print('b')
     url = os.environ.get('SHOP_URL_PAGE').format(brand)
