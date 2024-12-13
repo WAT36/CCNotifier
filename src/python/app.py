@@ -2,18 +2,11 @@ import json
 import time
 import os
 from getShopRate import get_shop_rate
-import pings
+import subprocess
 
 def handler(event, context):
-    p = pings.Ping() # Pingオブジェクト作成
-    res = p.ping("https://example.com/") 
-
-    if res.is_reached():
-        # 監視対象への接続ができた
-        print("ping OK")
-    else:
-        # 監視対象への接続ができなかった
-        print("ping NG")
+    ping = subprocess.run(["ping", "-c", "1", "https://example.com/"], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+    print(ping)
     
     print(os.getcwd()) #pwd
     print(os.listdir()) #ls
