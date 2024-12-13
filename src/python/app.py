@@ -2,12 +2,8 @@ import json
 import time
 import os
 from getShopRate import get_shop_rate
-import subprocess
 
 def handler(event, context):
-    ping = subprocess.run(["ping", "-c", "1", "https://example.com/"], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-    print(ping)
-    
     print(os.getcwd()) #pwd
     print(os.listdir()) #ls
     result = {}
