@@ -79,9 +79,9 @@ def get_shop_rate(brand,bid_ask):
 
     print('a')
     try:
-        res = requests.get("https://example.com/", timeout=(180,180))
+        res = requests.get(os.environ.get('SHOP_URL_PAGE').format(brand), timeout=(180,180))
         print(res.status_code)
-        print(res.text) 
+        print(len(res.text)) 
         time_elapsed = res.elapsed.total_seconds()
         print('time_elapsed:', time_elapsed)
     except:

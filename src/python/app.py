@@ -16,7 +16,7 @@ def handler(event, context):
             price = get_shop_rate(brand,ope)
             print('End...  {0}-{1}'.format(brand,ope))
             end = time.time()
-            print('時間:'+end-start)
+            print('時間:'+str(end-start))
             brand_result[ope] = price
         result[brand] =  brand_result
 
