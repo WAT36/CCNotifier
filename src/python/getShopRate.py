@@ -1,9 +1,11 @@
 # Selenuim+Firefox
 # from selenium import webdriver
 # from selenium.webdriver.firefox.options import Options
-import selenium
-import selenium.webdriver
+from selenium import webdriver
+#from webdriver_manager.chrome import ChromeDriverManager
+#import chromedriver_binary
 import time
+from tempfile import mkdtemp
 
 # htmlの解析とデータフレームへ
 from bs4 import BeautifulSoup
@@ -56,17 +58,34 @@ def get_shop_rate(brand,bid_ask):
     # options.timeouts = { 'script': 5000,'pageLoad': 5000,'implicit': 5000 }
     # options.add_argument('--headless')
     # driver = webdriver.Firefox(options=options)
+
+    #service = Service(ChromeDriverManager().install())
+    options = webdriver.ChromeOptions()
+    service = webdriver.ChromeService("/opt/chromedriver")
+    options.binary_location = "/opt/chrome/chrome"
+    options.add_argument("--headless=new")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--window-size=1280x1696")
+    options.add_argument("--single-process")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--disable-dev-tools")
+    options.add_argument("--no-zygote")
+    options.add_argument(f"--user-data-dir={mkdtemp()}")
+    options.add_argument(f"--data-path={mkdtemp()}")
+    options.add_argument(f"--disk-cache-dir={mkdtemp()}")
+    options.add_argument("--remote-debugging-port=9222")
+
     print('a')
-    print("MOZ_HEADLESS:"+os.environ.get('MOZ_HEADLESS'))
+    #print("MOZ_HEADLESS:"+os.environ.get('MOZ_HEADLESS'))
     print('b')
     url = os.environ.get('SHOP_URL_PAGE').format(brand)
+    print(url)
     print('c')
-
-    path_driver = os.environ.get("LAMBDA_TASK_ROOT") + "/geckodriver" # 当スクリプトファイルと同じ場所に"geckodriver.exe"を配置
     print('d')
-    service = selenium.webdriver.firefox.service.Service(executable_path=path_driver) # "geckodriver.exe"(Firefoxドライバ)がある場所を指定
     print('e')
-    driver = selenium.webdriver.Firefox(service=service)
+    # driver = webdriver.Chrome(service=service, options=options)
+    driver = webdriver.Chrome(options=options, service=service)
     print('f')
 
     driver.get(url)
@@ -74,15 +93,15 @@ def get_shop_rate(brand,bid_ask):
     result = None
     # 何回か実行して取得する（１回では取れないことがあるため）
     for i in range(5):
-        print('h,'+i)
+        print('h,'+str(i))
         time.sleep(1)
         # ページソースを取得
         html = driver.page_source
-        print('i,'+i)        
+        print('i,'+str(i))        
         # 解析し取得
         soup = BeautifulSoup(html, "html.parser")
         tag_list = soup.find_all("p" if bid_ask == 'bid' else 'td', class_="l-brand__rate__information__text jsc-price-{0}".format(bid_ask))
-        print('j,'+i,tag_list)
+        print('j,'+str(i),tag_list)
         if len(tag_list)==0:
             # 値を取得できなかった場合は次へ
             continue

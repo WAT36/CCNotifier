@@ -1,19 +1,17 @@
-# python
-FROM public.ecr.aws/lambda/python:3.8
-# install  firefox(firefox-esr?)
-ENV HOME="/tmp"
-RUN yum -y update
-RUN yum install -y amazon-linux-extras
-RUN yum install -y Xvfb
-RUN PYTHON=python2 amazon-linux-extras install firefox -y
-RUN yum install -y firefox
-RUN yum install -y wget bzip2 libxtst6 libgtk-3-0 libx11-xcb-dev libdbus-glib-1-2 libxt6 libpci-dev && rm -rf /var/lib/apt/lists/*
-RUN wget https://github.com/mozilla/geckodriver/releases/download/v0.32.2/geckodriver-v0.32.2-linux64.tar.gz
-RUN yum -y install tar 
-RUN tar -xf geckodriver-v0.32.2-linux64.tar.gz
-#RUN mv geckodriver /usr/local/bin/
-ENV MOZ_HEADLESS=1
-# RUN export HOME=/tmp/profile
+FROM --platform=linux/amd64 public.ecr.aws/lambda/python@sha256:1d922f123370801843aad18d0911759c55402af4d0dddb601181df4ed42b2ce2 as build
+RUN dnf install -y unzip && \
+    curl -Lo "/tmp/chromedriver-linux64.zip" "https://storage.googleapis.com/chrome-for-testing-public/122.0.6261.111/linux64/chromedriver-linux64.zip" && \
+    curl -Lo "/tmp/chrome-linux64.zip" "https://storage.googleapis.com/chrome-for-testing-public/122.0.6261.111/linux64/chrome-linux64.zip" && \
+    unzip /tmp/chromedriver-linux64.zip -d /opt/ && \
+    unzip /tmp/chrome-linux64.zip -d /opt/
+
+FROM --platform=linux/amd64 public.ecr.aws/lambda/python@sha256:1d922f123370801843aad18d0911759c55402af4d0dddb601181df4ed42b2ce2
+RUN dnf install -y atk cups-libs gtk3 libXcomposite alsa-lib \
+    libXcursor libXdamage libXext libXi libXrandr libXScrnSaver \
+    libXtst pango at-spi2-atk libXt xorg-x11-server-Xvfb \
+    xorg-x11-xauth dbus-glib dbus-glib-devel nss mesa-libgbm
+COPY --from=build /opt/chrome-linux64 /opt/chrome
+COPY --from=build /opt/chromedriver-linux64 /opt/
 
 WORKDIR ${LAMBDA_TASK_ROOT}
 
@@ -24,8 +22,5 @@ RUN pip install --upgrade pip
 
 # install python lib 
 RUN pip install -r requirements.txt
-
-# test
-RUN pip install pings
 
 CMD [ "app.handler" ]
