@@ -24,6 +24,6 @@ RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
 # test
-RUN pip install ping3
+RUN pip install requests
 
 CMD [ "app.handler" ]
