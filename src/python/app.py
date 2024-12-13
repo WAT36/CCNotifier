@@ -6,7 +6,7 @@ import pings
 
 def handler(event, context):
     p = pings.Ping() # Pingオブジェクト作成
-    res = p.ping("google.com")  # googleを監視
+    res = p.ping("https://example.com/") 
 
     if res.is_reached():
         # 監視対象への接続ができた
