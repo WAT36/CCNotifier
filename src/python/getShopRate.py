@@ -1,12 +1,6 @@
 # -*- coding: utf-8 -*-
-# Selenuim+Firefox
-# from selenium import webdriver
-# from selenium.webdriver.firefox.options import Options
 from selenium import webdriver
-#from webdriver_manager.chrome import ChromeDriverManager
-#import chromedriver_binary
 import time
-from tempfile import mkdtemp
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.service import Service
@@ -44,32 +38,11 @@ def get_shop_rate(brand,bid_ask):
         print("Error: you must input bid or ask. not {0}".format(bid_ask))
         sys.exit(1)
 
-    # # Firefox オプションを設定　ウインドウ非表示モード（--headless）
-    # if not os.path.exists("/tmp/profile"):
-    #     os.makedirs("/tmp/profile")
-
-    # options = Options()
-    # options.set_preference("pdfjs.disabled", True)
-    # options.set_preference("browser.download.folderList", 2)
-    # options.set_preference("browser.download.manager.useWindow", False)
-
-    # if not os.path.exists("/tmp/portal_downloads"):
-    #     os.makedirs("/tmp/portal_downloads")
-    # options.set_preference("browser.download.dir", os.path.abspath("/tmp/portal_downloads"))
-    # options.set_preference("browser.helperApps.neverAsk.saveToDisk","application/pdf, application/force-download")
-    # options.add_argument("--headless")
-    # options.add_argument('--disable-gpu')
-    # options.add_argument("--profile /tmp/profile")
-    # options = Options()
-    # options.timeouts = { 'script': 5000,'pageLoad': 5000,'implicit': 5000 }
-    # options.add_argument('--headless')
-    # driver = webdriver.Firefox(options=options)
-
-    #service = Service(ChromeDriverManager().install())
     chrome_options = Options()
     chrome_options.add_argument("--headless")
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--disable-gpu")
 
     print('a')
     try:
@@ -80,19 +53,15 @@ def get_shop_rate(brand,bid_ask):
         print('time_elapsed:', time_elapsed)
     except:
         print('Host : NOT reachable (Error)')
-    #print("MOZ_HEADLESS:"+os.environ.get('MOZ_HEADLESS'))
     print('b')
     url = os.environ.get('SHOP_URL_PAGE').format(brand)
     print(url)
     print('c')
-    print('d')
-    print('e')
-    # driver = webdriver.Chrome(service=service, options=options)
     driver = webdriver.Chrome(options=chrome_options, service=Service("/usr/bin/chromedriver"))
-    print('f')
+    print('d')
     # 明示的な待機を追加（必要ならTimeoutを長めに設定）
     driver.implicitly_wait(20)
-
+    print('e')
     for i in range(5):
         try:
             print("({0})fetching from {1}...".format(str(i),url))
