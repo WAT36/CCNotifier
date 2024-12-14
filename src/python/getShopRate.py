@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Selenuim+Firefox
 # from selenium import webdriver
 # from selenium.webdriver.firefox.options import Options
@@ -65,35 +66,10 @@ def get_shop_rate(brand,bid_ask):
     # driver = webdriver.Firefox(options=options)
 
     #service = Service(ChromeDriverManager().install())
-    options = Options()
-    service = Service("/opt/chromedriver")
-    options.binary_location = "/opt/chrome/chrome"
-    options.add_argument("start-maximized")
-    options.add_argument("enable-automation")
-    options.add_argument("--headless=new")
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-infobars")
-    options.add_argument('--disable-extensions')
-    options.add_argument("--disable-gpu")
-    options.add_argument("--window-size=1280x1696")
-    options.add_argument("--single-process")
-    options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("--disable-dev-tools")
-    options.add_argument("--dns-prefetch-disable")
-    options.add_argument('--ignore-certificate-errors')
-    options.add_argument('--ignore-ssl-errors')
-    options.add_argument("--no-zygote")
-    options.add_argument("--enable-logging")
-    options.add_argument("--log-level=0")
-    options.add_argument("–blink-settings=imagesEnabled=false")
-    options.add_argument(f"--user-data-dir={mkdtemp()}")
-    options.add_argument(f"--data-path={mkdtemp()}")
-    options.add_argument(f"--disk-cache-dir={mkdtemp()}")
-    options.add_argument("--remote-debugging-port=9222")
-    options.add_argument("--disable-browser-side-navigation")
-    options.add_argument('--disable-blink-features=AutomationControlled')
-    prefs = {"profile.default_content_setting_values.notifications" : 2}
-    options.add_experimental_option("prefs",prefs)
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
 
     print('a')
     try:
@@ -103,7 +79,7 @@ def get_shop_rate(brand,bid_ask):
         time_elapsed = res.elapsed.total_seconds()
         print('time_elapsed:', time_elapsed)
     except:
-        print(f'Host : NOT reachable (Error)')
+        print('Host : NOT reachable (Error)')
     #print("MOZ_HEADLESS:"+os.environ.get('MOZ_HEADLESS'))
     print('b')
     url = os.environ.get('SHOP_URL_PAGE').format(brand)
@@ -112,7 +88,7 @@ def get_shop_rate(brand,bid_ask):
     print('d')
     print('e')
     # driver = webdriver.Chrome(service=service, options=options)
-    driver = webdriver.Chrome(options=options, service=service)
+    driver = webdriver.Chrome(options=chrome_options, service=Service("/usr/bin/chromedriver"))
     print('f')
     # 明示的な待機を追加（必要ならTimeoutを長めに設定）
     driver.implicitly_wait(20)
