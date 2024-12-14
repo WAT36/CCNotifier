@@ -97,7 +97,7 @@ def get_shop_rate(brand,bid_ask):
     # driver = webdriver.Chrome(service=service, options=options)
     driver = webdriver.Chrome(options=options, service=service)
     print('f')
-    driver.set_page_load_timeout(30)
+    driver.set_page_load_timeout(150)
 
     for i in range(5):
         try:
