@@ -67,7 +67,7 @@ def get_shop_rate(brand,bid_ask):
     options.binary_location = "/opt/chrome/chrome"
     options.add_argument("start-maximized")
     options.add_argument("enable-automation")
-    options.add_argument("--headless")
+    options.add_argument("--headless=new")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-infobars")
     options.add_argument('--disable-extensions')
@@ -77,6 +77,7 @@ def get_shop_rate(brand,bid_ask):
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-dev-tools")
     options.add_argument("--disable-browser-side-navigation")
+    options.add_argument("--dns-prefetch-disable")
     options.add_argument('--ignore-certificate-errors')
     options.add_argument('--ignore-ssl-errors')
     options.add_argument("--no-zygote")
