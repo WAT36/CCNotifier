@@ -7,6 +7,9 @@ from selenium import webdriver
 import time
 from tempfile import mkdtemp
 from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
 
 # htmlの解析とデータフレームへ
 from bs4 import BeautifulSoup
@@ -76,15 +79,16 @@ def get_shop_rate(brand,bid_ask):
     options.add_argument("--single-process")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-dev-tools")
-    options.add_argument("--disable-browser-side-navigation")
     options.add_argument("--dns-prefetch-disable")
     options.add_argument('--ignore-certificate-errors')
     options.add_argument('--ignore-ssl-errors')
     options.add_argument("--no-zygote")
+    options.add_argument("–blink-settings=imagesEnabled=false")
     options.add_argument(f"--user-data-dir={mkdtemp()}")
     options.add_argument(f"--data-path={mkdtemp()}")
     options.add_argument(f"--disk-cache-dir={mkdtemp()}")
     options.add_argument("--remote-debugging-port=9222")
+    options.add_argument("--disable-browser-side-navigation")
     prefs = {"profile.default_content_setting_values.notifications" : 2}
     options.add_experimental_option("prefs",prefs)
 
@@ -107,13 +111,14 @@ def get_shop_rate(brand,bid_ask):
     # driver = webdriver.Chrome(service=service, options=options)
     driver = webdriver.Chrome(options=options, service=service)
     print('f')
-    driver.set_page_load_timeout(20)
+    WebDriverWait(driver, 10).until(
+        EC.visibility_of_element_located((By.CSS_SELECTOR, "l-brand__rate__information__text jsc-price-{0}".format(bid_ask)))
+    )
 
     for i in range(5):
         try:
             print("({0})fetching from {1}...".format(str(i),url))
             driver.get(url)
-            time.sleep(10) 
         except TimeoutException:
             print("Timeout!! "+str(i))
             continue
