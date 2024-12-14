@@ -7,9 +7,9 @@ from selenium import webdriver
 import time
 from tempfile import mkdtemp
 from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
 
 # htmlの解析とデータフレームへ
 from bs4 import BeautifulSoup
@@ -65,8 +65,8 @@ def get_shop_rate(brand,bid_ask):
     # driver = webdriver.Firefox(options=options)
 
     #service = Service(ChromeDriverManager().install())
-    options = webdriver.ChromeOptions()
-    service = webdriver.ChromeService("/opt/chromedriver")
+    options = Options()
+    service = Service("/opt/chromedriver")
     options.binary_location = "/opt/chrome/chrome"
     options.add_argument("start-maximized")
     options.add_argument("enable-automation")
@@ -83,6 +83,8 @@ def get_shop_rate(brand,bid_ask):
     options.add_argument('--ignore-certificate-errors')
     options.add_argument('--ignore-ssl-errors')
     options.add_argument("--no-zygote")
+    options.add_argument("--enable-logging")
+    options.add_argument("--log-level=0")
     options.add_argument("–blink-settings=imagesEnabled=false")
     options.add_argument(f"--user-data-dir={mkdtemp()}")
     options.add_argument(f"--data-path={mkdtemp()}")
@@ -112,6 +114,8 @@ def get_shop_rate(brand,bid_ask):
     # driver = webdriver.Chrome(service=service, options=options)
     driver = webdriver.Chrome(options=options, service=service)
     print('f')
+    # 明示的な待機を追加（必要ならTimeoutを長めに設定）
+    driver.implicitly_wait(20)
 
     for i in range(5):
         try:
