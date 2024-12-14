@@ -52,4 +52,6 @@ RUN pip3 install requests
 # 必要な環境変数を設定
 ENV PATH="/opt/google/chrome:/usr/bin/google-chrome:/usr/bin:${PATH}"
 
-CMD Xvfb :99 -screen 0 1280x1024x24 & export DISPLAY=:99 && python3 app.py
+RUN Xvfb :99 -screen 0 1280x1024x24 & export DISPLAY=:99
+
+CMD [ "app.handler" ]
