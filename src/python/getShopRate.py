@@ -89,6 +89,7 @@ def get_shop_rate(brand,bid_ask):
     options.add_argument(f"--disk-cache-dir={mkdtemp()}")
     options.add_argument("--remote-debugging-port=9222")
     options.add_argument("--disable-browser-side-navigation")
+    options.add_argument('--disable-blink-features=AutomationControlled')
     prefs = {"profile.default_content_setting_values.notifications" : 2}
     options.add_experimental_option("prefs",prefs)
 
@@ -111,9 +112,6 @@ def get_shop_rate(brand,bid_ask):
     # driver = webdriver.Chrome(service=service, options=options)
     driver = webdriver.Chrome(options=options, service=service)
     print('f')
-    WebDriverWait(driver, 10).until(
-        EC.visibility_of_element_located((By.CSS_SELECTOR, "l-brand__rate__information__text jsc-price-{0}".format(bid_ask)))
-    )
 
     for i in range(5):
         try:
