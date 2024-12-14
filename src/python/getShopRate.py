@@ -6,6 +6,7 @@ from selenium import webdriver
 #import chromedriver_binary
 import time
 from tempfile import mkdtemp
+from selenium.common.exceptions import TimeoutException
 
 # htmlの解析とデータフレームへ
 from bs4 import BeautifulSoup
@@ -96,8 +97,21 @@ def get_shop_rate(brand,bid_ask):
     # driver = webdriver.Chrome(service=service, options=options)
     driver = webdriver.Chrome(options=options, service=service)
     print('f')
-    driver.set_page_load_timeout(180)
-    driver.get(url)
+    driver.set_page_load_timeout(20)
+
+    for i in range(5):
+        try:
+            print("({0})fetching from {1}...".format(str(i),url))
+            driver.get(url)
+        except TimeoutException:
+            print("Timeout!! "+str(i))
+            continue
+        else:
+            break
+    else:
+        print("(last one)fetching from {1}...".format(url))
+        driver.get(url)
+
     print('g')
     result = None
     # 何回か実行して取得する（１回では取れないことがあるため）
