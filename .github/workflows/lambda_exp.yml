@@ -34,7 +34,7 @@ jobs:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: "ccnotifier_for_lambda"
         run: |
-          docker build ./src/python --tag ${{ env.REGISTRY }}/${{ env.REPOSITORY }}
+          docker build . --tag ${{ env.REGISTRY }}/${{ env.REPOSITORY }}
           docker push ${{ env.REGISTRY }}/${{ env.REPOSITORY }}
 
 
