@@ -26,7 +26,7 @@ export const getAssets = async () => {
     },
   };
 
-  return new Promise<any>((resolve, reject) => {
+  return await new Promise<any>((resolve, reject) => {
     axios
       .get(endPoint + path, options)
       .then(function (response) {

@@ -46,6 +46,11 @@ export const messageTemplate = {
     `${brand}:\t(最終買値 ${lastBuyRate} 円\t>\t現在買値 ${nowBuyRate} 円,\t比率 ${comparisonRate.toFixed(
       2
     )}%,\t(最後の購入額:${lastBuyYen}円))`,
-  STAY: (brand: string, nowSellRate: number, nowBuyRate: number) =>
-    `${brand}:特に売り買い時ではありません\t(売却価格 ${nowSellRate} 円,\t購入価格 ${nowBuyRate} 円)`,
+  STAY: (
+    brand: string,
+    nowSellRate: number,
+    nowBuyRate: number,
+    lastBuyRate: number
+  ) =>
+    `${brand}:\t(売却価格 ${nowSellRate} 円,\t購入価格 ${nowBuyRate} 円,\t最後の購入レート ${lastBuyRate})`,
 };
