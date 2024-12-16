@@ -12,8 +12,7 @@ export const getShopRate = async () => {
       body: data,
     }))
   );
-  console.log(result.body);
-  return result;
+  return result.body.data;
 };
 
 // 引数チェック
