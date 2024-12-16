@@ -1,29 +1,22 @@
-import superagent from "superagent";
-import * as cheerio from "cheerio";
 import * as dotenv from "dotenv";
 import * as path from "path";
 dotenv.config({ path: path.join(__dirname, "../../.env") });
 
-class Crowller {
-  private url = process.env.SHOP_URL_PAGE || "";
-  constructor() {
-    this.getRawHtml();
-  }
-  async getRawHtml() {
-    const result = await superagent.get(this.url);
-    this.getJobInfo(result.text);
-  }
+export const getShopRate = async () => {
+  const url = process.env.SHOP_URL || "";
+  const result = await fetch(url, {
+    method: "GET",
+  }).then((response) =>
+    response.json().then((data) => ({
+      status: response.status,
+      body: data,
+    }))
+  );
+  console.log(result.body);
+  return result;
+};
 
-  getJobInfo(html: string) {
-    console.log(html);
-    const $ = cheerio.load(html);
-    const jobItems = $(".l-brand__rate__information__text.jsc-price-bid");
-    jobItems.map((index, element) => {
-      const companyName = $(element).find("p").text();
-      console.log(companyName);
-      console.log(typeof companyName);
-    });
-  }
+// 引数チェック
+if (process.argv[1] === __filename) {
+  getShopRate();
 }
-
-const crowller = new Crowller();
