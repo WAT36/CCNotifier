@@ -4,7 +4,7 @@ WORKDIR ${LAMBDA_TASK_ROOT}
 COPY package*.json ./
 COPY prisma/ ./
 COPY src/ ./
-COPY index.mjs/ ./
+COPY index.js/ ./
 
 RUN npm install
 RUN npx prisma generate
