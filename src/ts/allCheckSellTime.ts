@@ -78,7 +78,12 @@ export async function allCheckSellTime() {
     .map((res) => {
       const { brand, stay } = res;
       return stay
-        ? messageTemplate.STAY(brand, stay.nowSellRate, stay.nowBuyRate)
+        ? messageTemplate.STAY(
+            brand,
+            stay.nowSellRate,
+            stay.nowBuyRate,
+            stay.lastBuyRate
+          )
         : "";
     });
   messages = messages.concat(stays);

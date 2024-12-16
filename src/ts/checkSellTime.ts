@@ -30,6 +30,7 @@ export type CheckSellResult = {
   stay?: {
     nowSellRate: number; // 現在の売却レート
     nowBuyRate: number; // 現在の購入レート
+    lastBuyRate: number; // 最後に買った時のレート
   };
 };
 
@@ -141,6 +142,7 @@ export const checkSellTime = async (
       result.stay = {
         nowSellRate: nowSellRate?.toNumber() || -1,
         nowBuyRate: nowBuyRate?.toNumber() || -1,
+        lastBuyRate: lastBuyRate ? lastBuyRate.toNumber() : -1,
       };
     }
 
