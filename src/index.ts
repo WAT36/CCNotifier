@@ -1,8 +1,12 @@
 import { allCheckSellTime } from "./allCheckSellTime";
+import { allUpdateShopRate } from "./allUpdateShopRate";
 import { compareDataAndAssets } from "./compareDataAndAssets";
 import { postWebhook } from "./postWebhook";
 
 export const handler = async () => {
+  // all update rate
+  await allUpdateShopRate();
+
   // assets compare
   const compareResult = await compareDataAndAssets();
 
