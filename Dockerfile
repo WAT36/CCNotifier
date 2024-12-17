@@ -5,7 +5,6 @@ COPY package*.json ./
 COPY prisma/ ./prisma
 COPY src/ ./src
 COPY tsconfig.json ./
-COPY index.mjs ./
 
 RUN npm install
 RUN npx prisma generate
