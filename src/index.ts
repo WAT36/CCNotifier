@@ -2,7 +2,7 @@ import { allCheckSellTime } from "./allCheckSellTime";
 import { compareDataAndAssets } from "./compareDataAndAssets";
 import { postWebhook } from "./postWebhook";
 
-async function entrypoint() {
+export const handler = async () => {
   // assets compare
   const compareResult = await compareDataAndAssets();
 
@@ -19,6 +19,4 @@ async function entrypoint() {
     "--- sell check ---\n" +
     allCheckResult.join("\n");
   await postWebhook(requestData);
-}
-
-entrypoint();
+};

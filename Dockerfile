@@ -14,4 +14,4 @@ RUN npm run build
 RUN ls
 RUN pwd 
 
-CMD ["index.handler"]
+CMD ["dist/index.handler"]
