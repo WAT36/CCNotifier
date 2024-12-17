@@ -25,6 +25,7 @@ FROM
       (
         (th.brand = latest_sell_t.brand)
         AND (th.trade_date = latest_sell_t.trade_date)
+        AND (th.buysell_category = '売' :: text)
       )
     )
   );

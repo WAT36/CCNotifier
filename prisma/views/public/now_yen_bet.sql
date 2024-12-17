@@ -23,8 +23,11 @@ FROM
             )
           WHERE
             (
-              (th.trade_date > lst.trade_date)
-              OR (lst.trade_date IS NULL)
+              (
+                (th.trade_date >= lst.trade_date)
+                OR (lst.trade_date IS NULL)
+              )
+              AND (th.buysell_category <> '売' :: text)
             )
         ) after_sell
       GROUP BY
