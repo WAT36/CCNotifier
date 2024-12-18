@@ -82,7 +82,9 @@ export async function allCheckSellTime() {
             brand,
             stay.nowSellRate,
             stay.nowBuyRate,
-            stay.lastBuyRate
+            stay.lastBuyRate,
+            stay.allSoldValueYen,
+            stay.yenBet
           )
         : "";
     });
