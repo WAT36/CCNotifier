@@ -43,6 +43,19 @@ try {
     );
     let passed = 0;
     const line = data.split(/\n/);
+
+    // 現在登録されているデータで最後の日時を取得（その日時以前のデータはスキップする
+    const latestRegisteredDate = (
+      await prisma.tradeHistory.findFirst({
+        select: {
+          trade_date: true,
+        },
+        orderBy: {
+          trade_date: "desc",
+        },
+      })
+    )?.trade_date;
+
     await prisma.$transaction(
       async (prisma) => {
         for (let i = 0; i < line.length; i++) {
@@ -57,6 +70,14 @@ try {
             continue;
           }
           const item = l.split(",");
+          if (
+            latestRegisteredDate &&
+            new Date(item[0]) <= latestRegisteredDate
+          ) {
+            // DBにある最新の日時よりも前 -> すでに登録済みとみなし、スキップ
+            passed++;
+            continue;
+          }
           const [
             trade_date,
             settlement_category,
