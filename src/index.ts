@@ -3,7 +3,10 @@ import { allUpdateShopRate } from "./allUpdateShopRate";
 import { compareDataAndAssets } from "./compareDataAndAssets";
 import { postWebhook } from "./postWebhook";
 
-export const handler = async () => {
+export const handler = async (event: any) => {
+  console.log("event:");
+  console.log(event);
+
   // all update rate
   await allUpdateShopRate();
 
