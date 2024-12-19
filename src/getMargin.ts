@@ -2,7 +2,7 @@ import axios from "axios";
 import crypto from "crypto";
 import * as dotenv from "dotenv";
 import * as path from "path";
-dotenv.config({ path: path.join(__dirname, "../../.env") });
+dotenv.config({ path: path.join(__dirname, "../.env") });
 
 const apiKey = process.env.API_KEY || "";
 const secretKey = process.env.API_SECRET_KEY || "";

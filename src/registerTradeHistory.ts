@@ -5,7 +5,7 @@ import * as dotenv from "dotenv";
 import { PrismaClient } from "@prisma/client";
 export const prisma: PrismaClient = new PrismaClient();
 
-dotenv.config({ path: path.join(__dirname, "../../.env") });
+dotenv.config({ path: path.join(__dirname, "../.env") });
 
 /**
  * 取引履歴データファイルを読み込んでDBに登録する

@@ -1,6 +1,6 @@
 import * as dotenv from "dotenv";
 import * as path from "path";
-dotenv.config({ path: path.join(__dirname, "../../.env") });
+dotenv.config({ path: path.join(__dirname, "../.env") });
 
 export const postWebhook = async (text: string) => {
   const webHookURL = process.env.WEBHOOK_URL || "";

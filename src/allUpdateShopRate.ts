@@ -3,7 +3,7 @@ import * as path from "path";
 import { getShopRate } from "./getShopRate";
 import { PrismaClient } from "@prisma/client";
 export const prisma: PrismaClient = new PrismaClient();
-dotenv.config({ path: path.join(__dirname, "../../.env") });
+dotenv.config({ path: path.join(__dirname, "../.env") });
 
 export type ShopRate = {
   id: number;
