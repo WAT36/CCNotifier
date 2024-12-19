@@ -6,12 +6,11 @@ import { allCheckSellTime } from "./allCheckSellTime";
 import { allUpdateShopRate } from "./allUpdateShopRate";
 import { compareDataAndAssets } from "./compareDataAndAssets";
 import { postWebhook } from "./postWebhook";
+import { registerDataByLambda } from "./registerTradeHistory";
 
 const s3 = new S3Client({ region: process.env.REGION });
 
 export const handler = async (event: any) => {
-  console.log("event:");
-  console.log(event);
   if (event.source === "aws.s3") {
     // S3 アップロードイベントの時
     const s3Event = event.detail;
@@ -47,7 +46,8 @@ export const handler = async (event: any) => {
       })
     );
 
-    console.log("CSV Contents:", results);
+    const registeredLine = await registerDataByLambda(results);
+    await postWebhook(`${registeredLine} 個のデータを登録しました。`);
   } else {
     // それ以外（定期スケジュール実行）
     // all update rate
