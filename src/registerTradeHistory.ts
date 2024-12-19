@@ -37,8 +37,7 @@ export const registerDataByLambda = async (data: any[]): Promise<number> => {
     await prisma.$transaction(
       async (prisma) => {
         for (let i = 0; i < data.length; i++) {
-          const l = data[i];
-          if (!l) {
+          if (!data[i]) {
             //空行ならパス
             passed++;
             continue;
@@ -67,8 +66,8 @@ export const registerDataByLambda = async (data: any[]): Promise<number> => {
             送付手数料: sending_commission,
             "送付先/送付元": sender,
             トランザクションID: transaction_id,
-          } = l;
-
+          } = data[i];
+          console.log(i, trade_date);
           if (
             latestRegisteredDate &&
             new Date(trade_date) <= latestRegisteredDate
