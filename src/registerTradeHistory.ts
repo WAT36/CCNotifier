@@ -43,7 +43,7 @@ export const registerDataByLambda = async (data: any[]): Promise<number> => {
             continue;
           }
           const {
-            日時: trade_date,
+            "﻿日時": trade_date,
             精算区分: settlement_category,
             日本円受渡金額: yen_payment,
             注文ID: order_id,
