@@ -3,9 +3,10 @@ import { Construct } from "constructs";
 import * as ecr from "aws-cdk-lib/aws-ecr";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as dotenv from "dotenv";
+import * as path from "path";
 import { Duration } from "aws-cdk-lib";
 
-dotenv.config();
+dotenv.config({ path: path.join(__dirname, "../../.env") });
 
 export class InfraStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -32,6 +33,17 @@ export class InfraStack extends cdk.Stack {
       runtime: lambda.Runtime.FROM_IMAGE,
       timeout: Duration.minutes(15),
       memorySize: 512,
+      // TODO parameter storeから取りたい
+      environment: {
+        API_ENDPONT: process.env.API_ENDPONT || "",
+        API_KEY: process.env.API_KEY || "",
+        API_PUBLIC_ENDPONT: process.env.API_PUBLIC_ENDPONT || "",
+        API_SECRET_KEY: process.env.API_SECRET_KEY || "",
+        DATABASE_URL: process.env.DATABASE_URL || "",
+        SHOP_URL: process.env.SHOP_URL || "",
+        SHOP_URL_PAGE: process.env.SHOP_URL_PAGE || "",
+        WEBHOOK_URL: process.env.WEBHOOK_URL || "",
+      },
     });
 
     // // EventBridge
