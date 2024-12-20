@@ -4,6 +4,7 @@ import * as ecr from "aws-cdk-lib/aws-ecr";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as events from "aws-cdk-lib/aws-events";
 import * as targets from "aws-cdk-lib/aws-events-targets";
+import * as s3 from "aws-cdk-lib/aws-s3";
 import * as dotenv from "dotenv";
 import * as path from "path";
 import { Duration } from "aws-cdk-lib";
@@ -51,6 +52,13 @@ export class InfraStack extends cdk.Stack {
         },
       }
     );
+
+    // S3
+    // TODO ライフサイクルルール追加　一週間くらい経ったらoldに移すようなルールつけたい
+    new s3.Bucket(this, "CCNotifierCsvFileUploadsBuckets", {
+      bucketName: "ccnotifier-csv-uploads-buckets",
+      eventBridgeEnabled: true,
+    });
 
     // EventBridge
     const ccnotifierEvent = new events.Rule(this, "CCNotifier", {
