@@ -55,10 +55,14 @@ export class InfraStack extends cdk.Stack {
 
     // S3
     // TODO ライフサイクルルール追加　一週間くらい経ったらoldに移すようなルールつけたい
-    new s3.Bucket(this, "CCNotifierCsvFileUploadsBuckets", {
-      bucketName: "ccnotifier-csv-uploads-buckets",
-      eventBridgeEnabled: true,
-    });
+    const csvFileBucket = new s3.Bucket(
+      this,
+      "CCNotifierCsvFileUploadsBuckets",
+      {
+        bucketName: "ccnotifier-csv-uploads-buckets",
+        eventBridgeEnabled: true,
+      }
+    );
 
     // EventBridge
     const ccnotifierEvent = new events.Rule(this, "CCNotifier", {
@@ -70,5 +74,32 @@ export class InfraStack extends cdk.Stack {
       }),
     });
     ccnotifierEvent.addTarget(new targets.LambdaFunction(ccnotifierLambda, {}));
+
+    const ccnotifierFileUploadedEvent = new events.Rule(
+      this,
+      "CCNotifierFileUploaded",
+      {
+        ruleName: "CCNotifierFileUploaded",
+        eventPattern: {
+          source: ["aws.s3"],
+          detailType: ["Object Created"],
+          detail: {
+            bucket: {
+              name: [csvFileBucket.bucketName],
+            },
+            object: {
+              key: [
+                {
+                  suffix: ".csv",
+                },
+              ],
+            },
+          },
+        },
+      }
+    );
+    ccnotifierFileUploadedEvent.addTarget(
+      new targets.LambdaFunction(ccnotifierLambda, {})
+    );
   }
 }
