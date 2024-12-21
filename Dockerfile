@@ -6,7 +6,6 @@ COPY prisma/ ./prisma
 COPY src/ ./src
 COPY tsconfig.json ./
 
-RUN npm install -g npm@11.0.0
 RUN npm install
 RUN npx prisma generate
 RUN npm run build
