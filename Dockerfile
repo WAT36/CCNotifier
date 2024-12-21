@@ -10,7 +10,4 @@ RUN npm install
 RUN npx prisma generate
 RUN npm run build
 
-RUN ls
-RUN pwd 
-
 CMD ["dist/index.handler"]
