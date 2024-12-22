@@ -10,8 +10,10 @@ import { registerDataByLambda } from "./registerTradeHistory";
 
 const s3 = new S3Client({ region: process.env.REGION });
 
-export const handler = async (event: any) => {
+export const handler = async (event: any, context: any) => {
   console.log("index handler test!!!.");
+  console.log("Event:", JSON.stringify(event));
+  console.log("Context:", JSON.stringify(context));
   if (event.source === "aws.s3") {
     // S3 アップロードイベントの時
     const s3Event = event.detail;
