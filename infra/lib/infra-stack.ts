@@ -39,6 +39,7 @@ export class InfraStack extends cdk.Stack {
         runtime: lambda.Runtime.FROM_IMAGE,
         timeout: Duration.minutes(15),
         memorySize: 512,
+        functionName: "CCNotifierImageFunctions",
         // TODO parameter storeから取りたい
         environment: {
           API_ENDPONT: process.env.API_ENDPONT || "",

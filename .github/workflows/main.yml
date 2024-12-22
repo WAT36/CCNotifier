@@ -37,6 +37,12 @@ jobs:
           docker build . --tag ${{ env.REGISTRY }}/${{ env.REPOSITORY }}
           docker push ${{ env.REGISTRY }}/${{ env.REPOSITORY }}
 
+      # Lambda更新
+      - name: update lambda function
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: "ccnotifier"
+        run: aws lambda update-function-code --function-name CCNotifierImageFunctions --image-uri ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:latest
 
 
 
