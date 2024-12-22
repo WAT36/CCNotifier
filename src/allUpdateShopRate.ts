@@ -13,50 +13,57 @@ export type ShopRate = {
 type BrandIdMap = { [id: string]: string };
 
 export const allUpdateShopRate = async () => {
-  // 銘柄のIDデータ取得
-  const brandIdMapData = (await prisma.brandId.findMany()).reduce<BrandIdMap>(
-    (accumulator, currentValue) => {
-      accumulator[String(currentValue.id.toNumber())] = currentValue.name;
-      return accumulator;
-    },
-    {}
-  );
-
-  const shopRateData: ShopRate[] = ((await getShopRate()) as any[]).map(
-    (x: any) => {
-      return {
-        id: x.productId,
-        bid: x.bid,
-        ask: x.ask,
-      };
-    }
-  );
-
-  await prisma.$transaction(async (prisma) => {
-    for (const brandRateData of shopRateData) {
-      // 更新
-      if (brandIdMapData[String(brandRateData.id)]) {
-        await prisma.brandBidAsk.upsert({
-          where: {
-            brand: brandIdMapData[String(brandRateData.id)].toUpperCase() || "",
-          },
-          update: {
-            bid_price: brandRateData.bid,
-            ask_price: brandRateData.ask,
-            bid_updated_time: new Date(),
-            ask_updated_time: new Date(),
-          },
-          create: {
-            brand: brandIdMapData[brandRateData.id].toUpperCase(),
-            bid_price: brandRateData.bid,
-            ask_price: brandRateData.ask,
-            bid_updated_time: new Date(),
-            ask_updated_time: new Date(),
-          },
-        });
+  try {
+    console.log("a");
+    // 銘柄のIDデータ取得
+    const brandIdMapData = (await prisma.brandId.findMany()).reduce<BrandIdMap>(
+      (accumulator, currentValue) => {
+        accumulator[String(currentValue.id.toNumber())] = currentValue.name;
+        return accumulator;
+      },
+      {}
+    );
+    console.log("b");
+    const shopRateData: ShopRate[] = ((await getShopRate()) as any[]).map(
+      (x: any) => {
+        return {
+          id: x.productId,
+          bid: x.bid,
+          ask: x.ask,
+        };
       }
-    }
-  });
+    );
+    console.log("c");
+    await prisma.$transaction(async (prisma) => {
+      for (const brandRateData of shopRateData) {
+        // 更新
+        if (brandIdMapData[String(brandRateData.id)]) {
+          await prisma.brandBidAsk.upsert({
+            where: {
+              brand:
+                brandIdMapData[String(brandRateData.id)].toUpperCase() || "",
+            },
+            update: {
+              bid_price: brandRateData.bid,
+              ask_price: brandRateData.ask,
+              bid_updated_time: new Date(),
+              ask_updated_time: new Date(),
+            },
+            create: {
+              brand: brandIdMapData[brandRateData.id].toUpperCase(),
+              bid_price: brandRateData.bid,
+              ask_price: brandRateData.ask,
+              bid_updated_time: new Date(),
+              ask_updated_time: new Date(),
+            },
+          });
+        }
+      }
+    });
+    console.log("d");
+  } catch (error) {
+    console.error("allUpdateShopRate 失敗しました:", error);
+  }
 };
 
 // 引数チェック
