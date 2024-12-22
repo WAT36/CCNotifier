@@ -5,6 +5,7 @@ import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as events from "aws-cdk-lib/aws-events";
 import * as targets from "aws-cdk-lib/aws-events-targets";
 import * as s3 from "aws-cdk-lib/aws-s3";
+import * as iam from "aws-cdk-lib/aws-iam";
 import * as dotenv from "dotenv";
 import * as path from "path";
 import { Duration } from "aws-cdk-lib";
@@ -26,6 +27,17 @@ export class InfraStack extends cdk.Stack {
       "CCNotifierRepositoryForLambda",
       {
         repositoryName: "ccnotifier_for_lambda",
+      }
+    );
+
+    // S3
+    // TODO ライフサイクルルール追加　一週間くらい経ったらoldに移すようなルールつけたい
+    const csvFileBucket = new s3.Bucket(
+      this,
+      "CCNotifierCsvFileUploadsBuckets",
+      {
+        bucketName: "ccnotifier-csv-uploads-buckets",
+        eventBridgeEnabled: true,
       }
     );
 
@@ -54,16 +66,13 @@ export class InfraStack extends cdk.Stack {
       }
     );
 
-    // S3
-    // TODO ライフサイクルルール追加　一週間くらい経ったらoldに移すようなルールつけたい
-    const csvFileBucket = new s3.Bucket(
-      this,
-      "CCNotifierCsvFileUploadsBuckets",
-      {
-        bucketName: "ccnotifier-csv-uploads-buckets",
-        eventBridgeEnabled: true,
-      }
-    );
+    // IAMポリシーを作成
+    const s3ReadPolicy = new iam.PolicyStatement({
+      actions: ["s3:GetObject", "s3:ListBucket"], // アクセス権限
+      resources: [csvFileBucket.bucketArn, csvFileBucket.bucketArn + "/*"], // リソース
+    });
+    // Lambda関数にポリシーをアタッチ
+    ccnotifierLambda.addToRolePolicy(s3ReadPolicy);
 
     // EventBridge
     const ccnotifierEvent = new events.Rule(this, "CCNotifier", {
