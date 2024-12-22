@@ -21,15 +21,6 @@ export class InfraStack extends cdk.Stack {
       repositoryName: "ccnotifier",
     });
 
-    // ECR repository
-    const lambdaExperimentRepository = new ecr.Repository(
-      this,
-      "CCNotifierRepositoryForLambda",
-      {
-        repositoryName: "ccnotifier_for_lambda",
-      }
-    );
-
     // S3
     // TODO ライフサイクルルール追加　一週間くらい経ったらoldに移すようなルールつけたい
     const csvFileBucket = new s3.Bucket(
