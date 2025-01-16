@@ -69,8 +69,7 @@ export class InfraStack extends cdk.Stack {
     const ccnotifierEvent = new events.Rule(this, "CCNotifier", {
       ruleName: "CCNotifier",
       schedule: events.Schedule.cron({
-        day: "2", // test
-        hour: "0-15/3,21",
+        hour: "0-16/2,20,22",
         minute: "2",
       }),
     });
