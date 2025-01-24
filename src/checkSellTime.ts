@@ -31,8 +31,9 @@ export type CheckSellResult = {
     nowSellRate: number; // 現在の売却レート
     nowBuyRate: number; // 現在の購入レート
     lastBuyRate: number; // 最後に買った時のレート
-    allSoldValueYen: number; // 全部売った時の円
-    yenBet: number; //  現在掛けている円
+    allSoldValueYen: number; // 全部売った時の円(全売値)
+    yenBet: number; //  現在掛けている円(掛値)
+    targetIncreaseRate: number; // 全売値が掛値に届くためにあと何%上昇が必要かを示す指標(目標上昇率 と命名)
   };
 };
 
@@ -140,14 +141,17 @@ export const checkSellTime = async (
         comparisonRate,
       };
     } else {
+      const allSoldValueYen =
+        (nowSellRate?.toNumber() || NaN) * (nowAmount?.toNumber() || NaN);
       result.recommend = "stay";
       result.stay = {
         nowSellRate: nowSellRate?.toNumber() || -1,
         nowBuyRate: nowBuyRate?.toNumber() || -1,
         lastBuyRate: lastBuyRate ? lastBuyRate.toNumber() : -1,
-        allSoldValueYen:
-          (nowSellRate?.toNumber() || NaN) * (nowAmount?.toNumber() || NaN),
+        allSoldValueYen,
         yenBet,
+        targetIncreaseRate:
+          (100 * (yenBet - allSoldValueYen)) / allSoldValueYen,
       };
     }
 

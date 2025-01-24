@@ -75,6 +75,22 @@ export async function allCheckSellTime() {
   messages.push("------- ステイ -------");
   const stays = results
     .filter((res) => res.recommend === "stay")
+    .sort((a, b) => {
+      if (
+        a.stay &&
+        b.stay &&
+        a.stay?.targetIncreaseRate < b.stay?.targetIncreaseRate
+      ) {
+        return -1;
+      } else if (
+        a.stay &&
+        b.stay &&
+        a.stay?.targetIncreaseRate > b.stay?.targetIncreaseRate
+      ) {
+        return 1;
+      }
+      return 0;
+    })
     .map((res) => {
       const { brand, stay } = res;
       return stay
@@ -84,7 +100,8 @@ export async function allCheckSellTime() {
             stay.nowBuyRate,
             stay.lastBuyRate,
             stay.allSoldValueYen,
-            stay.yenBet
+            stay.yenBet,
+            stay.targetIncreaseRate
           )
         : "";
     });

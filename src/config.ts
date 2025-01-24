@@ -52,7 +52,10 @@ export const messageTemplate = {
     nowBuyRate: number,
     lastBuyRate: number,
     allSoldValueYen: number,
-    yenBet: number
+    yenBet: number,
+    targetIncreaseRate: number
   ) =>
-    `${brand}:\t(売ﾚｰﾄ ${nowSellRate} 円,\t買ﾚｰﾄ ${nowBuyRate} 円,\t最後の購入ﾚｰﾄ ${lastBuyRate})円,\t全売値 ${allSoldValueYen} 円,\t掛値 ${yenBet} 円`,
+    `${brand}:\t(売ﾚｰﾄ ${nowSellRate} 円,\t買ﾚｰﾄ ${nowBuyRate} 円,\t最後の購入ﾚｰﾄ ${lastBuyRate})円,\t全売値 ${allSoldValueYen} 円,\t掛値 ${yenBet} 円,\t売り時まであと ${targetIncreaseRate.toFixed(
+      2
+    )}%`,
 };
