@@ -85,7 +85,7 @@ export const checkSellTime = async (
     }
 
     // 現在掛けている円
-    const yenBet = brandData.now_yen_bet?.yen_bet;
+    const yenBet = brandData.now_yen_bet?.yen_bet || 0;
     // 現在の保有数量
     const nowAmount = brandData.now_amount?.now_amount;
     // 最後に買った時のレート
@@ -105,12 +105,12 @@ export const checkSellTime = async (
     const result: CheckSellResult = {
       brand,
     };
-    if (!nowAmount || nowAmount === new Decimal(0) || !yenBet) {
+    if (!nowAmount || nowAmount === new Decimal(0)) {
       result.recommend = "none";
     } else if (
       nowSellRate &&
       nowAmount &&
-      yenBet &&
+      yenBet !== undefined &&
       nowSellRate.toNumber() * nowAmount.toNumber() > yenBet
     ) {
       const allSoldValueYen = nowSellRate.toNumber() * nowAmount.toNumber();
