@@ -103,3 +103,9 @@ view now_amount {
   now_amount      Decimal @db.Decimal
   brand_master    brand   @relation(fields: [brand], references: [name])
 }
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view brand_all_profit {
+  brand       String  @unique
+  yen_payment Decimal @db.Decimal
+}
