@@ -109,3 +109,9 @@ view brand_all_profit {
   brand       String  @unique
   yen_payment Decimal @db.Decimal
 }
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view brand_all_tradecount {
+  brand String @unique
+  count BigInt
+}
