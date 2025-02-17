@@ -115,3 +115,8 @@ view brand_all_tradecount {
   brand String @unique
   count BigInt
 }
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view trade_year_list {
+  year Decimal @unique @db.Decimal
+}
