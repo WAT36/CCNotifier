@@ -105,7 +105,7 @@ export const checkSellTime = async (
     const result: CheckSellResult = {
       brand,
     };
-    if (!nowAmount || nowAmount === new Decimal(0)) {
+    if (!nowAmount || nowAmount.equals(new Decimal(0))) {
       result.recommend = "none";
     } else if (
       nowSellRate &&
