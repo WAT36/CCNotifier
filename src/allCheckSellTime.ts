@@ -66,7 +66,8 @@ export async function allCheckSellTime() {
             buy.nowBuyRate,
             buy.comparisonRate,
             buy.lastBuyYen
-          )
+          ) +
+            (buy.comparisonRate <= -Math.log2(buy.lastBuyYen / 100) ? "🌟" : "") // test 買い時アラート
         : "";
     });
   messages = messages.concat(buys);
