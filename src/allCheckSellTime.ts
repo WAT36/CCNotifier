@@ -8,7 +8,15 @@ export async function allCheckSellTime() {
   }
 
   let messages: string[] = [];
-  messages.push("--- !!! 売り時 !!! ---");
+  const gainsYenSum = results
+    .filter((res) => res.recommend === "sell")
+    .reduce(
+      (accumulator, currentValue) =>
+        accumulator + (currentValue.sell?.gainsYen || 0),
+      0
+    )
+    .toFixed(2);
+  messages.push(`--- !!! 売り時 !!! --- 総利益 ${gainsYenSum} 円`);
   const sells = results
     .filter((res) => res.recommend === "sell")
     .sort((a, b) => {
