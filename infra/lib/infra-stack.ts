@@ -6,6 +6,7 @@ import * as events from "aws-cdk-lib/aws-events";
 import * as targets from "aws-cdk-lib/aws-events-targets";
 import * as s3 from "aws-cdk-lib/aws-s3";
 import * as iam from "aws-cdk-lib/aws-iam";
+import * as apigw from "aws-cdk-lib/aws-apigateway";
 import * as dotenv from "dotenv";
 import * as path from "path";
 import { Duration } from "aws-cdk-lib";
@@ -69,7 +70,7 @@ export class InfraStack extends cdk.Stack {
     const ccnotifierEvent = new events.Rule(this, "CCNotifier", {
       ruleName: "CCNotifier",
       schedule: events.Schedule.cron({
-        hour: "0-16/2,20,22",
+        hour: "0-16,20-23",
         minute: "2",
       }),
     });
@@ -101,5 +102,14 @@ export class InfraStack extends cdk.Stack {
     ccnotifierFileUploadedEvent.addTarget(
       new targets.LambdaFunction(ccnotifierLambda, {})
     );
+
+    // API gateway
+    const api = new apigw.RestApi(this, "ccnotifierRestApi", {
+      restApiName: "ccnotifier-fn-api",
+      deployOptions: { stageName: "prod" },
+    });
+    api.root
+      .addResource("notice")
+      .addMethod("GET", new apigw.LambdaIntegration(ccnotifierLambda));
   }
 }
