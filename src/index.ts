@@ -70,4 +70,16 @@ export const handler = async (event: any, context: any) => {
       allCheckResult.join("\n");
     await postWebhook(requestData);
   }
+
+  // 返り値設定、何もないので 204 No Content
+  return {
+    statusCode: 204,
+    body: "", // ← body は必ず string。未定義/ null はダメ
+    headers: {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+    },
+    // バイナリ返す時のみ true
+    isBase64Encoded: false,
+  };
 };
