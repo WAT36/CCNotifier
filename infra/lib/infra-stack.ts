@@ -33,6 +33,19 @@ export class InfraStack extends cdk.Stack {
       }
     );
 
+    const biPageBucket = new s3.Bucket(this, "CCNotifierBIStaticPageBuckets", {
+      bucketName: "ccnotifier-bi-page-buckets",
+      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
+      cors: [
+        {
+          allowedMethods: [s3.HttpMethods.GET, s3.HttpMethods.HEAD],
+          allowedOrigins: ["*"],
+          allowedHeaders: ["*"],
+          exposedHeaders: [],
+        },
+      ],
+    });
+
     // Lambda
     const ccnotifierLambda = new lambda.Function(
       this,
