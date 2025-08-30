@@ -135,20 +135,18 @@ export class InfraStack extends cdk.Stack {
       userPoolName: "ccnotifier-user-pool",
       selfSignUpEnabled: false, // セルフサインアップ無効
       signInAliases: {
-        email: true,
+        username: true, // サインインにユーザー名を使用
+        email: false,
+        phone: false,
+        preferredUsername: false,
       },
-      standardAttributes: {
-        email: {
-          required: true,
-          mutable: true,
-        },
-      },
+      standardAttributes: {},
       customAttributes: {
         name: new cognito.StringAttribute({
           mutable: true,
         }),
       },
-      accountRecovery: cognito.AccountRecovery.EMAIL_ONLY,
+      accountRecovery: cognito.AccountRecovery.EMAIL_AND_PHONE_WITHOUT_MFA, // 使用できる場合はEメール、それ以外はSMS
       removalPolicy: cdk.RemovalPolicy.DESTROY, // 開発環境用、本番環境では削除
     });
 
