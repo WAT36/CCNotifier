@@ -3,6 +3,10 @@ on:
   push:
     branches:
       - main
+
+env:
+  S3_BUCKET: ccnotifier-bi-page-buckets
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -44,5 +48,35 @@ jobs:
           REPOSITORY: "ccnotifier"
         run: aws lambda update-function-code --function-name CCNotifierImageFunctions --image-uri ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:latest
 
+      # Frontend deploy
+      - name: Install deps
+        run: cd frontend && npm ci
 
+      - name: Build & Export
+        run: |
+          cd frontend
+          npm run build
+          npm run export   # out/ 生成
 
+      # HTML はキャッシュさせない
+      - name: Upload HTML (no-cache)
+        run: |
+          aws s3 cp ./out s3://$S3_BUCKET \
+            --recursive \
+            --exclude "*" \
+            --include "*.html" \
+            --content-type "text/html" \
+            --cache-control "no-cache, no-store, must-revalidate"
+
+      # 残りアセットは長期キャッシュ
+      - name: Upload assets (immutable)
+        run: |
+          aws s3 cp ./out s3://$S3_BUCKET \
+            --recursive \
+            --exclude "*.html" \
+            --cache-control "public, max-age=31536000, immutable"
+
+      # 完全同期したい場合（不要なら削除可）
+      - name: Sync (delete removed)
+        run: |
+          aws s3 sync ./out s3://$S3_BUCKET --delete
