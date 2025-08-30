@@ -55,8 +55,7 @@ jobs:
       - name: Build & Export
         run: |
           cd frontend
-          npm run build
-          npm run export   # out/ 生成
+          npm run build   # out/ 生成
 
       # HTML はキャッシュさせない
       - name: Upload HTML (no-cache)
