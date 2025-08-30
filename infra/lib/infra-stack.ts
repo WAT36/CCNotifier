@@ -159,7 +159,8 @@ export class InfraStack extends cdk.Stack {
         userPoolClientName: "ccnotifier-user-pool-client",
         generateSecret: false, // パブリッククライアントの場合
         authFlows: {
-          userPassword: true, // パスワード認証のみ
+          userPassword: true, // パスワード認証
+          userSrp: true, // SRP認証フローを有効化
         },
         oAuth: {
           flows: {
