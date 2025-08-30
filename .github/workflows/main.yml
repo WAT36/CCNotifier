@@ -53,6 +53,9 @@ jobs:
         run: cd frontend && npm ci
 
       - name: Build & Export
+        env:
+          NEXT_PUBLIC_USERPOOL_ID: ${{ secrets.NEXT_PUBLIC_USERPOOL_ID }}
+          NEXT_PUBLIC_APPCLIENT_ID: ${{ secrets.NEXT_PUBLIC_APPCLIENT_ID }}
         run: |
           cd frontend
           npm run build   # out/ 生成
