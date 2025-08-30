@@ -10,7 +10,7 @@ import * as apigw from "aws-cdk-lib/aws-apigateway";
 import * as cognito from "aws-cdk-lib/aws-cognito";
 import * as dotenv from "dotenv";
 import * as path from "path";
-import { Duration } from "aws-cdk-lib";
+import { Duration, RemovalPolicy } from "aws-cdk-lib";
 
 dotenv.config({ path: path.join(__dirname, "../../.env") });
 
@@ -36,13 +36,17 @@ export class InfraStack extends cdk.Stack {
 
     const biPageBucket = new s3.Bucket(this, "CCNotifierBIStaticPageBuckets", {
       bucketName: "ccnotifier-bi-page-buckets",
-      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
+      websiteIndexDocument: "index.html",
+      websiteErrorDocument: "404.html", // なければ index.html でもOK
+      publicReadAccess: true, // ← Web 公開
+      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ACLS, // ポリシーで公開し、ACLは禁止
+      removalPolicy: RemovalPolicy.RETAIN, // 本番：RETAIN 推奨（削除保護）
+      autoDeleteObjects: false,
       cors: [
         {
           allowedMethods: [s3.HttpMethods.GET, s3.HttpMethods.HEAD],
           allowedOrigins: ["*"],
           allowedHeaders: ["*"],
-          exposedHeaders: [],
         },
       ],
     });
