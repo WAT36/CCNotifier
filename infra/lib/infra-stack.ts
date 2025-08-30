@@ -7,6 +7,7 @@ import * as targets from "aws-cdk-lib/aws-events-targets";
 import * as s3 from "aws-cdk-lib/aws-s3";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as apigw from "aws-cdk-lib/aws-apigateway";
+import * as cognito from "aws-cdk-lib/aws-cognito";
 import * as dotenv from "dotenv";
 import * as path from "path";
 import { Duration } from "aws-cdk-lib";
@@ -124,5 +125,65 @@ export class InfraStack extends cdk.Stack {
     api.root
       .addResource("notice")
       .addMethod("GET", new apigw.LambdaIntegration(ccnotifierLambda));
+
+    // Cognito User Pool
+    const userPool = new cognito.UserPool(this, "CCNotifierUserPool", {
+      userPoolName: "ccnotifier-user-pool",
+      selfSignUpEnabled: false, // セルフサインアップ無効
+      signInAliases: {
+        email: true,
+      },
+      standardAttributes: {
+        email: {
+          required: true,
+          mutable: true,
+        },
+      },
+      customAttributes: {
+        name: new cognito.StringAttribute({
+          mutable: true,
+        }),
+      },
+      accountRecovery: cognito.AccountRecovery.EMAIL_ONLY,
+      removalPolicy: cdk.RemovalPolicy.DESTROY, // 開発環境用、本番環境では削除
+    });
+
+    // Cognito User Pool Client
+    const userPoolClient = new cognito.UserPoolClient(
+      this,
+      "CCNotifierUserPoolClient",
+      {
+        userPool,
+        userPoolClientName: "ccnotifier-user-pool-client",
+        generateSecret: false, // パブリッククライアントの場合
+        authFlows: {
+          userPassword: true, // パスワード認証のみ
+        },
+        oAuth: {
+          flows: {
+            authorizationCodeGrant: true,
+          },
+          scopes: [
+            cognito.OAuthScope.EMAIL,
+            cognito.OAuthScope.OPENID,
+            cognito.OAuthScope.PROFILE,
+          ],
+          callbackUrls: ["http://localhost:3000/callback"], // フロントエンドのコールバックURL
+          logoutUrls: ["http://localhost:3000/logout"], // フロントエンドのログアウトURL
+        },
+      }
+    );
+
+    // Cognito User Pool Domain
+    const userPoolDomain = new cognito.UserPoolDomain(
+      this,
+      "CCNotifierUserPoolDomain",
+      {
+        userPool,
+        cognitoDomain: {
+          domainPrefix: process.env.COGNITO_DOMAIN || "ccnotifier", // 環境変数から取得
+        },
+      }
+    );
   }
 }
