@@ -16,13 +16,14 @@ export async function allRateCheckAndPost() {
 
   // send data
   const requestData =
-    "--- compare NG ---\n" +
-    (compareResult.ng.length === 0
-      ? "全て相違なし！\n"
-      : compareResult.ng.join("\n")) +
-    "---            ---\n" +
+    (compareResult.ng.length > 0
+      ? `※比較NGが ${compareResult.ng.length} 件あります\n`
+      : "") +
     "--- sell check ---\n" +
-    allCheckResult.join("\n");
+    allCheckResult.join("\n") +
+    (compareResult.ng.length === 0
+      ? ""
+      : "--- compare NG ---\n" + compareResult.ng.join("\n"));
   await postWebhook(requestData);
 }
 
