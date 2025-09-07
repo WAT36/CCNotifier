@@ -27,4 +27,4 @@ export async function allRateCheckAndPost() {
   await postWebhook(requestData);
 }
 
-allRateCheckAndPost();
+//allRateCheckAndPost();
