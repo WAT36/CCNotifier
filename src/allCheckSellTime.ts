@@ -126,6 +126,14 @@ export async function allCheckSellTime() {
     });
   messages = messages.concat(nones);
   messages.push("---------------------");
+
+  // 初めに総利益と星の個数を乗せる
+  const stars = buys.filter((buy) => buy.includes("🌟")).length;
+  messages.unshift(
+    (+gainsYenSum > 0 ? `総利益 ${gainsYenSum} 円, ` : "総利益なし, ") +
+      (stars > 0 ? `🌟 ${stars} 個` : "星なし")
+  );
+
   return messages;
 }
 

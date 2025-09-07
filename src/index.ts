@@ -2,11 +2,9 @@ import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 import * as stream from "stream";
 import * as util from "util";
 import csv from "csv-parser";
-import { allCheckSellTime } from "./allCheckSellTime";
-import { allUpdateShopRate } from "./allUpdateShopRate";
-import { compareDataAndAssets } from "./compareDataAndAssets";
 import { postWebhook } from "./postWebhook";
 import { registerDataByLambda } from "./registerTradeHistory";
+import { allRateCheckAndPost } from "./allRateCheckAndPost";
 
 const s3 = new S3Client({ region: process.env.REGION });
 
@@ -51,25 +49,7 @@ export const handler = async (event: any, context: any) => {
       await postWebhook(`${registeredLine} 個のデータを登録しました。`);
     } else {
       // それ以外（定期スケジュール実行）
-      // all update rate
-      await allUpdateShopRate();
-
-      // assets compare
-      const compareResult = await compareDataAndAssets();
-
-      // all check sell time
-      const allCheckResult = await allCheckSellTime();
-
-      // send data
-      const requestData =
-        "--- compare NG ---\n" +
-        (compareResult.ng.length === 0
-          ? "全て相違なし！\n"
-          : compareResult.ng.join("\n")) +
-        "---            ---\n" +
-        "--- sell check ---\n" +
-        allCheckResult.join("\n");
-      await postWebhook(requestData);
+      await allRateCheckAndPost();
     }
 
     // 返り値設定、何もないので 204 No Content

@@ -4,7 +4,7 @@ import { allCheckSellTime } from "./allCheckSellTime";
 import { postWebhook } from "./postWebhook";
 
 // 定期バッチを手動で実行させる
-export async function manualAllCheckSellTime() {
+export async function allRateCheckAndPost() {
   // all update rate
   await allUpdateShopRate();
 
@@ -26,4 +26,4 @@ export async function manualAllCheckSellTime() {
   await postWebhook(requestData);
 }
 
-manualAllCheckSellTime();
+allRateCheckAndPost();
