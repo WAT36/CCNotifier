@@ -19,7 +19,6 @@ export async function allRateCheckAndPost() {
     (compareResult.ng.length > 0
       ? `※比較NGが ${compareResult.ng.length} 件あります\n`
       : "") +
-    "--- sell check ---\n" +
     allCheckResult.join("\n") +
     (compareResult.ng.length === 0
       ? ""
