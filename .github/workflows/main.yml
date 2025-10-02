@@ -1,4 +1,4 @@
-name: ECR Deploy
+name: ECR & FrontendDeploy
 on:
   push:
     branches:
