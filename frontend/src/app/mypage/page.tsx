@@ -2,11 +2,12 @@
 
 import RequireAuth from "../RequireAuth";
 import { GraphGrid } from "../../components";
+import Notice from "@/components/card/Notice";
 
 export default function MyPage() {
   // 全グラフデータの定義
   const allGraphs = [
-    { id: "graph1", title: "グラフ1" },
+    { id: "notice", title: "Slack通知実行ボタン", children: <Notice /> },
     { id: "graph2", title: "グラフ2" },
     { id: "graph3", title: "グラフ3" },
     { id: "graph4", title: "グラフ4" },
