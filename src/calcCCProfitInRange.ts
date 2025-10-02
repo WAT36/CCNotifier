@@ -53,16 +53,9 @@ export function parseYyyyMmDdNextDay(input: string): Date {
   return dt;
 }
 
-// 引数チェック
-if (process.argv.length !== 4) {
-  console.error(
-    `Error: Usage: npx ts-node ${process.argv[1]} (startDate) (endDate)`
-  );
-  process.exit(1);
-}
 //  startDate,endDateがYYYY-MMM-DD形式か確認
-const startDate = parseYyyyMmDd(process.argv[2]);
-const endDate = parseYyyyMmDdNextDay(process.argv[3]);
+const startDate = parseYyyyMmDd(process.argv[2] || "1980-01-01");
+const endDate = parseYyyyMmDdNextDay(process.argv[3] || "9999-12-31");
 
 // 指定した期間内における仮想通貨取引の利益を算出（銘柄ごとに）する関数
 export async function calcCCProfitinRange() {
