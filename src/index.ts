@@ -5,6 +5,7 @@ import csv from "csv-parser";
 import { postWebhook } from "./postWebhook";
 import { registerDataByLambda } from "./registerTradeHistory";
 import { allRateCheckAndPost } from "./allRateCheckAndPost";
+import { calcCCProfitinRange } from "./calcCCProfitInRange";
 
 const s3 = new S3Client({ region: process.env.REGION });
 
@@ -31,9 +32,14 @@ export const handler = async (event: any, context: any) => {
           },
           isBase64Encoded: false,
         };
-      } else if (path === "/data" && method === "GET") {
+      } else if (path.startsWith("/data") && method === "GET") {
         // /dataエンドポイントかつGETメソッドの場合
-        console.log("/data");
+        let body;
+
+        // 利益取得
+        if (path.startsWith("/data/profit") && method === "GET") {
+          body = await calcCCProfitinRange();
+        }
 
         return {
           statusCode: 200,
@@ -41,6 +47,7 @@ export const handler = async (event: any, context: any) => {
             message: "Data endpoint accessed",
             path: "/data",
             method: "GET",
+            body,
           }),
           headers: {
             "Content-Type": "application/json",
