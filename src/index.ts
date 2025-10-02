@@ -10,7 +10,61 @@ const s3 = new S3Client({ region: process.env.REGION });
 
 export const handler = async (event: any, context: any) => {
   try {
-    if (event.source === "aws.s3") {
+    // API Gatewayからのリクエストかどうかを判定
+    if (event.httpMethod && event.path) {
+      // API Gatewayからのリクエスト
+      const path = event.path;
+      const method = event.httpMethod;
+
+      if (path === "/notice") {
+        // /noticeエンドポイントの場合
+        await allRateCheckAndPost();
+
+        return {
+          statusCode: 200,
+          body: JSON.stringify({
+            message: "Rate check completed successfully",
+          }),
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+          },
+          isBase64Encoded: false,
+        };
+      } else if (path === "/data" && method === "GET") {
+        // /dataエンドポイントかつGETメソッドの場合
+        console.log("/data");
+
+        return {
+          statusCode: 200,
+          body: JSON.stringify({
+            message: "Data endpoint accessed",
+            path: "/data",
+            method: "GET",
+          }),
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+          },
+          isBase64Encoded: false,
+        };
+      } else {
+        // その他のパスまたはメソッドの場合
+        return {
+          statusCode: 404,
+          body: JSON.stringify({
+            message: "Not Found",
+            path: path,
+            method: method,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+          },
+          isBase64Encoded: false,
+        };
+      }
+    } else if (event.source === "aws.s3") {
       // S3 アップロードイベントの時
       const s3Event = event.detail;
       const bucketName = s3Event.bucket.name;
@@ -47,22 +101,35 @@ export const handler = async (event: any, context: any) => {
 
       const registeredLine = await registerDataByLambda(results);
       await postWebhook(`${registeredLine} 個のデータを登録しました。`);
-    } else {
-      // それ以外（定期スケジュール実行）
-      await allRateCheckAndPost();
-    }
 
-    // 返り値設定、何もないので 204 No Content
-    return {
-      statusCode: 204,
-      body: "", // ← body は必ず string。未定義/ null はダメ
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-      },
-      // バイナリ返す時のみ true
-      isBase64Encoded: false,
-    };
+      return {
+        statusCode: 200,
+        body: JSON.stringify({
+          message: "CSV processing completed",
+          registeredCount: registeredLine,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+        },
+        isBase64Encoded: false,
+      };
+    } else {
+      // EventBridgeからの定期スケジュール実行
+      await allRateCheckAndPost();
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify({
+          message: "Scheduled rate check completed",
+        }),
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+        },
+        isBase64Encoded: false,
+      };
+    }
   } catch (e: any) {
     console.error(e);
     return {

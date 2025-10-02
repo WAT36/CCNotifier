@@ -125,10 +125,24 @@ export class InfraStack extends cdk.Stack {
     const api = new apigw.RestApi(this, "ccnotifierRestApi", {
       restApiName: "ccnotifier-fn-api",
       deployOptions: { stageName: "prod" },
+      defaultCorsPreflightOptions: {
+        allowOrigins: apigw.Cors.ALL_ORIGINS,
+        allowMethods: apigw.Cors.ALL_METHODS,
+        allowHeaders: ["Content-Type", "Authorization"],
+      },
     });
+
+    // 既存のnoticeエンドポイント
     api.root
       .addResource("notice")
       .addMethod("GET", new apigw.LambdaIntegration(ccnotifierLambda));
+
+    // データ取得用のエンドポイント
+    const dataResource = api.root.addResource("data");
+    dataResource.addMethod(
+      "GET",
+      new apigw.LambdaIntegration(ccnotifierLambda)
+    );
 
     // Cognito User Pool
     const userPool = new cognito.UserPool(this, "CCNotifierUserPool", {
