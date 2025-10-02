@@ -132,16 +132,21 @@ export class InfraStack extends cdk.Stack {
       },
     });
 
-    // 既存のnoticeエンドポイント
-    api.root
-      .addResource("notice")
-      .addMethod("GET", new apigw.LambdaIntegration(ccnotifierLambda));
+    // プロキシ統合で全てのリクエストをLambdaに転送
+    const proxyResource = api.root.addResource("{proxy+}");
+    proxyResource.addMethod(
+      "ANY",
+      new apigw.LambdaIntegration(ccnotifierLambda, {
+        proxy: true, // プロキシ統合を有効化
+      })
+    );
 
-    // データ取得用のエンドポイント
-    const dataResource = api.root.addResource("data");
-    dataResource.addMethod(
-      "GET",
-      new apigw.LambdaIntegration(ccnotifierLambda)
+    // ルートパス（/）も処理できるように追加
+    api.root.addMethod(
+      "ANY",
+      new apigw.LambdaIntegration(ccnotifierLambda, {
+        proxy: true,
+      })
     );
 
     // Cognito User Pool

@@ -17,7 +17,8 @@ export const handler = async (event: any, context: any) => {
       const path = event.path;
       const method = event.httpMethod;
 
-      if (path === "/notice") {
+      // ルーティング処理
+      if (path === "/notice" && method === "GET") {
         // /noticeエンドポイントの場合
         await allRateCheckAndPost();
 
@@ -48,6 +49,20 @@ export const handler = async (event: any, context: any) => {
             path: "/data",
             method: "GET",
             body,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+          },
+          isBase64Encoded: false,
+        };
+      } else if (path === "/health" && method === "GET") {
+        // ヘルスチェックエンドポイントの例
+        return {
+          statusCode: 200,
+          body: JSON.stringify({
+            status: "healthy",
+            timestamp: new Date().toISOString(),
           }),
           headers: {
             "Content-Type": "application/json",
