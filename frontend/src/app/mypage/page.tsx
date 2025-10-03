@@ -5,6 +5,7 @@ import { GraphGrid } from "../../components";
 import Notice from "@/components/card/Notice";
 import Profit from "@/components/card/Profit";
 import TradeCount from "@/components/card/TradeCount";
+import CsvUpload from "@/components/card/CsvUpload";
 
 export default function MyPage() {
   // 全グラフデータの定義
@@ -16,7 +17,7 @@ export default function MyPage() {
       title: "通貨毎の取引回数(全期間)",
       children: <TradeCount />,
     },
-    { id: "graph4", title: "グラフ4" },
+    { id: "csvupload", title: "CSVアップロード", children: <CsvUpload /> },
     { id: "graph5", title: "グラフ5" },
     { id: "graph6", title: "グラフ6" },
   ];
