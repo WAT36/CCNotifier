@@ -9,7 +9,6 @@ export const BRANDS = [
   "dot",
   "atom",
   "ada",
-  "mkr",
   "dai",
   "link",
   "doge",
