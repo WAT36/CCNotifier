@@ -78,11 +78,26 @@ export const handler = async (event: any, context: any) => {
             };
           }
 
-          // Base64エンコードされたファイルデータをデコード
-          const fileBuffer = Buffer.from(event.body, "base64");
+          // リクエストボディをパース（JSON形式でファイルデータとファイル名を受け取る）
+          const requestBody = JSON.parse(event.body);
+          const { fileData, fileName } = requestBody;
 
-          // ファイル名をヘッダーから取得（なければデフォルト名）
-          const fileName = event.headers["x-file-name"] || "uploaded-file.csv";
+          if (!fileData || !fileName) {
+            return {
+              statusCode: 400,
+              body: JSON.stringify({
+                message: "ファイルデータまたはファイル名が提供されていません",
+              }),
+              headers: {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",
+              },
+              isBase64Encoded: false,
+            };
+          }
+
+          // Base64エンコードされたファイルデータをデコード
+          const fileBuffer = Buffer.from(fileData, "base64");
 
           // CSVファイルをS3にアップロード
           const uploadResult = await uploadCsvToS3(fileBuffer, fileName);
