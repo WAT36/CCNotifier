@@ -6,6 +6,7 @@ import { postWebhook } from "./postWebhook";
 import { registerDataByLambda } from "./registerTradeHistory";
 import { allRateCheckAndPost } from "./allRateCheckAndPost";
 import { calcCCProfitinRange } from "./calcCCProfitInRange";
+import { calcCCTradeCountinRange } from "./calcCCTradeCountInRange";
 
 const s3 = new S3Client({ region: process.env.REGION });
 
@@ -40,6 +41,8 @@ export const handler = async (event: any, context: any) => {
         // 利益取得
         if (path.startsWith("/data/profit") && method === "GET") {
           body = await calcCCProfitinRange();
+        } else if (path.startsWith("/data/tradecount") && method === "GET") {
+          body = await calcCCTradeCountinRange();
         }
 
         return {
@@ -140,17 +143,17 @@ export const handler = async (event: any, context: any) => {
       // EventBridgeからの定期スケジュール実行
       await allRateCheckAndPost();
 
-    return {
+      return {
         statusCode: 200,
         body: JSON.stringify({
           message: "Scheduled rate check completed",
         }),
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-      },
-      isBase64Encoded: false,
-    };
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+        },
+        isBase64Encoded: false,
+      };
     }
   } catch (e: any) {
     console.error(e);
