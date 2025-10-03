@@ -7,6 +7,7 @@ import { registerDataByLambda } from "./registerTradeHistory";
 import { allRateCheckAndPost } from "./allRateCheckAndPost";
 import { calcCCProfitinRange } from "./calcCCProfitInRange";
 import { calcCCTradeCountinRange } from "./calcCCTradeCountInRange";
+import { uploadCsvToS3 } from "./csvUpload";
 
 const s3 = new S3Client({ region: process.env.REGION });
 
@@ -59,6 +60,78 @@ export const handler = async (event: any, context: any) => {
           },
           isBase64Encoded: false,
         };
+      } else if (path === "/upload/csv" && method === "POST") {
+        // CSVファイルアップロードエンドポイント
+        try {
+          // リクエストボディからファイルデータを取得
+          if (!event.body) {
+            return {
+              statusCode: 400,
+              body: JSON.stringify({
+                message: "ファイルデータが提供されていません",
+              }),
+              headers: {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",
+              },
+              isBase64Encoded: false,
+            };
+          }
+
+          // Base64エンコードされたファイルデータをデコード
+          const fileBuffer = Buffer.from(event.body, "base64");
+
+          // ファイル名をヘッダーから取得（なければデフォルト名）
+          const fileName = event.headers["x-file-name"] || "uploaded-file.csv";
+
+          // CSVファイルをS3にアップロード
+          const uploadResult = await uploadCsvToS3(fileBuffer, fileName);
+
+          if (uploadResult.success) {
+            return {
+              statusCode: 200,
+              body: JSON.stringify({
+                message: uploadResult.message,
+                fileName: uploadResult.fileName,
+                success: true,
+              }),
+              headers: {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",
+              },
+              isBase64Encoded: false,
+            };
+          } else {
+            return {
+              statusCode: 500,
+              body: JSON.stringify({
+                message: uploadResult.message,
+                success: false,
+              }),
+              headers: {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",
+              },
+              isBase64Encoded: false,
+            };
+          }
+        } catch (error) {
+          console.error("CSVアップロード処理エラー:", error);
+          return {
+            statusCode: 500,
+            body: JSON.stringify({
+              message: `アップロード処理中にエラーが発生しました: ${
+                error instanceof Error ? error.message : "不明なエラー"
+              }`,
+              success: false,
+            }),
+            headers: {
+              "Content-Type": "application/json",
+              "Access-Control-Allow-Origin": "*",
+            },
+            isBase64Encoded: false,
+          };
+        }
       } else if (path === "/health" && method === "GET") {
         // ヘルスチェックエンドポイントの例
         return {

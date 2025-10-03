@@ -80,6 +80,8 @@ export class InfraStack extends cdk.Stack {
           SHOP_URL: process.env.SHOP_URL || "",
           SHOP_URL_PAGE: process.env.SHOP_URL_PAGE || "",
           WEBHOOK_URL: process.env.WEBHOOK_URL || "",
+          REGION: process.env.REGION || "",
+          CSV_UPLOAD_BUCKET_NAME: process.env.CSV_UPLOAD_BUCKET_NAME || "",
         },
       }
     );
