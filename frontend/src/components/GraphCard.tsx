@@ -12,7 +12,7 @@ export default function GraphCard({ title, children }: GraphCardProps) {
           {children || "グラフエリア（データ読み込み中...）"}
         </div>
       </div>
-      
+
       <style jsx>{`
         .graph-card {
           background-color: #f8f9fa;
@@ -25,39 +25,40 @@ export default function GraphCard({ title, children }: GraphCardProps) {
           align-items: center;
           justify-content: center;
         }
-        
+
         .graph-title {
           margin: 0 0 1rem 0;
           color: #495057;
           font-size: 1.1rem;
         }
-        
+
         .graph-content {
           width: 100%;
           height: 200px;
           background-color: #e9ecef;
           border-radius: 4px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
           color: #6c757d;
           font-size: 14px;
+          overflow: auto;
+          padding: 1rem;
+          box-sizing: border-box;
         }
-        
+
         @media (max-width: 768px) {
           .graph-card {
             min-height: 250px;
             padding: 0.75rem;
           }
-          
+
           .graph-title {
             font-size: 1rem;
             margin-bottom: 0.75rem;
           }
-          
+
           .graph-content {
             height: 180px;
             font-size: 13px;
+            padding: 0.75rem;
           }
         }
       `}</style>

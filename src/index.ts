@@ -140,17 +140,17 @@ export const handler = async (event: any, context: any) => {
       // EventBridgeからの定期スケジュール実行
       await allRateCheckAndPost();
 
-      return {
+    return {
         statusCode: 200,
         body: JSON.stringify({
           message: "Scheduled rate check completed",
         }),
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-        },
-        isBase64Encoded: false,
-      };
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+      isBase64Encoded: false,
+    };
     }
   } catch (e: any) {
     console.error(e);

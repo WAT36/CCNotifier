@@ -32,7 +32,15 @@ export default function Notice() {
   };
 
   return (
-    <>
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "100%",
+        width: "100%",
+      }}
+    >
       <button
         onClick={handleSlackNotification}
         disabled={isLoading}
@@ -54,16 +62,8 @@ export default function Notice() {
           fontWeight: "bold",
         }}
       >
-        {isLoading ? (
-          "送信中..."
-        ) : (
-          <span>
-            Slack通知
-            <br />
-            ボタン
-          </span>
-        )}
+        {isLoading ? "送信中..." : <span>Slack通知</span>}
       </button>
-    </>
+    </div>
   );
 }
