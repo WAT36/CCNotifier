@@ -21,6 +21,14 @@ export class InfraStack extends cdk.Stack {
     // ECR repository
     const repository = new ecr.Repository(this, "CCNotifierRepository", {
       repositoryName: "ccnotifier",
+      lifecycleRules: [
+        {
+          // 最新の5つのイメージを保持し、それ以外は削除
+          maxImageCount: 5,
+          rulePriority: 1,
+          description: "Keep only the latest 5 images",
+        },
+      ],
     });
 
     // S3
