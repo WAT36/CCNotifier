@@ -86,13 +86,19 @@ export class InfraStack extends cdk.Stack {
       }
     );
 
-    // IAMポリシーを作成
+    // IAMポリシーを作成（読み取り権限）
     const s3ReadPolicy = new iam.PolicyStatement({
-      actions: ["s3:GetObject", "s3:ListBucket"], // アクセス権限
+      actions: ["s3:GetObject", "s3:ListBucket"], // 読み取り権限
       resources: [csvFileBucket.bucketArn, csvFileBucket.bucketArn + "/*"], // リソース
     });
-    // Lambda関数にポリシーをアタッチ
     ccnotifierLambda.addToRolePolicy(s3ReadPolicy);
+
+    // IAMポリシーを作成（書き込み権限 - CSVアップロード用）
+    const s3WritePolicy = new iam.PolicyStatement({
+      actions: ["s3:PutObject"], // 書き込み権限
+      resources: [csvFileBucket.bucketArn + "/*"], // バケット内のオブジェクト
+    });
+    ccnotifierLambda.addToRolePolicy(s3WritePolicy);
 
     // EventBridge
     const ccnotifierEvent = new events.Rule(this, "CCNotifier", {

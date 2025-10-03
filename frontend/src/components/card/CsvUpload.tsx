@@ -46,9 +46,11 @@ export default function CsvUpload({
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "X-File-Name": file.name,
           },
-          body: base64String,
+          body: JSON.stringify({
+            fileData: base64String,
+            fileName: file.name,
+          }),
         });
 
         if (!response.ok) {
