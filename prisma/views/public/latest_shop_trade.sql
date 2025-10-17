@@ -14,7 +14,7 @@ FROM
     JOIN (
       SELECT
         th2.brand,
-        max(th2.trade_date) AS trade_date
+        max(th2.id) AS id
       FROM
         "tradeHistory" th2
       WHERE
@@ -26,7 +26,7 @@ FROM
     ) max_th ON (
       (
         (th.brand = max_th.brand)
-        AND (th.trade_date = max_th.trade_date)
+        AND (th.id = max_th.id)
       )
     )
   );
