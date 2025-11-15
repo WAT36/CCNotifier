@@ -129,7 +129,10 @@ export async function allCheckSellTime(isRegularly: boolean = false) {
 
   // 伸び率10%以上の個数を確認
   const highGrowthRates = results.filter(
-    (res) => (res.recommend === "sell" && res.sell?.gainsGrowthRate) || 0 >= 10
+    (res) =>
+      res.recommend === "sell" &&
+      res.sell?.gainsGrowthRate &&
+      res.sell?.gainsGrowthRate >= 10
   ).length;
   // 星の個数を確認、初めに総利益と星の個数を乗せる
   const stars = buys.filter((buy) => buy.includes("🌟")).length;
