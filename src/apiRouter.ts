@@ -29,7 +29,7 @@ export const routeApiGatewayRequest = async (event: any) => {
   if (path.startsWith("/data") && method === "GET") {
     let body;
 
-    if (path.startsWith("/data/profit")) {
+    if (path.startsWith("/data/profit/brand")) {
       body = await calcCCProfitinRange();
     } else if (path.startsWith("/data/tradecount")) {
       body = await calcCCTradeCountinRange();

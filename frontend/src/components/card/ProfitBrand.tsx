@@ -19,7 +19,7 @@ export default function ProfitBrand() {
         // APIエンドポイントのURLを指定（環境変数から取得するか、直接指定）
         const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "";
 
-        const response = await fetch(`${apiUrl}/data/profit`, {
+        const response = await fetch(`${apiUrl}/data/profit/brand`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
