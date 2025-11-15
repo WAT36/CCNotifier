@@ -148,6 +148,10 @@ export async function allCheckSellTime(isRegularly: boolean = false) {
       (stars > 0 ? `🌟 ${stars} 個` : "星なし")
   );
 
+  // 伸び率10%以上、星がある場合はメッセージ冒頭に上昇下降の絵を乗せる
+  if (highGrowthRates > 0 || stars > 0) {
+    messages.unshift("📈".repeat(highGrowthRates) + "📉".repeat(stars));
+  }
   return messages;
 }
 
