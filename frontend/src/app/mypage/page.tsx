@@ -4,6 +4,7 @@ import RequireAuth from "../RequireAuth";
 import { GraphGrid } from "../../components";
 import Notice from "@/components/card/Notice";
 import ProfitBrand from "@/components/card/ProfitBrand";
+import ProfitYearly from "@/components/card/ProfitYearly";
 import TradeCount from "@/components/card/TradeCount";
 import CsvUpload from "@/components/card/CsvUpload";
 
@@ -22,7 +23,11 @@ export default function MyPage() {
       children: <TradeCount />,
     },
     { id: "csvupload", title: "CSVアップロード", children: <CsvUpload /> },
-    { id: "graph5", title: "グラフ5" },
+    {
+      id: "profitYearly",
+      title: "年次利益サマリ",
+      children: <ProfitYearly />,
+    },
     { id: "graph6", title: "グラフ6" },
   ];
 

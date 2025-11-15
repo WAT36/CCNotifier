@@ -1,5 +1,6 @@
 import { allRateCheckAndPost } from "./allRateCheckAndPost";
 import { calcCCProfitinRange } from "./calcCCProfitInRange";
+import { calcCCProfitByYear } from "./calcCCProfitByYear";
 import { calcCCTradeCountinRange } from "./calcCCTradeCountInRange";
 import { uploadCsvToS3 } from "./csvUpload";
 
@@ -31,6 +32,8 @@ export const routeApiGatewayRequest = async (event: any) => {
 
     if (path.startsWith("/data/profit/brand")) {
       body = await calcCCProfitinRange();
+    } else if (path.startsWith("/data/profit/yearly")) {
+      body = await calcCCProfitByYear();
     } else if (path.startsWith("/data/tradecount")) {
       body = await calcCCTradeCountinRange();
     }

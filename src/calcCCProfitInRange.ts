@@ -2,12 +2,23 @@ import { PrismaClient } from "@prisma/client";
 import { parseYyyyMmDd, parseYyyyMmDdNextDay } from "./lib/date";
 export const prisma: PrismaClient = new PrismaClient();
 
-//  startDate,endDateがYYYY-MMM-DD形式か確認
-const startDate = parseYyyyMmDd(process.argv[2] || "1990-01-01");
-const endDate = parseYyyyMmDdNextDay(process.argv[3] || "2100-12-30");
+type ProfitResult = {
+  brand: {
+    name: string;
+  };
+  profit: number | undefined;
+};
+
+const defaultStartDate = parseYyyyMmDd(process.argv[2] || "1990-01-01");
+const defaultEndDate = parseYyyyMmDdNextDay(process.argv[3] || "2100-12-30");
 
 // 指定した期間内における仮想通貨取引の利益を算出（銘柄ごとに）する関数
-export async function calcCCProfitinRange() {
+export async function calcCCProfitinRange(
+  startDateInput?: Date,
+  endDateInput?: Date
+): Promise<ProfitResult[]> {
+  const startDate = startDateInput || defaultStartDate;
+  const endDate = endDateInput || defaultEndDate;
   const result = [];
   const brands = await prisma.brand.findMany({
     select: {
@@ -72,9 +83,10 @@ export async function calcCCProfitinRange() {
       },
     });
 
+    const rawProfit = profit[0]?._sum?.yen_payment;
     result.push({
       brand,
-      profit: profit[0]?._sum?.yen_payment || undefined,
+      profit: rawProfit !== undefined ? Number(rawProfit) : undefined,
     });
   }
   console.log(result);
