@@ -3,7 +3,7 @@
 import RequireAuth from "../RequireAuth";
 import { GraphGrid } from "../../components";
 import Notice from "@/components/card/Notice";
-import Profit from "@/components/card/Profit";
+import ProfitBrand from "@/components/card/ProfitBrand";
 import TradeCount from "@/components/card/TradeCount";
 import CsvUpload from "@/components/card/CsvUpload";
 
@@ -11,7 +11,11 @@ export default function MyPage() {
   // 全グラフデータの定義
   const allGraphs = [
     { id: "notice", title: "Slack通知実行ボタン", children: <Notice /> },
-    { id: "profit", title: "通貨毎の利益(全期間)", children: <Profit /> },
+    {
+      id: "profitBrand",
+      title: "通貨毎の利益(全期間)",
+      children: <ProfitBrand />,
+    },
     {
       id: "tradecount",
       title: "通貨毎の取引回数(全期間)",

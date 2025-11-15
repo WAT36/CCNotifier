@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 
-type Profit = {
+type ProfitBrand = {
   brand: string;
   profit: number;
 };
 
-export default function Profit() {
-  const [profitData, setProfitData] = useState<Profit[]>([]);
+export default function ProfitBrand() {
+  const [profitData, setProfitData] = useState<ProfitBrand[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -33,7 +33,7 @@ export default function Profit() {
               .map((item: { brand: { name: string }; profit: string }) => {
                 return { brand: item.brand.name, profit: +item.profit };
               })
-              .sort((item1: Profit, item2: Profit) =>
+              .sort((item1: ProfitBrand, item2: ProfitBrand) =>
                 item1.profit > item2.profit ? -1 : 1
               )
           ); // bodyパラメータの値を取得
