@@ -3,8 +3,13 @@ import { compareDataAndAssets } from "./compareDataAndAssets";
 import { allCheckSellTime } from "./allCheckSellTime";
 import { postWebhook } from "./postWebhook";
 
+type AllRateCheckAndPostProps = {
+  isRegularly?: boolean;
+};
 // 定期バッチを手動で実行させる
-export async function allRateCheckAndPost() {
+export async function allRateCheckAndPost({
+  isRegularly = false,
+}: AllRateCheckAndPostProps = {}) {
   // all update rate
   await allUpdateShopRate();
 
@@ -12,18 +17,21 @@ export async function allRateCheckAndPost() {
   const compareResult = await compareDataAndAssets();
 
   // all check sell time
-  const allCheckResult = await allCheckSellTime();
+  const allCheckResult = await allCheckSellTime(isRegularly || false);
 
   // send data
-  const requestData =
-    (compareResult.ng.length > 0
-      ? `※比較NGが ${compareResult.ng.length} 件あります\n`
-      : "") +
-    allCheckResult.join("\n") +
-    (compareResult.ng.length === 0
-      ? ""
-      : "--- compare NG ---\n" + compareResult.ng.join("\n"));
-  await postWebhook(requestData);
+  if (allCheckResult.length > 0) {
+    // メッセージがある場合は通知を送信
+    const requestData =
+      (compareResult.ng.length > 0
+        ? `※比較NGが ${compareResult.ng.length} 件あります\n`
+        : "") +
+      allCheckResult.join("\n") +
+      (compareResult.ng.length === 0
+        ? ""
+        : "--- compare NG ---\n" + compareResult.ng.join("\n"));
+    await postWebhook(requestData);
+  }
 }
 
 //allRateCheckAndPost();

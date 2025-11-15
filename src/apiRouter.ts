@@ -20,7 +20,7 @@ export const routeApiGatewayRequest = async (event: any) => {
   const method: string = event.httpMethod;
 
   if (path === "/notice" && method === "GET") {
-    await allRateCheckAndPost();
+    await allRateCheckAndPost({ isRegularly: false });
     return jsonResponse(200, {
       message: "Rate check completed successfully",
     });

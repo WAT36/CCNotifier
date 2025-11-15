@@ -1,7 +1,7 @@
 import { BRANDS, messageTemplate } from "./config";
 import { CheckSellResult, checkSellTime } from "./checkSellTime";
 
-export async function allCheckSellTime() {
+export async function allCheckSellTime(isRegularly: boolean = false) {
   const results: CheckSellResult[] = [];
   for (const brand of BRANDS) {
     results.push(await checkSellTime(brand.toUpperCase()));
@@ -75,7 +75,7 @@ export async function allCheckSellTime() {
             buy.comparisonRate,
             buy.lastBuyYen
           ) +
-            (buy.comparisonRate <= -Math.log2(buy.lastBuyYen / 100) ? "🌟" : "") // test 買い時アラート
+            (buy.comparisonRate <= -Math.log2(buy.lastBuyYen / 100) ? "🌟" : "")
         : "";
     });
   messages = messages.concat(buys);
@@ -127,8 +127,22 @@ export async function allCheckSellTime() {
   messages = messages.concat(nones);
   messages.push("---------------------");
 
-  // 初めに総利益と星の個数を乗せる
+  // 伸び率10%以上の個数を確認
+  const highGrowthRates = results.filter(
+    (res) => (res.recommend === "sell" && res.sell?.gainsGrowthRate) || 0 >= 10
+  ).length;
+  // 星の個数を確認、初めに総利益と星の個数を乗せる
   const stars = buys.filter((buy) => buy.includes("🌟")).length;
+  // 定期実行時で伸び率10%以上なし、星無し、総利益1000円未満の場合はメッセージを出力しない
+  if (
+    isRegularly &&
+    highGrowthRates === 0 &&
+    stars === 0 &&
+    +gainsYenSum < 1000
+  ) {
+    return [];
+  }
+  // メッセージ冒頭に概略追記
   messages.unshift(
     (+gainsYenSum > 0 ? `総利益 ${gainsYenSum} 円, ` : "総利益なし, ") +
       (stars > 0 ? `🌟 ${stars} 個` : "星なし")

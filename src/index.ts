@@ -67,7 +67,7 @@ export const handler = async (event: any, context: any) => {
       };
     } else {
       // EventBridgeからの定期スケジュール実行
-      await allRateCheckAndPost();
+      await allRateCheckAndPost({ isRegularly: true });
 
       return {
         statusCode: 200,
