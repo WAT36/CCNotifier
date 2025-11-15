@@ -18,6 +18,20 @@ export default function CsvUpload({
   const [errorMessage, setErrorMessage] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // ArrayBuffer → Base64 変換（大きなファイルでもスタックオーバーフローを防止）
+  const arrayBufferToBase64 = useCallback((buffer: ArrayBuffer) => {
+    let binary = "";
+    const bytes = new Uint8Array(buffer);
+    const chunkSize = 0x8000; // 32KB
+
+    for (let i = 0; i < bytes.length; i += chunkSize) {
+      const chunk = bytes.subarray(i, i + chunkSize);
+      binary += String.fromCharCode(...chunk);
+    }
+
+    return btoa(binary);
+  }, []);
+
   // ファイルアップロード処理（直接API呼び出し）
   const uploadFile = useCallback(
     async (file: File) => {
@@ -36,9 +50,7 @@ export default function CsvUpload({
         // ファイルをArrayBufferに変換
         setUploadProgress(10);
         const arrayBuffer = await file.arrayBuffer();
-        const base64String = btoa(
-          String.fromCharCode(...new Uint8Array(arrayBuffer))
-        );
+        const base64String = arrayBufferToBase64(arrayBuffer);
         setUploadProgress(30);
 
         // APIにファイルをアップロード
@@ -80,7 +92,7 @@ export default function CsvUpload({
         setIsUploading(false);
       }
     },
-    [apiBaseUrl]
+    [apiBaseUrl, arrayBufferToBase64]
   );
 
   // ドラッグ&ドロップイベントハンドラー
