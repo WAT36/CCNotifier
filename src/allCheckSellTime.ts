@@ -75,7 +75,11 @@ export async function allCheckSellTime(isRegularly: boolean = false) {
             buy.comparisonRate,
             buy.lastBuyYen
           ) +
-            (buy.comparisonRate <= -Math.log2(buy.lastBuyYen / 100) ? "🌟" : "")
+            (buy.comparisonRate <= -2 * Math.log2(buy.lastBuyYen / 100)
+              ? "💥"
+              : buy.comparisonRate <= -Math.log2(buy.lastBuyYen / 100)
+              ? "🌟"
+              : "")
         : "";
     });
   messages = messages.concat(buys);
@@ -135,6 +139,7 @@ export async function allCheckSellTime(isRegularly: boolean = false) {
       res.sell?.gainsGrowthRate >= 10
   ).length;
   // 星の個数を確認、初めに総利益と星の個数を乗せる
+  const burns = buys.filter((buy) => buy.includes("💥")).length;
   const stars = buys.filter((buy) => buy.includes("🌟")).length;
   // 定期実行時で伸び率10%以上なし、星無し、総利益1000円未満の場合はメッセージを出力しない
   if (
@@ -148,12 +153,13 @@ export async function allCheckSellTime(isRegularly: boolean = false) {
   // メッセージ冒頭に概略追記
   messages.unshift(
     (+gainsYenSum > 0 ? `総利益 ${gainsYenSum} 円, ` : "総利益なし, ") +
-      (stars > 0 ? `🌟 ${stars} 個` : "星なし")
+      (stars > 0 ? `🌟 ${stars} 個` : "星なし") +
+      (burns > 0 ? `、⚠️💥 ${burns} 個⚠️` : "")
   );
 
   // 伸び率10%以上、星がある場合はメッセージ冒頭に上昇下降の絵を乗せる
   if (highGrowthRates > 0 || stars > 0) {
-    messages.unshift("📈".repeat(highGrowthRates) + "📉".repeat(stars));
+    messages.unshift("📈".repeat(highGrowthRates) + "📉".repeat(stars + burns));
   }
   return messages;
 }
