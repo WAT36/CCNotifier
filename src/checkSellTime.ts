@@ -21,12 +21,14 @@ export type CheckSellResult = {
     nowSellRate: number; // 現在の売却レート
     nowAmount: number; //  現在の保有量
     yenBet: number; //  現在掛けている円
+    lastTradeDate?: Date; // 最後に売買した時の日付
   };
   buy?: {
     lastBuyRate: number; // 最後に買った時のレート
     nowBuyRate: number; // 現在の購入レート
     lastBuyYen: number; // 最後に買った時の円
     comparisonRate: number; // 最後に買った時のレート、現在の購入レートの比率
+    lastTradeDate?: Date; // 最後に売買した時の日付
   };
   stay?: {
     nowSellRate: number; // 現在の売却レート
@@ -35,6 +37,7 @@ export type CheckSellResult = {
     allSoldValueYen: number; // 全部売った時の円(全売値)
     yenBet: number; //  現在掛けている円(掛値)
     targetIncreaseRate: number; // 全売値が掛値に届くためにあと何%上昇が必要かを示す指標(目標上昇率 と命名)
+    lastTradeDate?: Date; // 最後に売買した時の日付
   };
 };
 
@@ -63,6 +66,7 @@ export const checkSellTime = async (
             buysell_category: true,
             contract_rate: true,
             contract_payment: true,
+            trade_date: true,
           },
         },
         brandBidAsk: {
@@ -107,6 +111,7 @@ export const checkSellTime = async (
       brand,
     };
     if (!nowAmount || nowAmount.equals(new Decimal(0))) {
+      // 保有数量が0の場合は買い時も売り時もない
       result.recommend = "none";
     } else if (
       nowSellRate &&
@@ -114,6 +119,7 @@ export const checkSellTime = async (
       yenBet !== undefined &&
       nowSellRate.toNumber() * nowAmount.toNumber() > yenBet
     ) {
+      // 売り時の場合
       const allSoldValueYen = nowSellRate.toNumber() * nowAmount.toNumber();
       const gainsYen = allSoldValueYen - yenBet;
       const gainsGrowthRate = (
@@ -127,6 +133,7 @@ export const checkSellTime = async (
         gainsGrowthRate: Number(gainsGrowthRate),
         nowSellRate: nowSellRate.toNumber(),
         nowAmount: nowAmount.toNumber(),
+        lastTradeDate: brandData.latest_shop_trade?.trade_date,
         yenBet,
       };
     } else if (
@@ -135,6 +142,7 @@ export const checkSellTime = async (
       lastBuyYen &&
       lastBuyRate.toNumber() > nowBuyRate.toNumber()
     ) {
+      // 買い時の場合
       const comparisonRate =
         (nowBuyRate.toNumber() / lastBuyRate.toNumber() - 1) *
         PERCENTAGE_MULTIPLIER;
@@ -144,8 +152,10 @@ export const checkSellTime = async (
         nowBuyRate: nowBuyRate.toNumber(),
         lastBuyYen: lastBuyYen.toNumber(),
         comparisonRate,
+        lastTradeDate: brandData.latest_shop_trade?.trade_date,
       };
     } else {
+      // ステイの場合
       const allSoldValueYen =
         (nowSellRate?.toNumber() || NaN) * (nowAmount?.toNumber() || NaN);
       result.recommend = "stay";
@@ -158,6 +168,7 @@ export const checkSellTime = async (
         targetIncreaseRate:
           (PERCENTAGE_MULTIPLIER * (yenBet - allSoldValueYen)) /
           allSoldValueYen,
+        lastTradeDate: brandData.latest_shop_trade?.trade_date,
       };
     }
 

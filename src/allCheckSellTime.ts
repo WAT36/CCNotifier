@@ -6,6 +6,7 @@ import {
   COMPARISON_RATE_MULTIPLIER,
   PERCENTAGE_MULTIPLIER,
 } from "./lib/constant";
+import { diffDaysHoursFromNow } from "./lib/date";
 
 export async function allCheckSellTime(isRegularly: boolean = false) {
   const results: CheckSellResult[] = [];
@@ -43,13 +44,15 @@ export async function allCheckSellTime(isRegularly: boolean = false) {
     })
     .map((res) => {
       const { brand, sell } = res;
+      const diffDaysHours = diffDaysHoursFromNow(sell?.lastTradeDate);
       return sell
         ? messageTemplate.SELL(
             brand,
             sell.allSoldValueYen,
             sell.yenBet,
             sell.gainsYen,
-            sell.gainsGrowthRate
+            sell.gainsGrowthRate,
+            diffDaysHours
           )
         : "";
     });
@@ -73,13 +76,15 @@ export async function allCheckSellTime(isRegularly: boolean = false) {
     })
     .map((res) => {
       const { brand, buy } = res;
+      const diffDaysHours = diffDaysHoursFromNow(buy?.lastTradeDate);
       return buy
         ? messageTemplate.BUY(
             brand,
             buy.lastBuyRate,
             buy.nowBuyRate,
             buy.comparisonRate,
-            buy.lastBuyYen
+            buy.lastBuyYen,
+            diffDaysHours
           ) +
             (buy.comparisonRate <=
             -COMPARISON_RATE_MULTIPLIER *
@@ -115,6 +120,7 @@ export async function allCheckSellTime(isRegularly: boolean = false) {
     })
     .map((res) => {
       const { brand, stay } = res;
+      const diffDaysHours = diffDaysHoursFromNow(stay?.lastTradeDate);
       return stay
         ? messageTemplate.STAY(
             brand,
@@ -123,7 +129,8 @@ export async function allCheckSellTime(isRegularly: boolean = false) {
             stay.lastBuyRate,
             stay.allSoldValueYen,
             stay.yenBet,
-            stay.targetIncreaseRate
+            stay.targetIncreaseRate,
+            diffDaysHours
           )
         : "";
     });

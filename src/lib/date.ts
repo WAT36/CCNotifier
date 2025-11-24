@@ -49,3 +49,26 @@ export function parseYyyyMmDdNextDay(input: string): Date {
   dt.setDate(dt.getDate() + 1);
   return dt;
 }
+
+/**
+ * 指定したDate型の日付が今から何日何時間前なのかを "x日y時間" の形式で返す
+ * @param targetDate 計算対象の日付
+ * @returns 基本は"x日y時間"（現在時刻より後なら"-x日y時間"）
+ */
+export function diffDaysHoursFromNow(targetDate?: Date): string {
+  if (!targetDate) {
+    return "＜日付入力なしエラー＞";
+  }
+  const now = new Date();
+  const msDiff = now.getTime() - targetDate.getTime();
+  const isNegative = msDiff < 0;
+  const absMsDiff = Math.abs(msDiff);
+
+  const totalHours = Math.floor(absMsDiff / (1000 * 60 * 60));
+  const days = Math.floor(totalHours / 24);
+  const hours = totalHours % 24;
+
+  const result = `${days}日${hours}時間`;
+  // 時刻が未来（今より後）の場合はマイナス
+  return isNegative ? `-${result}` : result;
+}
