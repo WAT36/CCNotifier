@@ -49,7 +49,11 @@ export async function compareDataAndAssets() {
   };
   for (let key in assetsData) {
     let message = "";
-    if (key in registeredAmount && assetsData[key] !== registeredAmount[key]) {
+    // assetsData[key]・registeredAmount[key]ともに小数点以下8桁までの誤差は許容する
+    if (
+      key in registeredAmount &&
+      Math.abs(Number(assetsData[key]) - Number(registeredAmount[key])) > 1e-8
+    ) {
       message = `'${key}' is wrong\tnow:${assetsData[key]},\tDB:${registeredAmount[key]}`;
       result.ng.push(message);
     } else if (
