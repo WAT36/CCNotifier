@@ -1,5 +1,10 @@
 import { getAssets } from "./getAssets";
 import { PrismaClient } from "@prisma/client";
+import {
+  EXCLUDED_BRAND,
+  ASSETS_COMPARISON_TOLERANCE,
+  ASSETS_DECIMAL_PLACES,
+} from "./lib/constant";
 export const prisma: PrismaClient = new PrismaClient();
 
 /**
@@ -32,14 +37,16 @@ export async function compareDataAndAssets() {
       },
       where: {
         brand: {
-          not: "JPY",
+          not: EXCLUDED_BRAND,
         },
       },
     })
   ).reduce((previousValue, currentValue) => {
     return {
       ...previousValue,
-      [currentValue.brand]: String(currentValue.now_amount.toDP(8)),
+      [currentValue.brand]: String(
+        currentValue.now_amount.toDP(ASSETS_DECIMAL_PLACES)
+      ),
     };
   }, {} as { [key: string]: string });
 
@@ -52,7 +59,8 @@ export async function compareDataAndAssets() {
     // assetsData[key]・registeredAmount[key]ともに小数点以下8桁までの誤差は許容する
     if (
       key in registeredAmount &&
-      Math.abs(Number(assetsData[key]) - Number(registeredAmount[key])) > 1e-8
+      Math.abs(Number(assetsData[key]) - Number(registeredAmount[key])) >
+        ASSETS_COMPARISON_TOLERANCE
     ) {
       message = `'${key}' is wrong\tnow:${assetsData[key]},\tDB:${registeredAmount[key]}`;
       result.ng.push(message);

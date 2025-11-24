@@ -1,5 +1,6 @@
 import { calcCCProfitinRange, prisma } from "./calcCCProfitInRange";
 import { parseYyyyMmDd, parseYyyyMmDdNextDay } from "./lib/date";
+import { YEAR_START_DATE_FORMAT, YEAR_END_DATE_FORMAT } from "./lib/constant";
 
 export type YearlyProfitSummary = {
   year: number;
@@ -28,8 +29,8 @@ export async function calcCCProfitByYear(): Promise<YearlyProfitSummary[]> {
   const yearlySummaries: YearlyProfitSummary[] = [];
 
   for (let year = startYear; year <= endYear; year += 1) {
-    const rangeStart = parseYyyyMmDd(`${year}-01-01`);
-    const rangeEnd = parseYyyyMmDdNextDay(`${year}-12-31`);
+    const rangeStart = parseYyyyMmDd(`${year}-${YEAR_START_DATE_FORMAT}`);
+    const rangeEnd = parseYyyyMmDdNextDay(`${year}-${YEAR_END_DATE_FORMAT}`);
     const brandProfits = await calcCCProfitinRange(rangeStart, rangeEnd);
 
     const profit = brandProfits.reduce((sum, item) => {

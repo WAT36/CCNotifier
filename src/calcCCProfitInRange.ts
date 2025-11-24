@@ -1,5 +1,10 @@
 import { PrismaClient } from "@prisma/client";
 import { parseYyyyMmDd, parseYyyyMmDdNextDay } from "./lib/date";
+import {
+  DEFAULT_START_DATE,
+  DEFAULT_END_DATE,
+  EXCLUDED_BRAND,
+} from "./lib/constant";
 export const prisma: PrismaClient = new PrismaClient();
 
 type ProfitResult = {
@@ -9,8 +14,10 @@ type ProfitResult = {
   profit: number | undefined;
 };
 
-const defaultStartDate = parseYyyyMmDd(process.argv[2] || "1990-01-01");
-const defaultEndDate = parseYyyyMmDdNextDay(process.argv[3] || "2100-12-30");
+const defaultStartDate = parseYyyyMmDd(process.argv[2] || DEFAULT_START_DATE);
+const defaultEndDate = parseYyyyMmDdNextDay(
+  process.argv[3] || DEFAULT_END_DATE
+);
 
 // 指定した期間内における仮想通貨取引の利益を算出（銘柄ごとに）する関数
 export async function calcCCProfitinRange(
@@ -28,7 +35,7 @@ export async function calcCCProfitinRange(
 
   for (const brand of brands) {
     // JPYだけは対象外
-    if (brand.name === "JPY") {
+    if (brand.name === EXCLUDED_BRAND) {
       continue;
     }
     // 期間内の一番前と一番後の売却レコードを取得

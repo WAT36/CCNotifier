@@ -1,5 +1,11 @@
 import { BRANDS, messageTemplate } from "./config";
 import { CheckSellResult, checkSellTime } from "./checkSellTime";
+import {
+  MIN_GAIN_YEN_SUM,
+  HIGH_GROWTH_RATE_THRESHOLD,
+  COMPARISON_RATE_MULTIPLIER,
+  PERCENTAGE_MULTIPLIER,
+} from "./lib/constant";
 
 export async function allCheckSellTime(isRegularly: boolean = false) {
   const results: CheckSellResult[] = [];
@@ -75,9 +81,12 @@ export async function allCheckSellTime(isRegularly: boolean = false) {
             buy.comparisonRate,
             buy.lastBuyYen
           ) +
-            (buy.comparisonRate <= -2 * Math.log2(buy.lastBuyYen / 100)
+            (buy.comparisonRate <=
+            -COMPARISON_RATE_MULTIPLIER *
+              Math.log2(buy.lastBuyYen / PERCENTAGE_MULTIPLIER)
               ? "💥"
-              : buy.comparisonRate <= -Math.log2(buy.lastBuyYen / 100)
+              : buy.comparisonRate <=
+                -Math.log2(buy.lastBuyYen / PERCENTAGE_MULTIPLIER)
               ? "🌟"
               : "")
         : "";
@@ -136,7 +145,7 @@ export async function allCheckSellTime(isRegularly: boolean = false) {
     (res) =>
       res.recommend === "sell" &&
       res.sell?.gainsGrowthRate &&
-      res.sell?.gainsGrowthRate >= 10
+      res.sell?.gainsGrowthRate >= HIGH_GROWTH_RATE_THRESHOLD
   ).length;
   // 星の個数を確認、初めに総利益と星の個数を乗せる
   const burns = buys.filter((buy) => buy.includes("💥")).length;
@@ -146,7 +155,7 @@ export async function allCheckSellTime(isRegularly: boolean = false) {
     isRegularly &&
     highGrowthRates === 0 &&
     stars === 0 &&
-    +gainsYenSum < 1000
+    +gainsYenSum < MIN_GAIN_YEN_SUM
   ) {
     return [];
   }

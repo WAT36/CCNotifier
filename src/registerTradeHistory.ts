@@ -3,6 +3,10 @@ import * as path from "path";
 import { readFile } from "fs/promises";
 import * as dotenv from "dotenv";
 import { PrismaClient } from "@prisma/client";
+import {
+  TRANSACTION_MAX_WAIT,
+  TRANSACTION_TIMEOUT,
+} from "./lib/constant";
 export const prisma: PrismaClient = new PrismaClient();
 
 dotenv.config({ path: path.join(__dirname, "../.env") });
@@ -108,8 +112,8 @@ export const registerDataByLambda = async (data: any[]): Promise<number> => {
         }
       },
       {
-        maxWait: 10000, // default: 2000
-        timeout: 20000, // default: 5000
+        maxWait: TRANSACTION_MAX_WAIT, // default: 2000
+        timeout: TRANSACTION_TIMEOUT, // default: 5000
       }
     );
     return data.length - passed;

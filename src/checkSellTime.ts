@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { Decimal } from "@prisma/client/runtime/library";
+import { PERCENTAGE_MULTIPLIER, DECIMAL_PLACES } from "./lib/constant";
 export const prisma: PrismaClient = new PrismaClient();
 
 /**
@@ -115,7 +116,10 @@ export const checkSellTime = async (
     ) {
       const allSoldValueYen = nowSellRate.toNumber() * nowAmount.toNumber();
       const gainsYen = allSoldValueYen - yenBet;
-      const gainsGrowthRate = ((gainsYen / yenBet) * 100).toFixed(2);
+      const gainsGrowthRate = (
+        (gainsYen / yenBet) *
+        PERCENTAGE_MULTIPLIER
+      ).toFixed(DECIMAL_PLACES);
       result.recommend = "sell";
       result.sell = {
         allSoldValueYen,
@@ -132,7 +136,8 @@ export const checkSellTime = async (
       lastBuyRate.toNumber() > nowBuyRate.toNumber()
     ) {
       const comparisonRate =
-        (nowBuyRate.toNumber() / lastBuyRate.toNumber() - 1) * 100;
+        (nowBuyRate.toNumber() / lastBuyRate.toNumber() - 1) *
+        PERCENTAGE_MULTIPLIER;
       result.recommend = "buy";
       result.buy = {
         lastBuyRate: lastBuyRate.toNumber(),
@@ -151,7 +156,8 @@ export const checkSellTime = async (
         allSoldValueYen,
         yenBet,
         targetIncreaseRate:
-          (100 * (yenBet - allSoldValueYen)) / allSoldValueYen,
+          (PERCENTAGE_MULTIPLIER * (yenBet - allSoldValueYen)) /
+          allSoldValueYen,
       };
     }
 
