@@ -4,6 +4,7 @@ import { calcCCProfitByYear } from "./calcCCProfitByYear";
 import { calcCCTradeCountinRange } from "./calcCCTradeCountInRange";
 import { uploadCsvToS3 } from "./csvUpload";
 import { calcCCProfitByMonth } from "./calcCCProfitByMonth";
+import { parseYyyyMmDd } from "./lib/date";
 
 const defaultHeaders = {
   "Content-Type": "application/json",
@@ -32,8 +33,15 @@ export const routeApiGatewayRequest = async (event: any) => {
     let body;
 
     if (path.startsWith("/data/profit/brand/range")) {
-      const startDate = event.queryStringParameters?.startDate;
-      const endDate = event.queryStringParameters?.endDate;
+      const startDate = parseYyyyMmDd(
+        event.queryStringParameters?.startDate || ""
+      );
+      const endDate = parseYyyyMmDd(event.queryStringParameters?.endDate || "");
+      if (!startDate || !endDate) {
+        return jsonResponse(400, {
+          message: "startDateまたはendDateが提供されていません",
+        });
+      }
       body = await calcCCProfitinRange(startDate, endDate);
     } else if (path.startsWith("/data/profit/brand")) {
       body = await calcCCProfitinRange();
