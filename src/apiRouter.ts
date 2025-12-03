@@ -31,7 +31,11 @@ export const routeApiGatewayRequest = async (event: any) => {
   if (path.startsWith("/data") && method === "GET") {
     let body;
 
-    if (path.startsWith("/data/profit/brand")) {
+    if (path.startsWith("/data/profit/brand/range")) {
+      const requestBody = JSON.parse(event.body);
+      const { startDate, endDate } = requestBody;
+      body = await calcCCProfitinRange(startDate, endDate);
+    } else if (path.startsWith("/data/profit/brand")) {
       body = await calcCCProfitinRange();
     } else if (path.startsWith("/data/profit/yearly")) {
       body = await calcCCProfitByYear();
