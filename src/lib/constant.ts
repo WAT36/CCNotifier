@@ -28,6 +28,9 @@ export const YEAR_START_DATE_FORMAT = "01-01";
 // 年の終了日フォーマット
 export const YEAR_END_DATE_FORMAT = "12-31";
 
+// 月の開始日フォーマット
+export const MONTH_START_DAY_FORMAT = "01";
+
 // 資産比較時の許容誤差
 export const ASSETS_COMPARISON_TOLERANCE = 1e-8;
 

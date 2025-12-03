@@ -7,6 +7,7 @@ import ProfitBrand from "@/components/card/ProfitBrand";
 import ProfitYearly from "@/components/card/ProfitYearly";
 import TradeCount from "@/components/card/TradeCount";
 import CsvUpload from "@/components/card/CsvUpload";
+import ProfitMonthly from "@/components/card/ProfitMonthly";
 
 export default function MyPage() {
   // 全グラフデータの定義
@@ -27,6 +28,11 @@ export default function MyPage() {
       id: "profitYearly",
       title: "年次利益サマリ",
       children: <ProfitYearly />,
+    },
+    {
+      id: "profitMonthly",
+      title: "月次利益サマリ",
+      children: <ProfitMonthly />,
     },
     { id: "graph6", title: "グラフ6" },
   ];

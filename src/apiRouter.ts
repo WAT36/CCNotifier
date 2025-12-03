@@ -3,6 +3,7 @@ import { calcCCProfitinRange } from "./calcCCProfitInRange";
 import { calcCCProfitByYear } from "./calcCCProfitByYear";
 import { calcCCTradeCountinRange } from "./calcCCTradeCountInRange";
 import { uploadCsvToS3 } from "./csvUpload";
+import { calcCCProfitByMonth } from "./calcCCProfitByMonth";
 
 const defaultHeaders = {
   "Content-Type": "application/json",
@@ -34,6 +35,8 @@ export const routeApiGatewayRequest = async (event: any) => {
       body = await calcCCProfitinRange();
     } else if (path.startsWith("/data/profit/yearly")) {
       body = await calcCCProfitByYear();
+    } else if (path.startsWith("/data/profit/monthly")) {
+      body = await calcCCProfitByMonth();
     } else if (path.startsWith("/data/tradecount")) {
       body = await calcCCTradeCountinRange();
     }
