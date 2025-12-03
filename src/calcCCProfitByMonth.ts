@@ -13,7 +13,7 @@ export async function calcCCProfitByMonth(): Promise<MonthlyProfitSummary[]> {
   const now = new Date();
   // 年と月を取得
   let year = now.getFullYear();
-  let month = now.getMonth();
+  let month = now.getMonth() + 1; // 0-indexedなので+1
 
   // 月ごとに利益を計算
   const monthlySummaries: MonthlyProfitSummary[] = [];

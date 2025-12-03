@@ -78,9 +78,9 @@ export default function ProfitMonthly() {
       <tbody>
         {monthlyProfit.map((item) => (
           <tr key={`${item.year}-${item.month}`}>
-            <td
-              style={{ border: "1px solid black" }}
-            >{`${item.year}-${item.month}`}</td>
+            <td style={{ border: "1px solid black" }}>{`${item.year}/${String(
+              item.month
+            ).padStart(2, "0")}`}</td>
             <td style={{ border: "1px solid black" }}>{item.profit}</td>
           </tr>
         ))}
