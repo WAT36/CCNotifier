@@ -22,11 +22,14 @@ export async function calcCCProfitByMonth(): Promise<MonthlyProfitSummary[]> {
     const nowYear = year;
     const nowMonth = month;
     const rangeStart = parseYyyyMmDd(
-      `${nowYear}-${nowMonth}-${MONTH_START_DAY_FORMAT}`
+      `${nowYear}-${String(nowMonth).padStart(
+        2,
+        "0"
+      )}-${MONTH_START_DAY_FORMAT}`
     );
     const rangeEnd = parseYyyyMmDd(
       `${nowMonth < 12 ? nowYear : nowYear + 1}-${
-        nowMonth < 12 ? nowMonth + 1 : 1
+        nowMonth < 12 ? String(nowMonth + 1).padStart(2, "0") : "01"
       }-${MONTH_START_DAY_FORMAT}`
     );
     const brandProfits = await calcCCProfitinRange(rangeStart, rangeEnd);
