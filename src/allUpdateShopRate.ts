@@ -54,6 +54,16 @@ export const allUpdateShopRate = async () => {
             ask_updated_time: new Date(),
           },
         });
+
+        // レート履歴登録
+        await prisma.rateHistory.create({
+          data: {
+            brand: brandIdMapData[brandRateData.id].toUpperCase(),
+            bid_price: brandRateData.bid,
+            ask_price: brandRateData.ask,
+            created_time: new Date(),
+          },
+        });
       }
     }
   });
