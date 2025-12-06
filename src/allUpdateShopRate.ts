@@ -56,7 +56,7 @@ export const allUpdateShopRate = async () => {
         });
 
         // レート履歴登録
-        await prisma.rateHistory.create({
+        await prisma.priceRateHistory.create({
           data: {
             brand: brandIdMapData[brandRateData.id].toUpperCase(),
             bid_price: brandRateData.bid,
