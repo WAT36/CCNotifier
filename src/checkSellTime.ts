@@ -5,7 +5,7 @@ export const prisma: PrismaClient = new PrismaClient();
 
 /**
  * 銘柄が売り時かを確認する
- * 事前にtradeHistory、brandBidAskテーブルに最新データを登録しておくこと
+ * 事前にtradeHistoryテーブルに最新データを登録しておくこと
  *
  * 実行方法は
  * npx ts-node src/checkSellTime.ts 銘柄名
@@ -69,7 +69,7 @@ export const checkSellTime = async (
             trade_date: true,
           },
         },
-        brandBidAsk: {
+        latest_price_rate: {
           select: {
             bid_price: true,
             ask_price: true,
@@ -102,9 +102,9 @@ export const checkSellTime = async (
       brandData.latest_shop_trade?.buysell_category === "買" &&
       brandData.latest_shop_trade.contract_payment;
     // 今の売却レート
-    const nowSellRate = brandData.brandBidAsk?.bid_price;
+    const nowSellRate = brandData.latest_price_rate?.bid_price;
     // 今の買値レート
-    const nowBuyRate = brandData.brandBidAsk?.ask_price;
+    const nowBuyRate = brandData.latest_price_rate?.ask_price;
 
     // 判定結果
     const result: CheckSellResult = {

@@ -34,28 +34,8 @@ export const allUpdateShopRate = async () => {
 
   await prisma.$transaction(async (prisma) => {
     for (const brandRateData of shopRateData) {
-      // 更新
+      // レート履歴登録
       if (brandIdMapData[String(brandRateData.id)]) {
-        await prisma.brandBidAsk.upsert({
-          where: {
-            brand: brandIdMapData[String(brandRateData.id)].toUpperCase() || "",
-          },
-          update: {
-            bid_price: brandRateData.bid,
-            ask_price: brandRateData.ask,
-            bid_updated_time: new Date(),
-            ask_updated_time: new Date(),
-          },
-          create: {
-            brand: brandIdMapData[brandRateData.id].toUpperCase(),
-            bid_price: brandRateData.bid,
-            ask_price: brandRateData.ask,
-            bid_updated_time: new Date(),
-            ask_updated_time: new Date(),
-          },
-        });
-
-        // レート履歴登録
         await prisma.priceRateHistory.create({
           data: {
             brand: brandIdMapData[brandRateData.id].toUpperCase(),
