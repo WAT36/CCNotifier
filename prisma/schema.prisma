@@ -67,6 +67,7 @@ view brand {
   now_amount             now_amount?
   latest_shop_trade      latest_shop_trade?
   latest_shop_sell_trade latest_shop_sell_trade?
+  latest_price_rate      latest_price_rate?
   priceRateHistory       priceRateHistory[]
 }
 
@@ -129,4 +130,13 @@ view brand_all_tradecount {
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 view trade_year_list {
   year Decimal @unique @db.Decimal
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view latest_price_rate {
+  brand        String   @unique @db.VarChar(4)
+  bid_price    Decimal
+  ask_price    Decimal
+  created_time DateTime @db.Timestamp(6)
+  brand_master brand    @relation(fields: [brand], references: [name])
 }
