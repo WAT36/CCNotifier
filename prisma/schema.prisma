@@ -45,8 +45,9 @@ model brandBidAsk {
   brand_master     brand     @relation(fields: [brand], references: [name])
 }
 
-model rateHistory {
-  brand        String    @id @db.VarChar(4)
+model priceRateHistory {
+  id           Int       @id @default(autoincrement())
+  brand        String    @db.VarChar(4)
   bid_price    Decimal?
   ask_price    Decimal?
   created_time DateTime? @db.Timestamp(6)
@@ -66,7 +67,7 @@ view brand {
   now_amount             now_amount?
   latest_shop_trade      latest_shop_trade?
   latest_shop_sell_trade latest_shop_sell_trade?
-  rateHistory            rateHistory[]
+  priceRateHistory       priceRateHistory[]
 }
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
