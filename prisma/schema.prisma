@@ -36,6 +36,27 @@ model tradeHistory {
   id                          Int      @id @default(autoincrement())
 }
 
+model tradeHistoryCoinCheck {
+  id                  Int      @id @default(autoincrement())
+  trade_date          DateTime @db.Timestamp(6)
+  trade_type          String
+  trade_method        String
+  currency_pair       String
+  increase_currency   String
+  increase_amount     Decimal
+  decrease_currency   String
+  decrease_amount     Decimal
+  executed_value      Decimal
+  executed_price      Decimal
+  fee_currency        String
+  fee_amount          Decimal
+  from_address        String
+  to_address          String
+  registration_number String
+  company_name        String
+  remarks             String
+}
+
 model priceRateHistory {
   id           Int       @id @default(autoincrement())
   brand        String    @db.VarChar(4)
