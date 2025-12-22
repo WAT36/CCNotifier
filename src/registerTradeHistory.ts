@@ -20,14 +20,8 @@ dotenv.config({ path: path.join(__dirname, "../.env") });
 
 // Lambda version
 export const registerDataByLambda = async (data: any[]): Promise<number> => {
-  console.log(
-    "data.length:",
-    data.length,
-    " data[0].length:",
-    data[0].length,
-    " data[0][0]:",
-    data[0][0]
-  );
+  console.log("data.length:", data.length);
+  data[0] && console.log("data[0]:", data[0]);
   return await registerGMOData(data);
 };
 
