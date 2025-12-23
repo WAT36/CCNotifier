@@ -38,13 +38,14 @@ export const handler = async (event: any, context: any) => {
       const results: any[] = [];
 
       // CSVファイルの処理
+      const parser = csv({ headers: false }); // 先頭ヘッダ行もデータ行として扱う
       await pipeline(
         response.Body as stream.Readable,
-        csv(),
+        parser,
         new stream.Writable({
           objectMode: true,
           write: (chunk, _, callback) => {
-            results.push(chunk);
+            results.push(chunk); // 先頭行が最初の chunk として入る
             callback();
           },
         })

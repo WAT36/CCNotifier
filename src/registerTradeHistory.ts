@@ -174,7 +174,8 @@ export const registerGMOData = async (data: any[]): Promise<number> => {
 
     await prisma.$transaction(
       async (prisma) => {
-        for (let i = 0; i < data.length; i++) {
+        for (let i = 1; i < data.length; i++) {
+          // 先頭(ヘッダ)行は飛ばすため、1から始める
           if (!data[i]) {
             //空行ならパス
             passed++;
