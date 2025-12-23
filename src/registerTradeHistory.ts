@@ -22,7 +22,12 @@ dotenv.config({ path: path.join(__dirname, "../.env") });
 export const registerDataByLambda = async (data: any[]): Promise<number> => {
   console.log("data.length:", data.length);
   data[0] && console.log("data[0]:", data[0]);
-  return await registerGMOData(data);
+  if (data[0] && Object.keys(data[0]).length === 23) {
+    // GMOデータの場合23列のため
+    return await registerGMOData(data);
+  } else {
+    throw new Error("CSVファイルのデータ形式が未対応です");
+  }
 };
 
 // 引数チェック
@@ -174,8 +179,7 @@ export const registerGMOData = async (data: any[]): Promise<number> => {
 
     await prisma.$transaction(
       async (prisma) => {
-        for (let i = 1; i < data.length; i++) {
-          // 先頭(ヘッダ)行は飛ばすため、1から始める
+        for (let i = 0; i < data.length; i++) {
           if (!data[i]) {
             //空行ならパス
             passed++;
