@@ -24,7 +24,7 @@ export const registerDataByLambda = async (
   data: any[],
   serviceFlag?: ServiceFlag
 ): Promise<number> => {
-  if (data[0] && Object.keys(data[0]).length === 23) {
+  if (serviceFlag === "GMO") {
     // GMOデータの場合23列のため
     return await registerGMOData(data);
   } else if (serviceFlag === "COINCHECK") {
