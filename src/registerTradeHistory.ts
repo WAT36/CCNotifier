@@ -32,7 +32,9 @@ export const registerDataByLambda = async (
     return await registerGMOData(data);
   } else if (serviceFlag === "COINCHECK") {
     // coincheck用
+    console.log("cc-start");
     return await registerCoinCheckData(data);
+    console.log("cc-end");
   } else {
     throw new Error("CSVファイルのデータ形式が未対応です");
   }
@@ -143,8 +145,9 @@ export const registerGMOData = async (data: any[]): Promise<number> => {
 // Coincheckデータを読み込んでDBに登録する
 export const registerCoinCheckData = async (data: any[]): Promise<number> => {
   try {
+    console.log("cc-a");
     let passed = 0;
-
+    console.log("cc-b");
     // 現在登録されているデータで最後の日時を取得（その日時以前のデータはスキップする
     const latestRegisteredDate = (
       await prisma.tradeHistoryCoinCheck.findFirst({
@@ -156,15 +159,17 @@ export const registerCoinCheckData = async (data: any[]): Promise<number> => {
         },
       })
     )?.trade_date;
-
+    console.log("cc-c", latestRegisteredDate);
     await prisma.$transaction(
       async (prisma) => {
         for (let i = 0; i < data.length; i++) {
+          console.log("cc-d", i, data[i]);
           if (!data[i]["取引日時"] || data[i]["取引日時"] === "") {
             //空行または１列目(取引日時)が空欄ならパス
             passed++;
             continue;
           }
+          console.log("cc-e");
           const {
             取引日時: trade_date,
             取引種別: trade_type,
@@ -193,7 +198,7 @@ export const registerCoinCheckData = async (data: any[]): Promise<number> => {
             passed++;
             continue;
           }
-
+          console.log("cc-f");
           // データ登録
           await prisma.tradeHistoryCoinCheck.create({
             data: {
@@ -216,6 +221,7 @@ export const registerCoinCheckData = async (data: any[]): Promise<number> => {
               remarks,
             },
           });
+          console.log("cc-g");
         }
       },
       {
@@ -223,6 +229,7 @@ export const registerCoinCheckData = async (data: any[]): Promise<number> => {
         timeout: TRANSACTION_TIMEOUT, // default: 5000
       }
     );
+    console.log("cc-h");
     return data.length - passed;
   } catch (error) {
     console.error("ファイルの読み込みに・登録に失敗しました:", error);
