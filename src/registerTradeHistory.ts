@@ -149,7 +149,7 @@ export const registerCoinCheckData = async (data: any[]): Promise<number> => {
     let passed = 0;
     console.log("cc-b");
     // 現在登録されているデータで最後の日時を取得（その日時以前のデータはスキップする
-    const latestRegisteredDate = (
+    let latestRegisteredDate = (
       await prisma.tradeHistoryCoinCheck.findFirst({
         select: {
           trade_date: true,
@@ -159,6 +159,9 @@ export const registerCoinCheckData = async (data: any[]): Promise<number> => {
         },
       })
     )?.trade_date;
+    if (!latestRegisteredDate) {
+      latestRegisteredDate = new Date("2000-01-01T00:00:00.000Z"); // 十分古い日付
+    }
     console.log("cc-c", latestRegisteredDate);
     await prisma.$transaction(
       async (prisma) => {
