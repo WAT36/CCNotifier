@@ -19,14 +19,211 @@ dotenv.config({ path: path.join(__dirname, "../.env") });
  */
 
 // Lambda version
-export const registerDataByLambda = async (data: any[]): Promise<number> => {
-  console.log("data.length:", data.length);
-  data[0] && console.log("data[0]:", data[0]);
+type ServiceFlag = "GMO" | "COINCHECK";
+export const registerDataByLambda = async (
+  data: any[],
+  serviceFlag?: ServiceFlag
+): Promise<number> => {
   if (data[0] && Object.keys(data[0]).length === 23) {
     // GMOデータの場合23列のため
     return await registerGMOData(data);
+  } else if (serviceFlag === "COINCHECK") {
+    // coincheck用
+    return await registerCoinCheckData(data);
   } else {
     throw new Error("CSVファイルのデータ形式が未対応です");
+  }
+};
+
+// GMOデータを読み込んでDBに登録する
+export const registerGMOData = async (data: any[]): Promise<number> => {
+  try {
+    let passed = 0;
+
+    // 現在登録されているデータで最後の日時を取得（その日時以前のデータはスキップする
+    const latestRegisteredDate = (
+      await prisma.tradeHistory.findFirst({
+        select: {
+          trade_date: true,
+        },
+        orderBy: {
+          trade_date: "desc",
+        },
+      })
+    )?.trade_date;
+
+    await prisma.$transaction(
+      async (prisma) => {
+        for (let i = 0; i < data.length; i++) {
+          if (!data[i]) {
+            //空行ならパス
+            passed++;
+            continue;
+          }
+          const {
+            "﻿日時": trade_date,
+            精算区分: settlement_category,
+            日本円受渡金額: yen_payment,
+            注文ID: order_id,
+            約定ID: contract_id,
+            建玉ID: position_id,
+            銘柄名: brand,
+            注文タイプ: order_type,
+            取引区分: trade_category,
+            売買区分: buysell_category,
+            執行条件: ioc_category,
+            約定数量: contract_amount,
+            約定レート: contract_rate,
+            約定金額: contract_payment,
+            注文手数料: order_commission,
+            レバレッジ手数料: leverage_commission,
+            入出金区分: deposit_withdrawal_category,
+            入出金金額: deposit_withdrawal_amount,
+            授受区分: givetake_category,
+            数量: givetake_amount,
+            送付手数料: sending_commission,
+            "送付先/送付元": sender,
+            トランザクションID: transaction_id,
+          } = data[i];
+          console.log(i, trade_date);
+          if (
+            latestRegisteredDate &&
+            new Date(trade_date) <= latestRegisteredDate
+          ) {
+            // DBにある最新の日時よりも前 -> すでに登録済みとみなし、スキップ
+            passed++;
+            continue;
+          }
+
+          // データ登録
+          await prisma.tradeHistory.create({
+            data: {
+              trade_date: new Date(trade_date),
+              settlement_category,
+              yen_payment: +yen_payment,
+              order_id,
+              contract_id,
+              position_id,
+              brand,
+              order_type,
+              trade_category,
+              buysell_category,
+              ioc_category,
+              contract_amount: +contract_amount,
+              contract_rate: +contract_rate,
+              contract_payment: +contract_payment,
+              order_commission: +order_commission,
+              leverage_commission: +leverage_commission,
+              deposit_withdrawal_category,
+              deposit_withdrawal_amount: +deposit_withdrawal_amount,
+              givetake_category,
+              givetake_amount: +givetake_amount,
+              sending_commission: +sending_commission,
+              sender,
+              transaction_id,
+            },
+          });
+        }
+      },
+      {
+        maxWait: TRANSACTION_MAX_WAIT, // default: 2000
+        timeout: TRANSACTION_TIMEOUT, // default: 5000
+      }
+    );
+    return data.length - passed;
+  } catch (error) {
+    console.error("ファイルの読み込みに・登録に失敗しました:", error);
+    return 0;
+  }
+};
+
+// Coincheckデータを読み込んでDBに登録する
+export const registerCoinCheckData = async (data: any[]): Promise<number> => {
+  try {
+    let passed = 0;
+
+    // 現在登録されているデータで最後の日時を取得（その日時以前のデータはスキップする
+    const latestRegisteredDate = (
+      await prisma.tradeHistoryCoinCheck.findFirst({
+        select: {
+          trade_date: true,
+        },
+        orderBy: {
+          trade_date: "desc",
+        },
+      })
+    )?.trade_date;
+
+    await prisma.$transaction(
+      async (prisma) => {
+        for (let i = 0; i < data.length; i++) {
+          if (!data[i][0] || data[i][0] === "") {
+            //空行または１列目(取引日時)が空欄ならパス
+            passed++;
+            continue;
+          }
+          const {
+            取引日時: trade_date,
+            取引種別: trade_type,
+            取引形態: trade_method,
+            通貨ペア: currency_pair,
+            増加通貨名: increase_currency,
+            増加数量: increase_amount,
+            減少通貨名: decrease_currency,
+            減少数量: decrease_amount,
+            約定代金: executed_value,
+            約定価格: executed_price,
+            手数料通貨: fee_currency,
+            手数料金額: fee_amount,
+            送付元アドレス: from_address,
+            送付先アドレス: to_address,
+            登録番号: registration_number,
+            社名: company_name,
+            備考: remarks,
+          } = data[i];
+          console.log(i, trade_date);
+          if (
+            latestRegisteredDate &&
+            new Date(trade_date) <= latestRegisteredDate
+          ) {
+            // DBにある最新の日時よりも前 -> すでに登録済みとみなし、スキップ
+            passed++;
+            continue;
+          }
+
+          // データ登録
+          await prisma.tradeHistoryCoinCheck.create({
+            data: {
+              trade_date: new Date(trade_date),
+              trade_type,
+              trade_method,
+              currency_pair,
+              increase_currency,
+              increase_amount: +increase_amount,
+              decrease_currency,
+              decrease_amount: +decrease_amount,
+              executed_value: +executed_value,
+              executed_price: +executed_price,
+              fee_currency,
+              fee_amount: +fee_amount,
+              from_address,
+              to_address,
+              registration_number,
+              company_name,
+              remarks,
+            },
+          });
+        }
+      },
+      {
+        maxWait: TRANSACTION_MAX_WAIT, // default: 2000
+        timeout: TRANSACTION_TIMEOUT, // default: 5000
+      }
+    );
+    return data.length - passed;
+  } catch (error) {
+    console.error("ファイルの読み込みに・登録に失敗しました:", error);
+    return 0;
   }
 };
 
@@ -159,105 +356,3 @@ if (process.argv[1] === __filename) {
     }
   })();
 }
-
-// GMOデータを読み込んでDBに登録する
-export const registerGMOData = async (data: any[]): Promise<number> => {
-  try {
-    let passed = 0;
-
-    // 現在登録されているデータで最後の日時を取得（その日時以前のデータはスキップする
-    const latestRegisteredDate = (
-      await prisma.tradeHistory.findFirst({
-        select: {
-          trade_date: true,
-        },
-        orderBy: {
-          trade_date: "desc",
-        },
-      })
-    )?.trade_date;
-
-    await prisma.$transaction(
-      async (prisma) => {
-        for (let i = 0; i < data.length; i++) {
-          if (!data[i]) {
-            //空行ならパス
-            passed++;
-            continue;
-          }
-          const {
-            "﻿日時": trade_date,
-            精算区分: settlement_category,
-            日本円受渡金額: yen_payment,
-            注文ID: order_id,
-            約定ID: contract_id,
-            建玉ID: position_id,
-            銘柄名: brand,
-            注文タイプ: order_type,
-            取引区分: trade_category,
-            売買区分: buysell_category,
-            執行条件: ioc_category,
-            約定数量: contract_amount,
-            約定レート: contract_rate,
-            約定金額: contract_payment,
-            注文手数料: order_commission,
-            レバレッジ手数料: leverage_commission,
-            入出金区分: deposit_withdrawal_category,
-            入出金金額: deposit_withdrawal_amount,
-            授受区分: givetake_category,
-            数量: givetake_amount,
-            送付手数料: sending_commission,
-            "送付先/送付元": sender,
-            トランザクションID: transaction_id,
-          } = data[i];
-          console.log(i, trade_date);
-          if (
-            latestRegisteredDate &&
-            new Date(trade_date) <= latestRegisteredDate
-          ) {
-            // DBにある最新の日時よりも前 -> すでに登録済みとみなし、スキップ
-            passed++;
-            continue;
-          }
-
-          // データ登録
-          await prisma.tradeHistory.create({
-            data: {
-              trade_date: new Date(trade_date),
-              settlement_category,
-              yen_payment: +yen_payment,
-              order_id,
-              contract_id,
-              position_id,
-              brand,
-              order_type,
-              trade_category,
-              buysell_category,
-              ioc_category,
-              contract_amount: +contract_amount,
-              contract_rate: +contract_rate,
-              contract_payment: +contract_payment,
-              order_commission: +order_commission,
-              leverage_commission: +leverage_commission,
-              deposit_withdrawal_category,
-              deposit_withdrawal_amount: +deposit_withdrawal_amount,
-              givetake_category,
-              givetake_amount: +givetake_amount,
-              sending_commission: +sending_commission,
-              sender,
-              transaction_id,
-            },
-          });
-        }
-      },
-      {
-        maxWait: TRANSACTION_MAX_WAIT, // default: 2000
-        timeout: TRANSACTION_TIMEOUT, // default: 5000
-      }
-    );
-    return data.length - passed;
-  } catch (error) {
-    console.error("ファイルの読み込みに・登録に失敗しました:", error);
-    return 0;
-  }
-};

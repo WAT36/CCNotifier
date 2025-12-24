@@ -49,8 +49,12 @@ export const handler = async (event: any, context: any) => {
           },
         })
       );
-
-      const registeredLine = await registerDataByLambda(results);
+      // どの事業者からのデータかを確認するフラグを設定
+      const serviceFlag = objectKey.includes("コインチェック")
+        ? "COINCHECK"
+        : undefined;
+      // データを登録する
+      const registeredLine = await registerDataByLambda(results, serviceFlag);
       await postWebhook(`${registeredLine} 個のデータを登録しました。`);
 
       return {
