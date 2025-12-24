@@ -57,7 +57,9 @@ export const handler = async (event: any, context: any) => {
         : undefined;
       // データを登録する
       const registeredLine = await registerDataByLambda(results, serviceFlag);
-      await postWebhook(`${registeredLine} 個のデータを登録しました。`);
+      await postWebhook(
+        `${registeredLine} 個のデータを登録しました。(${serviceFlag})`
+      );
 
       return {
         statusCode: 200,
