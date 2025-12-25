@@ -171,11 +171,13 @@ export const registerCoinCheckData = async (data: any[]): Promise<number> => {
             i,
             data[i],
             data[i]["取引日時"],
-            !data[i]["取引日時"]
+            !data[i]["取引日時"],
+            data[i]["﻿取引日時"],
+            !data[i]["﻿取引日時"]
           );
           console.log("cc-e");
           const {
-            取引日時: trade_date,
+            "﻿取引日時": trade_date, //BOM設定
             取引種別: trade_type,
             取引形態: trade_method,
             通貨ペア: currency_pair,
@@ -194,7 +196,7 @@ export const registerCoinCheckData = async (data: any[]): Promise<number> => {
             備考: remarks,
           } = data[i];
           console.log(i, trade_date, trade_type, trade_method);
-          if (!data[i]["取引日時"] || data[i]["取引日時"] === "") {
+          if (!data[i]["﻿取引日時"] || data[i]["﻿取引日時"] === "") {
             //空行または１列目(取引日時)が空欄ならパス
             passed++;
             continue;
