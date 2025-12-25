@@ -10,9 +10,10 @@ dotenv.config({ path: path.join(__dirname, "../.env") });
 
 /**
  * 取引履歴データファイルを読み込んでDBに登録する
- * ファイルの形式はCSVで以下の定義とする
- * 日時,精算区分,日本円受渡金額,注文ID,約定ID,建玉ID,銘柄名,注文タイプ,取引区分,売買区分,執行条件,約定数量,約定レート,約定金額,注文手数料,レバレッジ手数料,入出金区分,入出金金額,授受区分,数量,送付手数料,送付先/送付元,トランザクションID
- * ※最初の１行はヘッダ行として取り除かれる
+ * ファイルの形式はCSV
+ * 23列ならgmo用と認識
+ * ファイル名にコインチェックとあればcoincheck用と認識する
+ * ※仕様上最初の１行はヘッダ行として取り除かれる
  *
  * 実行方法は
  * npx ts-node src/registerTradeHistory.ts （入力ファイルのパス）
@@ -24,17 +25,12 @@ export const registerDataByLambda = async (
   data: any[],
   serviceFlag?: ServiceFlag
 ): Promise<number> => {
-  console.log("serviceFlag:", serviceFlag);
-  console.log("data.length:", data.length);
-  data[0] && console.log("data[0]:", data[0]);
   if (serviceFlag === "GMO") {
     // GMOデータの場合23列のため
     return await registerGMOData(data);
   } else if (serviceFlag === "COINCHECK") {
     // coincheck用
-    console.log("cc-start");
     return await registerCoinCheckData(data);
-    console.log("cc-end");
   } else {
     throw new Error("CSVファイルのデータ形式が未対応です");
   }
@@ -66,7 +62,7 @@ export const registerGMOData = async (data: any[]): Promise<number> => {
             continue;
           }
           const {
-            "﻿日時": trade_date,
+            "﻿日時": trade_date, // BOM付き
             精算区分: settlement_category,
             日本円受渡金額: yen_payment,
             注文ID: order_id,
@@ -90,7 +86,6 @@ export const registerGMOData = async (data: any[]): Promise<number> => {
             "送付先/送付元": sender,
             トランザクションID: transaction_id,
           } = data[i];
-          console.log(i, trade_date);
           if (
             latestRegisteredDate &&
             new Date(trade_date) <= latestRegisteredDate
@@ -145,9 +140,7 @@ export const registerGMOData = async (data: any[]): Promise<number> => {
 // Coincheckデータを読み込んでDBに登録する
 export const registerCoinCheckData = async (data: any[]): Promise<number> => {
   try {
-    console.log("cc-a");
     let passed = 0;
-    console.log("cc-b");
     // 現在登録されているデータで最後の日時を取得（その日時以前のデータはスキップする
     let latestRegisteredDate = (
       await prisma.tradeHistoryCoinCheck.findFirst({
@@ -162,20 +155,9 @@ export const registerCoinCheckData = async (data: any[]): Promise<number> => {
     if (!latestRegisteredDate) {
       latestRegisteredDate = new Date("2000-01-01T00:00:00.000Z"); // 十分古い日付
     }
-    console.log("cc-c", latestRegisteredDate);
     await prisma.$transaction(
       async (prisma) => {
         for (let i = 0; i < data.length; i++) {
-          console.log(
-            "cc-d",
-            i,
-            data[i],
-            data[i]["取引日時"],
-            !data[i]["取引日時"],
-            data[i]["﻿取引日時"],
-            !data[i]["﻿取引日時"]
-          );
-          console.log("cc-e");
           const {
             "﻿取引日時": trade_date, //BOM設定
             取引種別: trade_type,
@@ -195,7 +177,6 @@ export const registerCoinCheckData = async (data: any[]): Promise<number> => {
             社名: company_name,
             備考: remarks,
           } = data[i];
-          console.log(i, trade_date, trade_type, trade_method);
           if (!data[i]["﻿取引日時"] || data[i]["﻿取引日時"] === "") {
             //空行または１列目(取引日時)が空欄ならパス
             passed++;
@@ -209,7 +190,6 @@ export const registerCoinCheckData = async (data: any[]): Promise<number> => {
             passed++;
             continue;
           }
-          console.log("cc-f");
           // データ登録
           await prisma.tradeHistoryCoinCheck.create({
             data: {
@@ -232,7 +212,6 @@ export const registerCoinCheckData = async (data: any[]): Promise<number> => {
               remarks,
             },
           });
-          console.log("cc-g");
         }
       },
       {
@@ -240,7 +219,6 @@ export const registerCoinCheckData = async (data: any[]): Promise<number> => {
         timeout: TRANSACTION_TIMEOUT, // default: 5000
       }
     );
-    console.log("cc-h");
     return data.length - passed;
   } catch (error) {
     console.error("ファイルの読み込みに・登録に失敗しました:", error);
