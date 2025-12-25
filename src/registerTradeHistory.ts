@@ -188,7 +188,7 @@ export const registerCoinCheckData = async (data: any[]): Promise<number> => {
             約定代金: executed_value,
             約定価格: executed_price,
             手数料通貨: fee_currency,
-            手数料金額: fee_amount,
+            手数料数量: fee_amount,
             送付元アドレス: from_address,
             送付先アドレス: to_address,
             登録番号: registration_number,
