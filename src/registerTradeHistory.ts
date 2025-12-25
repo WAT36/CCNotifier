@@ -90,7 +90,7 @@ export const registerGMOData = async (data: any[]): Promise<number> => {
             "送付先/送付元": sender,
             トランザクションID: transaction_id,
           } = data[i];
-          console.log(i, trade_date);
+          console.log(i, trade_date, settlement_category, yen_payment);
           if (
             latestRegisteredDate &&
             new Date(trade_date) <= latestRegisteredDate
