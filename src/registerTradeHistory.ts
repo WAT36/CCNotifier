@@ -166,7 +166,13 @@ export const registerCoinCheckData = async (data: any[]): Promise<number> => {
     await prisma.$transaction(
       async (prisma) => {
         for (let i = 0; i < data.length; i++) {
-          console.log("cc-d", i, data[i]);
+          console.log(
+            "cc-d",
+            i,
+            data[i],
+            data[i]["取引日時"],
+            !data[i]["取引日時"]
+          );
           if (!data[i]["取引日時"] || data[i]["取引日時"] === "") {
             //空行または１列目(取引日時)が空欄ならパス
             passed++;
