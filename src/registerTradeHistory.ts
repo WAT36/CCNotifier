@@ -173,11 +173,6 @@ export const registerCoinCheckData = async (data: any[]): Promise<number> => {
             data[i]["取引日時"],
             !data[i]["取引日時"]
           );
-          if (!data[i]["取引日時"] || data[i]["取引日時"] === "") {
-            //空行または１列目(取引日時)が空欄ならパス
-            passed++;
-            continue;
-          }
           console.log("cc-e");
           const {
             取引日時: trade_date,
@@ -199,6 +194,11 @@ export const registerCoinCheckData = async (data: any[]): Promise<number> => {
             備考: remarks,
           } = data[i];
           console.log(i, trade_date);
+          if (!data[i]["取引日時"] || data[i]["取引日時"] === "") {
+            //空行または１列目(取引日時)が空欄ならパス
+            passed++;
+            continue;
+          }
           if (
             latestRegisteredDate &&
             new Date(trade_date) <= latestRegisteredDate
