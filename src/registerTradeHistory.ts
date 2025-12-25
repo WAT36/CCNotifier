@@ -90,7 +90,7 @@ export const registerGMOData = async (data: any[]): Promise<number> => {
             "送付先/送付元": sender,
             トランザクションID: transaction_id,
           } = data[i];
-          console.log(i, trade_date, settlement_category, yen_payment);
+          console.log(i, trade_date);
           if (
             latestRegisteredDate &&
             new Date(trade_date) <= latestRegisteredDate
@@ -193,7 +193,7 @@ export const registerCoinCheckData = async (data: any[]): Promise<number> => {
             社名: company_name,
             備考: remarks,
           } = data[i];
-          console.log(i, trade_date);
+          console.log(i, trade_date, trade_type, trade_method);
           if (!data[i]["取引日時"] || data[i]["取引日時"] === "") {
             //空行または１列目(取引日時)が空欄ならパス
             passed++;
