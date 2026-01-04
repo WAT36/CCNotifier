@@ -20,7 +20,7 @@ dotenv.config({ path: path.join(__dirname, "../.env") });
  */
 
 // Lambda version
-type ServiceFlag = "GMO" | "COINCHECK";
+type ServiceFlag = "GMO" | "COINCHECK" | "RAKUTEN";
 export const registerDataByLambda = async (
   data: any[],
   serviceFlag?: ServiceFlag
@@ -31,6 +31,9 @@ export const registerDataByLambda = async (
   } else if (serviceFlag === "COINCHECK") {
     // coincheck用
     return await registerCoinCheckData(data);
+  } else if (serviceFlag === "RAKUTEN") {
+    // Rakuten用
+    return await registerRakutenData(data);
   } else {
     throw new Error("CSVファイルのデータ形式が未対応です");
   }
@@ -209,6 +212,82 @@ export const registerCoinCheckData = async (data: any[]): Promise<number> => {
               to_address,
               registration_number,
               company_name,
+              remarks,
+            },
+          });
+        }
+      },
+      {
+        maxWait: TRANSACTION_MAX_WAIT, // default: 2000
+        timeout: TRANSACTION_TIMEOUT, // default: 5000
+      }
+    );
+    return data.length - passed;
+  } catch (error) {
+    console.error("ファイルの読み込みに・登録に失敗しました:", error);
+    return 0;
+  }
+};
+
+// Rakutenデータを読み込んでDBに登録する
+export const registerRakutenData = async (data: any[]): Promise<number> => {
+  try {
+    let passed = 0;
+    // 現在登録されているデータで最後の日時を取得（その日時以前のデータはスキップする
+    let latestRegisteredDate = (
+      await prisma.tradeHistoryRakuten.findFirst({
+        select: {
+          trade_date: true,
+        },
+        orderBy: {
+          trade_date: "desc",
+        },
+      })
+    )?.trade_date;
+    if (!latestRegisteredDate) {
+      latestRegisteredDate = new Date("2000-01-01T00:00:00.000Z"); // 十分古い日付
+    }
+    await prisma.$transaction(
+      async (prisma) => {
+        for (let i = 0; i < data.length; i++) {
+          const {
+            "﻿取引年月日": trade_date, //BOM設定
+            取引種別: trade_type,
+            取引形態: trade_method,
+            通貨ペア: currency_pair,
+            増加通貨名: increase_currency,
+            増加数量: increase_amount,
+            減少通貨名: decrease_currency,
+            減少数量: decrease_amount,
+            約定価格: execution_price,
+            単価: unit_price,
+            手数料通貨: fee_currency,
+            手数料数量: fee_amount,
+            備考: remarks,
+          } = data[i];
+          if (
+            latestRegisteredDate &&
+            new Date(trade_date) <= latestRegisteredDate
+          ) {
+            // DBにある最新の日時よりも前 -> すでに登録済みとみなし、スキップ
+            passed++;
+            continue;
+          }
+          // データ登録
+          await prisma.tradeHistoryRakuten.create({
+            data: {
+              trade_date: new Date(trade_date),
+              trade_type,
+              trade_method,
+              currency_pair,
+              increase_currency,
+              increase_amount: +increase_amount,
+              decrease_currency,
+              decrease_amount: +decrease_amount,
+              execution_price: +execution_price,
+              unit_price: +unit_price,
+              fee_currency,
+              fee_amount: +fee_amount,
               remarks,
             },
           });

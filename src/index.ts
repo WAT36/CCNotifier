@@ -52,6 +52,8 @@ export const handler = async (event: any, context: any) => {
       // どの事業者からのデータかを確認するフラグを設定
       const serviceFlag = objectKey.includes("コインチェック")
         ? "COINCHECK"
+        : objectKey.includes("Rakuten")
+        ? "RAKUTEN"
         : results[0] && Object.keys(results[0]).length === 23
         ? "GMO"
         : undefined;
