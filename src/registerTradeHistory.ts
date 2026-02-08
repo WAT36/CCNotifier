@@ -247,6 +247,8 @@ export const registerRakutenData = async (data: any[]): Promise<number> => {
     if (!latestRegisteredDate) {
       latestRegisteredDate = new Date("2000-01-01T00:00:00.000Z"); // 十分古い日付
     }
+    console.log("data.length:",data.length)
+    console.log("latestRegisteredDate:",latestRegisteredDate)
     await prisma.$transaction(
       async (prisma) => {
         for (let i = 0; i < data.length; i++) {
