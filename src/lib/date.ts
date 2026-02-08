@@ -28,11 +28,7 @@ export function parseYyyyMmDd(input: string): Date {
   const dt = new Date(year, month - 1, day);
 
   // 実在日か確認
-  if (
-    dt.getFullYear() !== year ||
-    dt.getMonth() !== month - 1 ||
-    dt.getDate() !== day
-  ) {
+  if (dt.getFullYear() !== year || dt.getMonth() !== month - 1 || dt.getDate() !== day) {
     throw new Error(`Invalid date: "${input}"`);
   }
 
@@ -57,7 +53,7 @@ export function parseYyyyMmDdNextDay(input: string): Date {
  */
 export function diffDaysHoursFromNow(targetDate?: Date): string {
   if (!targetDate) {
-    return "＜日付入力なしエラー＞";
+    return '＜日付入力なしエラー＞';
   }
   const now = new Date();
   const msDiff = now.getTime() - targetDate.getTime();

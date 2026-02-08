@@ -1,6 +1,6 @@
-import { calcCCProfitinRange } from "./calcCCProfitInRange";
-import { parseYyyyMmDd } from "./lib/date";
-import { MONTH_START_DAY_FORMAT } from "./lib/constant";
+import { calcCCProfitinRange } from './calcCCProfitInRange';
+import { parseYyyyMmDd } from './lib/date';
+import { MONTH_START_DAY_FORMAT } from './lib/constant';
 
 export type MonthlyProfitSummary = {
   year: number;
@@ -21,15 +21,10 @@ export async function calcCCProfitByMonth(): Promise<MonthlyProfitSummary[]> {
   for (let i = 0; i < 12; i++) {
     const nowYear = year;
     const nowMonth = month;
-    const rangeStart = parseYyyyMmDd(
-      `${nowYear}-${String(nowMonth).padStart(
-        2,
-        "0"
-      )}-${MONTH_START_DAY_FORMAT}`
-    );
+    const rangeStart = parseYyyyMmDd(`${nowYear}-${String(nowMonth).padStart(2, '0')}-${MONTH_START_DAY_FORMAT}`);
     const rangeEnd = parseYyyyMmDd(
       `${nowMonth < 12 ? nowYear : nowYear + 1}-${
-        nowMonth < 12 ? String(nowMonth + 1).padStart(2, "0") : "01"
+        nowMonth < 12 ? String(nowMonth + 1).padStart(2, '0') : '01'
       }-${MONTH_START_DAY_FORMAT}`
     );
     const brandProfits = await calcCCProfitinRange(rangeStart, rangeEnd);
@@ -41,7 +36,7 @@ export async function calcCCProfitByMonth(): Promise<MonthlyProfitSummary[]> {
     monthlySummaries.push({
       year: nowYear,
       month: nowMonth,
-      profit,
+      profit
     });
 
     if (month == 1) {

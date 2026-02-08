@@ -1,6 +1,6 @@
-import { calcCCProfitinRange, prisma } from "./calcCCProfitInRange";
-import { parseYyyyMmDd, parseYyyyMmDdNextDay } from "./lib/date";
-import { YEAR_START_DATE_FORMAT, YEAR_END_DATE_FORMAT } from "./lib/constant";
+import { calcCCProfitinRange, prisma } from './calcCCProfitInRange';
+import { parseYyyyMmDd, parseYyyyMmDdNextDay } from './lib/date';
+import { YEAR_START_DATE_FORMAT, YEAR_END_DATE_FORMAT } from './lib/constant';
 
 export type YearlyProfitSummary = {
   year: number;
@@ -11,7 +11,7 @@ export async function calcCCProfitByYear(): Promise<YearlyProfitSummary[]> {
   // 最初と最後の取引日を取得
   const { _min, _max } = await prisma.tradeHistory.aggregate({
     _min: { trade_date: true },
-    _max: { trade_date: true },
+    _max: { trade_date: true }
   });
 
   const firstTradeDate = _min.trade_date;
@@ -39,7 +39,7 @@ export async function calcCCProfitByYear(): Promise<YearlyProfitSummary[]> {
 
     yearlySummaries.push({
       year,
-      profit,
+      profit
     });
   }
 

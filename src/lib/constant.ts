@@ -14,22 +14,22 @@ export const DECIMAL_PLACES = 2;
 export const COMPARISON_RATE_MULTIPLIER = 2;
 
 // デフォルトの開始日
-export const DEFAULT_START_DATE = "1990-01-01";
+export const DEFAULT_START_DATE = '1990-01-01';
 
 // デフォルトの終了日
-export const DEFAULT_END_DATE = "2100-12-30";
+export const DEFAULT_END_DATE = '2100-12-30';
 
 // 除外する銘柄名
-export const EXCLUDED_BRAND = "JPY";
+export const EXCLUDED_BRAND = 'JPY';
 
 // 年の開始日フォーマット
-export const YEAR_START_DATE_FORMAT = "01-01";
+export const YEAR_START_DATE_FORMAT = '01-01';
 
 // 年の終了日フォーマット
-export const YEAR_END_DATE_FORMAT = "12-31";
+export const YEAR_END_DATE_FORMAT = '12-31';
 
 // 月の開始日フォーマット
-export const MONTH_START_DAY_FORMAT = "01";
+export const MONTH_START_DAY_FORMAT = '01';
 
 // 資産比較時の許容誤差
 export const ASSETS_COMPARISON_TOLERANCE = 1e-8;

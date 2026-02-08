@@ -1,15 +1,15 @@
-import * as dotenv from "dotenv";
-import * as path from "path";
-dotenv.config({ path: path.join(__dirname, "../.env") });
+import * as dotenv from 'dotenv';
+import * as path from 'path';
+dotenv.config({ path: path.join(__dirname, '../.env') });
 
 export const getShopRate = async () => {
-  const url = process.env.SHOP_URL || "";
+  const url = process.env.SHOP_URL || '';
   const result = await fetch(url, {
-    method: "GET",
+    method: 'GET'
   }).then((response) =>
     response.json().then((data) => ({
       status: response.status,
-      body: data,
+      body: data
     }))
   );
   return result.body.data;

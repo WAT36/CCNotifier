@@ -1,71 +1,69 @@
-import { allRateCheckAndPost } from "./allRateCheckAndPost";
-import { calcCCProfitinRange } from "./calcCCProfitInRange";
-import { calcCCProfitByYear } from "./calcCCProfitByYear";
-import { calcCCTradeCountinRange } from "./calcCCTradeCountInRange";
-import { uploadCsvToS3 } from "./csvUpload";
-import { calcCCProfitByMonth } from "./calcCCProfitByMonth";
-import { parseYyyyMmDd } from "./lib/date";
+import { allRateCheckAndPost } from './allRateCheckAndPost';
+import { calcCCProfitinRange } from './calcCCProfitInRange';
+import { calcCCProfitByYear } from './calcCCProfitByYear';
+import { calcCCTradeCountinRange } from './calcCCTradeCountInRange';
+import { uploadCsvToS3 } from './csvUpload';
+import { calcCCProfitByMonth } from './calcCCProfitByMonth';
+import { parseYyyyMmDd } from './lib/date';
 
 const defaultHeaders = {
-  "Content-Type": "application/json",
-  "Access-Control-Allow-Origin": "*",
+  'Content-Type': 'application/json',
+  'Access-Control-Allow-Origin': '*'
 };
 
 const jsonResponse = (statusCode: number, body: Record<string, unknown>) => ({
   statusCode,
   body: JSON.stringify(body),
   headers: defaultHeaders,
-  isBase64Encoded: false,
+  isBase64Encoded: false
 });
 
 export const routeApiGatewayRequest = async (event: any) => {
   const path: string = event.path;
   const method: string = event.httpMethod;
 
-  if (path === "/notice" && method === "GET") {
+  if (path === '/notice' && method === 'GET') {
     await allRateCheckAndPost({ isRegularly: false });
     return jsonResponse(200, {
-      message: "Rate check completed successfully",
+      message: 'Rate check completed successfully'
     });
   }
 
-  if (path.startsWith("/data") && method === "GET") {
+  if (path.startsWith('/data') && method === 'GET') {
     let body;
 
-    if (path.startsWith("/data/profit/brand/range")) {
-      const startDate = parseYyyyMmDd(
-        event.queryStringParameters?.startDate || ""
-      );
-      const endDate = parseYyyyMmDd(event.queryStringParameters?.endDate || "");
+    if (path.startsWith('/data/profit/brand/range')) {
+      const startDate = parseYyyyMmDd(event.queryStringParameters?.startDate || '');
+      const endDate = parseYyyyMmDd(event.queryStringParameters?.endDate || '');
       if (!startDate || !endDate) {
         return jsonResponse(400, {
-          message: "startDateまたはendDateが提供されていません",
+          message: 'startDateまたはendDateが提供されていません'
         });
       }
       body = await calcCCProfitinRange(startDate, endDate);
-    } else if (path.startsWith("/data/profit/brand")) {
+    } else if (path.startsWith('/data/profit/brand')) {
       body = await calcCCProfitinRange();
-    } else if (path.startsWith("/data/profit/yearly")) {
+    } else if (path.startsWith('/data/profit/yearly')) {
       body = await calcCCProfitByYear();
-    } else if (path.startsWith("/data/profit/monthly")) {
+    } else if (path.startsWith('/data/profit/monthly')) {
       body = await calcCCProfitByMonth();
-    } else if (path.startsWith("/data/tradecount")) {
+    } else if (path.startsWith('/data/tradecount')) {
       body = await calcCCTradeCountinRange();
     }
 
     return jsonResponse(200, {
-      message: "Data endpoint accessed",
-      path: "/data",
-      method: "GET",
-      body,
+      message: 'Data endpoint accessed',
+      path: '/data',
+      method: 'GET',
+      body
     });
   }
 
-  if (path === "/upload/csv" && method === "POST") {
+  if (path === '/upload/csv' && method === 'POST') {
     try {
       if (!event.body) {
         return jsonResponse(400, {
-          message: "ファイルデータが提供されていません",
+          message: 'ファイルデータが提供されていません'
         });
       }
 
@@ -74,46 +72,44 @@ export const routeApiGatewayRequest = async (event: any) => {
 
       if (!fileData || !fileName) {
         return jsonResponse(400, {
-          message: "ファイルデータまたはファイル名が提供されていません",
+          message: 'ファイルデータまたはファイル名が提供されていません'
         });
       }
 
-      const fileBuffer = Buffer.from(fileData, "base64");
+      const fileBuffer = Buffer.from(fileData, 'base64');
       const uploadResult = await uploadCsvToS3(fileBuffer, fileName);
 
       if (uploadResult.success) {
         return jsonResponse(200, {
           message: uploadResult.message,
           fileName: uploadResult.fileName,
-          success: true,
+          success: true
         });
       }
 
       return jsonResponse(500, {
         message: uploadResult.message,
-        success: false,
+        success: false
       });
     } catch (error) {
-      console.error("CSVアップロード処理エラー:", error);
+      console.error('CSVアップロード処理エラー:', error);
       return jsonResponse(500, {
-        message: `アップロード処理中にエラーが発生しました: ${
-          error instanceof Error ? error.message : "不明なエラー"
-        }`,
-        success: false,
+        message: `アップロード処理中にエラーが発生しました: ${error instanceof Error ? error.message : '不明なエラー'}`,
+        success: false
       });
     }
   }
 
-  if (path === "/health" && method === "GET") {
+  if (path === '/health' && method === 'GET') {
     return jsonResponse(200, {
-      status: "healthy",
-      timestamp: new Date().toISOString(),
+      status: 'healthy',
+      timestamp: new Date().toISOString()
     });
   }
 
   return jsonResponse(404, {
-    message: "Not Found",
+    message: 'Not Found',
     path,
-    method,
+    method
   });
 };

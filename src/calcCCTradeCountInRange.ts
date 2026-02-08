@@ -1,10 +1,6 @@
-import { PrismaClient } from "@prisma/client";
-import { parseYyyyMmDd, parseYyyyMmDdNextDay } from "./lib/date";
-import {
-  DEFAULT_START_DATE,
-  DEFAULT_END_DATE,
-  EXCLUDED_BRAND,
-} from "./lib/constant";
+import { PrismaClient } from '@prisma/client';
+import { parseYyyyMmDd, parseYyyyMmDdNextDay } from './lib/date';
+import { DEFAULT_START_DATE, DEFAULT_END_DATE, EXCLUDED_BRAND } from './lib/constant';
 export const prisma: PrismaClient = new PrismaClient();
 
 //  startDate,endDateがYYYY-MMM-DD形式か確認
@@ -16,8 +12,8 @@ export async function calcCCTradeCountinRange() {
   const result = [];
   const brands = await prisma.brand.findMany({
     select: {
-      name: true,
-    },
+      name: true
+    }
   });
 
   for (const brand of brands) {
@@ -28,44 +24,44 @@ export async function calcCCTradeCountinRange() {
     // 期間内の一番前と一番後の売却レコードを取得
     const sell_count = await prisma.tradeHistory.aggregate({
       _count: {
-        brand: true,
+        brand: true
       },
       where: {
         brand: brand.name,
-        buysell_category: "売",
+        buysell_category: '売',
         trade_date: {
           gte: startDate,
-          lt: endDate,
-        },
-      },
+          lt: endDate
+        }
+      }
     });
     // データがない->その期間内ではまだ売却してないので利益なし->nullで返す
     if (!sell_count || !sell_count._count.brand) {
       result.push({
         brand,
-        profit: undefined,
+        profit: undefined
       });
       continue;
     }
     // 期間より前で一番後の売却レコードを取得（それより後の購入データも含めての利益を算出する）
     const buy_count = await prisma.tradeHistory.aggregate({
       _count: {
-        brand: true,
+        brand: true
       },
       where: {
         brand: brand.name,
-        buysell_category: "買",
+        buysell_category: '買',
         trade_date: {
           gte: startDate,
-          lt: endDate,
-        },
-      },
+          lt: endDate
+        }
+      }
     });
 
     result.push({
       brand,
       sell_count: sell_count?._count?.brand || 0,
-      buy_count: buy_count?._count?.brand || 0,
+      buy_count: buy_count?._count?.brand || 0
     });
   }
   console.log(result);

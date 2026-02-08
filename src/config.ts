@@ -1,25 +1,25 @@
 export const BRANDS = [
-  "btc",
-  "eth",
-  "bch",
-  "ltc",
-  "xrp",
-  "xlm",
-  "xtz",
-  "dot",
-  "atom",
-  "ada",
-  "dai",
-  "link",
-  "doge",
-  "sol",
-  "fil",
-  "sand",
-  "chz",
-  "avax",
+  'btc',
+  'eth',
+  'bch',
+  'ltc',
+  'xrp',
+  'xlm',
+  'xtz',
+  'dot',
+  'atom',
+  'ada',
+  'dai',
+  'link',
+  'doge',
+  'sol',
+  'fil',
+  'sand',
+  'chz',
+  'avax'
 ];
 
-export const BIDASK = ["bid", "ask"];
+export const BIDASK = ['bid', 'ask'];
 
 export const messageTemplate = {
   NONE: (brand: string) => `${brand}:保有数量0です。全く買っていません`,
@@ -57,5 +57,5 @@ export const messageTemplate = {
   ) =>
     `${brand}:\t(売ﾚｰﾄ ${nowSellRate} 円,\t買ﾚｰﾄ ${nowBuyRate} 円,\t最後の購入ﾚｰﾄ ${lastBuyRate})円,\t全売値 ${allSoldValueYen} 円,\t掛値 ${yenBet} 円,\t売り時まであと ${targetIncreaseRate.toFixed(
       2
-    )}%,\t前回取引：${diffDaysHours}前)`,
+    )}%,\t前回取引：${diffDaysHours}前)`
 };

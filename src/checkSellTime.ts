@@ -1,6 +1,6 @@
-import { PrismaClient } from "@prisma/client";
-import { Decimal } from "@prisma/client/runtime/library";
-import { PERCENTAGE_MULTIPLIER, DECIMAL_PLACES } from "./lib/constant";
+import { PrismaClient } from '@prisma/client';
+import { Decimal } from '@prisma/client/runtime/library';
+import { PERCENTAGE_MULTIPLIER, DECIMAL_PLACES } from './lib/constant';
 export const prisma: PrismaClient = new PrismaClient();
 
 /**
@@ -13,7 +13,7 @@ export const prisma: PrismaClient = new PrismaClient();
 
 export type CheckSellResult = {
   brand: string;
-  recommend?: "none" | "sell" | "buy" | "stay" | "error";
+  recommend?: 'none' | 'sell' | 'buy' | 'stay' | 'error';
   sell?: {
     allSoldValueYen: number; // 全部売った時の円
     gainsYen: number; // 全部売った時の利益円
@@ -41,9 +41,7 @@ export type CheckSellResult = {
   };
 };
 
-export const checkSellTime = async (
-  brand: string
-): Promise<CheckSellResult> => {
+export const checkSellTime = async (brand: string): Promise<CheckSellResult> => {
   try {
     // 銘柄のデータ取得
     const brandData = await prisma.brand.findUnique({
@@ -51,41 +49,41 @@ export const checkSellTime = async (
         name: true,
         now_yen_bet: {
           select: {
-            yen_bet: true,
-          },
+            yen_bet: true
+          }
         },
         now_amount: {
           select: {
             contract_amount: true,
             givetake_amount: true,
-            now_amount: true,
-          },
+            now_amount: true
+          }
         },
         latest_shop_trade: {
           select: {
             buysell_category: true,
             contract_rate: true,
             contract_payment: true,
-            trade_date: true,
-          },
+            trade_date: true
+          }
         },
         latest_price_rate: {
           select: {
             bid_price: true,
-            ask_price: true,
-          },
-        },
+            ask_price: true
+          }
+        }
       },
       where: {
-        name: brand,
-      },
+        name: brand
+      }
     });
 
     if (!brandData) {
-      console.error("銘柄のデータがありません");
+      console.error('銘柄のデータがありません');
       return {
         brand,
-        recommend: "error",
+        recommend: 'error'
       };
     }
 
@@ -95,12 +93,10 @@ export const checkSellTime = async (
     const nowAmount = brandData.now_amount?.now_amount;
     // 最後に買った時のレート
     const lastBuyRate =
-      brandData.latest_shop_trade?.buysell_category === "買" &&
-      brandData.latest_shop_trade.contract_rate;
+      brandData.latest_shop_trade?.buysell_category === '買' && brandData.latest_shop_trade.contract_rate;
     // 最後に買った時の額
     const lastBuyYen =
-      brandData.latest_shop_trade?.buysell_category === "買" &&
-      brandData.latest_shop_trade.contract_payment;
+      brandData.latest_shop_trade?.buysell_category === '買' && brandData.latest_shop_trade.contract_payment;
     // 今の売却レート
     const nowSellRate = brandData.latest_price_rate?.bid_price;
     // 今の買値レート
@@ -108,11 +104,11 @@ export const checkSellTime = async (
 
     // 判定結果
     const result: CheckSellResult = {
-      brand,
+      brand
     };
     if (!nowAmount || nowAmount.equals(new Decimal(0))) {
       // 保有数量が0の場合は買い時も売り時もない
-      result.recommend = "none";
+      result.recommend = 'none';
     } else if (
       nowSellRate &&
       nowAmount &&
@@ -122,11 +118,8 @@ export const checkSellTime = async (
       // 売り時の場合
       const allSoldValueYen = nowSellRate.toNumber() * nowAmount.toNumber();
       const gainsYen = allSoldValueYen - yenBet;
-      const gainsGrowthRate = (
-        (gainsYen / yenBet) *
-        PERCENTAGE_MULTIPLIER
-      ).toFixed(DECIMAL_PLACES);
-      result.recommend = "sell";
+      const gainsGrowthRate = ((gainsYen / yenBet) * PERCENTAGE_MULTIPLIER).toFixed(DECIMAL_PLACES);
+      result.recommend = 'sell';
       result.sell = {
         allSoldValueYen,
         gainsYen,
@@ -134,57 +127,47 @@ export const checkSellTime = async (
         nowSellRate: nowSellRate.toNumber(),
         nowAmount: nowAmount.toNumber(),
         lastTradeDate: brandData.latest_shop_trade?.trade_date,
-        yenBet,
+        yenBet
       };
-    } else if (
-      lastBuyRate &&
-      nowBuyRate &&
-      lastBuyYen &&
-      lastBuyRate.toNumber() > nowBuyRate.toNumber()
-    ) {
+    } else if (lastBuyRate && nowBuyRate && lastBuyYen && lastBuyRate.toNumber() > nowBuyRate.toNumber()) {
       // 買い時の場合
-      const comparisonRate =
-        (nowBuyRate.toNumber() / lastBuyRate.toNumber() - 1) *
-        PERCENTAGE_MULTIPLIER;
-      result.recommend = "buy";
+      const comparisonRate = (nowBuyRate.toNumber() / lastBuyRate.toNumber() - 1) * PERCENTAGE_MULTIPLIER;
+      result.recommend = 'buy';
       result.buy = {
         lastBuyRate: lastBuyRate.toNumber(),
         nowBuyRate: nowBuyRate.toNumber(),
         lastBuyYen: lastBuyYen.toNumber(),
         comparisonRate,
-        lastTradeDate: brandData.latest_shop_trade?.trade_date,
+        lastTradeDate: brandData.latest_shop_trade?.trade_date
       };
     } else {
       // ステイの場合
-      const allSoldValueYen =
-        (nowSellRate?.toNumber() || NaN) * (nowAmount?.toNumber() || NaN);
-      result.recommend = "stay";
+      const allSoldValueYen = (nowSellRate?.toNumber() || NaN) * (nowAmount?.toNumber() || NaN);
+      result.recommend = 'stay';
       result.stay = {
         nowSellRate: nowSellRate?.toNumber() || -1,
         nowBuyRate: nowBuyRate?.toNumber() || -1,
         lastBuyRate: lastBuyRate ? lastBuyRate.toNumber() : -1,
         allSoldValueYen,
         yenBet,
-        targetIncreaseRate:
-          (PERCENTAGE_MULTIPLIER * (yenBet - allSoldValueYen)) /
-          allSoldValueYen,
-        lastTradeDate: brandData.latest_shop_trade?.trade_date,
+        targetIncreaseRate: (PERCENTAGE_MULTIPLIER * (yenBet - allSoldValueYen)) / allSoldValueYen,
+        lastTradeDate: brandData.latest_shop_trade?.trade_date
       };
     }
 
     return result;
   } catch (error) {
-    console.error("データの登録に失敗しました:", error);
+    console.error('データの登録に失敗しました:', error);
     return {
       brand,
-      recommend: "error",
+      recommend: 'error'
     };
   }
 };
 
 // 引数チェック
 if (process.argv[1] === __filename && process.argv.length !== 3) {
-  console.error("Error: Usage: npx ts-node src/checkSellTime.ts brand");
+  console.error('Error: Usage: npx ts-node src/checkSellTime.ts brand');
   process.exit(1);
 } else if (process.argv[1] === __filename) {
   checkSellTime(process.argv[2].toUpperCase());

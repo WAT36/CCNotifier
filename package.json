@@ -6,6 +6,7 @@
   "scripts": {
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "prettier --write 'src/**/*.(ts|tsx)'",
     "start:test": "npx ts-node src/ts/tsnodeTest.ts"
   },
   "repository": {
@@ -22,6 +23,7 @@
     "@types/cheerio": "^0.22.35",
     "@types/node": "^20.14.2",
     "@types/superagent": "^8.1.9",
+    "prettier": "^3.8.1",
     "ts-node": "^10.9.2",
     "tsx": "^4.15.7",
     "typescript": "^5.4.5"
