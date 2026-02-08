@@ -136,7 +136,7 @@ export const registerGMOData = async (data: any[]): Promise<number> => {
     return data.length - passed;
   } catch (error) {
     console.error("ファイルの読み込みに・登録に失敗しました:", error);
-    return 0;
+    return -1;
   }
 };
 
@@ -225,7 +225,7 @@ export const registerCoinCheckData = async (data: any[]): Promise<number> => {
     return data.length - passed;
   } catch (error) {
     console.error("ファイルの読み込みに・登録に失敗しました:", error);
-    return 0;
+    return -1;
   }
 };
 
@@ -303,7 +303,7 @@ export const registerRakutenData = async (data: any[]): Promise<number> => {
     return data.length - passed;
   } catch (error) {
     console.error("ファイルの読み込みに・登録に失敗しました:", error);
-    return 0;
+    return -1; // TODO エラー時の値は別で定義しておきたい
   }
 };
 

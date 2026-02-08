@@ -60,7 +60,7 @@ export const handler = async (event: any, context: any) => {
       // データを登録する
       const registeredLine = await registerDataByLambda(results, serviceFlag);
       await postWebhook(
-        `${registeredLine} 個のデータを登録しました。(${serviceFlag})`
+        registeredLine !== -1 ? `${registeredLine} 個のデータを登録しました。(${serviceFlag})` : `登録時にエラーが発生しました。確認して下さい。(${serviceFlag})`
       );
 
       return {
