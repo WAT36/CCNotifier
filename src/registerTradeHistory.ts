@@ -267,6 +267,8 @@ export const registerRakutenData = async (data: any[]): Promise<number> => {
             手数料数量: fee_amount,
             備考: remarks,
           } = data[i];
+          // 取引年月日 yy/mm/dd hh:MM:ss なので年4桁に整形する
+          const formatted_trade_date = "20" + String(trade_date)
           if (
             latestRegisteredDate &&
             new Date(trade_date) <= latestRegisteredDate
@@ -278,7 +280,7 @@ export const registerRakutenData = async (data: any[]): Promise<number> => {
           // データ登録
           await prisma.tradeHistoryRakuten.create({
             data: {
-              trade_date: new Date(trade_date),
+              trade_date: new Date(formatted_trade_date),
               trade_type,
               trade_method,
               currency_pair,
