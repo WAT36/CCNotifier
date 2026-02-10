@@ -16,6 +16,8 @@
   - 全銘柄の販売所レートを一括で取得し DB に更新します。
 - **getShopRate.ts**
   - API を利用して販売所レートを取得します。
+- **getTraderTicker.ts**
+  - API を利用して取引所のティッカー情報を取得します。
 - **compareDataAndAssets.ts**
   - DB に記録されている資産と、API で取得した現資産を比較し、差異があればアラートを出します。
 - **getAssets.ts**
