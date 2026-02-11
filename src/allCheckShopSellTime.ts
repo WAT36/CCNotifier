@@ -8,7 +8,7 @@ import {
 } from './lib/constant';
 import { diffDaysHoursFromNow } from './lib/date';
 
-export async function allCheckSellTime(isRegularly: boolean = false) {
+export async function allCheckShopSellTime(isRegularly: boolean = false) {
   const results: CheckSellResult[] = [];
   for (const brand of BRANDS) {
     results.push(await checkSellTime(brand.toUpperCase()));
@@ -146,4 +146,4 @@ export async function allCheckSellTime(isRegularly: boolean = false) {
   return messages;
 }
 
-allCheckSellTime();
+allCheckShopSellTime();

@@ -1,6 +1,6 @@
 import { allUpdateShopRate } from './allUpdateShopRate';
 import { compareDataAndAssets } from './compareDataAndAssets';
-import { allCheckSellTime } from './allCheckSellTime';
+import { allCheckShopSellTime } from './allCheckShopSellTime';
 import { postWebhook } from './postWebhook';
 
 type AllRateCheckAndPostProps = {
@@ -15,7 +15,7 @@ export async function allRateCheckAndPost({ isRegularly = false }: AllRateCheckA
   const compareResult = await compareDataAndAssets();
 
   // all check sell time
-  const allCheckResult = await allCheckSellTime(isRegularly || false);
+  const allCheckResult = await allCheckShopSellTime(isRegularly || false);
 
   // send data
   if (allCheckResult.length > 0) {
