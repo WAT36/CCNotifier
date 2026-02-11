@@ -11,7 +11,7 @@ export const prisma: PrismaClient = new PrismaClient();
  * npx ts-node src/checkSellTime.ts 銘柄名
  */
 
-export type CheckSellResult = {
+export type CheckShopSellResult = {
   brand: string;
   recommend?: 'none' | 'sell' | 'buy' | 'stay' | 'error';
   sell?: {
@@ -41,7 +41,7 @@ export type CheckSellResult = {
   };
 };
 
-export const checkSellTime = async (brand: string): Promise<CheckSellResult> => {
+export const checkShopSellTime = async (brand: string): Promise<CheckShopSellResult> => {
   try {
     // 銘柄のデータ取得
     const brandData = await prisma.brand.findUnique({
@@ -103,7 +103,7 @@ export const checkSellTime = async (brand: string): Promise<CheckSellResult> => 
     const nowBuyRate = brandData.latest_price_rate?.ask_price;
 
     // 判定結果
-    const result: CheckSellResult = {
+    const result: CheckShopSellResult = {
       brand
     };
     if (!nowAmount || nowAmount.equals(new Decimal(0))) {
@@ -170,5 +170,5 @@ if (process.argv[1] === __filename && process.argv.length !== 3) {
   console.error('Error: Usage: npx ts-node src/checkSellTime.ts brand');
   process.exit(1);
 } else if (process.argv[1] === __filename) {
-  checkSellTime(process.argv[2].toUpperCase());
+  checkShopSellTime(process.argv[2].toUpperCase());
 }

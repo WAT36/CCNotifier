@@ -1,5 +1,5 @@
 import { BRANDS, messageTemplate } from './config';
-import { CheckSellResult, checkSellTime } from './checkSellTime';
+import { CheckShopSellResult, checkShopSellTime } from './checkShopSellTime';
 import {
   MIN_GAIN_YEN_SUM,
   HIGH_GROWTH_RATE_THRESHOLD,
@@ -9,9 +9,9 @@ import {
 import { diffDaysHoursFromNow } from './lib/date';
 
 export async function allCheckShopSellTime(isRegularly: boolean = false) {
-  const results: CheckSellResult[] = [];
+  const results: CheckShopSellResult[] = [];
   for (const brand of BRANDS) {
-    results.push(await checkSellTime(brand.toUpperCase()));
+    results.push(await checkShopSellTime(brand.toUpperCase()));
   }
 
   let messages: string[] = [];
