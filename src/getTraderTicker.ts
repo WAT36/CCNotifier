@@ -4,15 +4,15 @@ import * as path from 'path';
 dotenv.config({ path: path.join(__dirname, '../.env') });
 
 export type TradeTickerData = {
-  ask: string,
-  bid: string,
-  high: string,
-  last: string,
-  low: string,
-  symbol: string,
-  timestamp: string,
-  volume: string
-}
+  ask: string;
+  bid: string;
+  high: string;
+  last: string;
+  low: string;
+  symbol: string;
+  timestamp: string;
+  volume: string;
+};
 
 export const getTradeTicker = async () => {
   const endPoint = process.env.API_PUBLIC_ENDPONT || '';
@@ -23,7 +23,7 @@ export const getTradeTicker = async () => {
       .get(endPoint + path)
       .then(function (response) {
         // response.dataに実際のデータが入っている
-        let result: TradeTickerData[] = response.data;
+        let result: TradeTickerData[] = response.data.data;
         console.log(result);
         resolve(result);
       })
