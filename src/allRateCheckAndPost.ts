@@ -9,7 +9,12 @@ type AllRateCheckAndPostProps = {
 // 定期バッチを手動で実行させる
 export async function allRateCheckAndPost({ isRegularly = false }: AllRateCheckAndPostProps = {}) {
   // all update rate
-  await allUpdateShopRate();
+  try {
+    await allUpdateShopRate();
+  } catch (e) {
+    await postWebhook('レート情報を取得できませんでした。メンテナンス中か、APIに問題が発生している可能性があります。');
+    return;
+  }
 
   // assets compare
   const compareResult = await compareDataAndAssets();

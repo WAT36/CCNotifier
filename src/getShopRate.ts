@@ -12,6 +12,9 @@ export const getShopRate = async () => {
       body: data
     }))
   );
+  if (!result.body.data) {
+    throw new Error('データを取得できませんでした（メンテナンス中の可能性があります）');
+  }
   return result.body.data;
 };
 
