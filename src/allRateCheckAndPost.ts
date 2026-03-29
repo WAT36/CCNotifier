@@ -1,6 +1,7 @@
 import { allUpdateShopRate } from './allUpdateShopRate';
 import { compareDataAndAssets } from './compareDataAndAssets';
 import { allCheckShopSellTime } from './allCheckShopSellTime';
+import { allCheckPatterns } from './allCheckPatterns';
 import { postWebhook } from './postWebhook';
 
 type AllRateCheckAndPostProps = {
@@ -30,6 +31,12 @@ export async function allRateCheckAndPost({ isRegularly = false }: AllRateCheckA
       allCheckResult.join('\n') +
       (compareResult.ng.length === 0 ? '' : '--- compare NG ---\n' + compareResult.ng.join('\n'));
     await postWebhook(requestData);
+  }
+
+  // チャートパターン検出・通知
+  const patternMessages = await allCheckPatterns();
+  if (patternMessages.length > 0) {
+    await postWebhook('--- チャートパターン検出 ---\n' + patternMessages.join('\n\n'));
   }
 }
 
