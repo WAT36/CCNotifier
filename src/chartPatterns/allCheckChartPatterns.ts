@@ -25,7 +25,6 @@ export async function allCheckChartPatterns(): Promise<string[]> {
   }
 
   const sections: string[] = [];
-  sections.push('--- チャートパターン ---');
   for (const detector of CHART_PATTERN_DETECTORS) {
     const brands = linesByDetectorId.get(detector.id) ?? [];
     if (brands.length > 0) {
@@ -34,5 +33,5 @@ export async function allCheckChartPatterns(): Promise<string[]> {
     }
   }
 
-  return sections;
+  return sections.length > 0 ? ['--- チャートパターン ---', ...sections] : [];
 }
