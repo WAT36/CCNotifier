@@ -134,7 +134,7 @@ function evaluateDescendingChannelBreakout({ bars }: ChartPatternEvaluateInput):
 
 export const descendingChannelBreakoutDetector: ChartPatternDetector = {
   id: 'descending_channel_breakout',
-  titleJa: '上昇フラッグ',
+  titleJa: 'S - 上昇フラッグ',
   signal: 'buy',
   evaluate: evaluateDescendingChannelBreakout
 };

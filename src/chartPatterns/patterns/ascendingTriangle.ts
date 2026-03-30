@@ -145,7 +145,7 @@ function evaluateAscendingTriangle({ bars }: ChartPatternEvaluateInput): boolean
 
 export const ascendingTriangleDetector: ChartPatternDetector = {
   id: 'ascending_triangle',
-  titleJa: '上昇三角',
+  titleJa: 'S - 上昇三角持ち合い',
   signal: 'buy',
   evaluate: evaluateAscendingTriangle
 };
