@@ -2,6 +2,7 @@ import type { ChartPatternDetector } from './types';
 import { ascendingTriangleDetector } from './patterns/ascendingTriangle';
 import { descendingChannelBreakoutDetector } from './patterns/descendingChannelBreakout';
 import { descendingWedgeDetector } from './patterns/descendingWedge';
+import { descendingTriangleDetector } from './patterns/descendingTriangle';
 import { resistanceReclaimBreakoutDetector } from './patterns/resistanceReclaimBreakout';
 import { doubleBottomDetector } from './patterns/doubleBottom';
 import { symmetricalTriangleBreakoutDetector } from './patterns/symmetricalTriangleBreakout';
@@ -16,5 +17,6 @@ export const CHART_PATTERN_DETECTORS: ChartPatternDetector[] = [
   ascendingTriangleDetector,
   descendingChannelBreakoutDetector,
   descendingWedgeDetector,
-  symmetricalTriangleBreakoutDetector
+  symmetricalTriangleBreakoutDetector,
+  descendingTriangleDetector
 ];
