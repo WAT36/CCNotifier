@@ -10,6 +10,7 @@ import { headAndShouldersDetector } from './patterns/headAndShoulders';
 import { doubleTopDetector } from './patterns/doubleTop';
 import { ascendingWedgeDetector } from './patterns/ascendingWedge';
 import { ascendingChannelBreakdownDetector } from './patterns/ascendingChannelBreakdown';
+import { symmetricalTriangleBreakdownDetector } from './patterns/symmetricalTriangleBreakdown';
 
 /**
  * ここに検出器を追加していく。順序は Slack 上のセクション表示順になる。
@@ -26,5 +27,6 @@ export const CHART_PATTERN_DETECTORS: ChartPatternDetector[] = [
   headAndShouldersDetector,
   doubleTopDetector,
   ascendingWedgeDetector,
-  ascendingChannelBreakdownDetector
+  ascendingChannelBreakdownDetector,
+  symmetricalTriangleBreakdownDetector
 ];
