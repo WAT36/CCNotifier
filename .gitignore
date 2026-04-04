@@ -6,3 +6,7 @@ dist/
 
 # prisma
 migration_lock.toml
+
+# Claude Code
+.claude/settings.local.json
+.claude/worktrees/
