@@ -25,13 +25,23 @@ export async function allCheckChartPatterns(): Promise<string[]> {
   }
 
   const sections: string[] = [];
+  let ssBuyCount = 0;
+  let ssSellCount = 0;
   for (const detector of CHART_PATTERN_DETECTORS) {
     const brands = linesByDetectorId.get(detector.id) ?? [];
     if (brands.length > 0) {
       const sideLabel = detector.signal === 'buy' ? '買い' : '売り';
       sections.push(`~~~  ${detector.titleJa}（${sideLabel}候補） ~~~\n${brands.join(', ')}`);
+      if (detector.titleJa.startsWith('SS')) {
+        if (detector.signal === 'buy') ssBuyCount++;
+        else ssSellCount++;
+      }
     }
   }
 
-  return sections.length > 0 ? ['--- チャートパターン ---', ...sections] : [];
+  if (sections.length === 0) return [];
+
+  const emojiPrefix = '💰'.repeat(ssBuyCount) + '🔥'.repeat(ssSellCount);
+  const header = emojiPrefix.length > 0 ? `${emojiPrefix}\n--- チャートパターン ---` : '--- チャートパターン ---';
+  return [header, ...sections];
 }
