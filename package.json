@@ -7,7 +7,8 @@
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
     "format": "prettier --write 'src/**/*.(ts|tsx)'",
-    "start:test": "npx ts-node src/ts/tsnodeTest.ts"
+    "start:test": "npx ts-node src/ts/tsnodeTest.ts",
+    "get:gmt-min-price": "npx tsx src/getGmtMinPrice.ts"
   },
   "repository": {
     "type": "git",
@@ -37,6 +38,7 @@
     "crypto": "^1.0.1",
     "csv-parser": "^3.0.0",
     "dotenv": "^16.4.5",
+    "playwright": "^1.59.1",
     "prisma": "^5.15.0",
     "superagent": "^10.1.1",
     "ws": "^8.17.0"
