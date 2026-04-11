@@ -1,19 +1,13 @@
 /**
  *
  * 実行方法:
- *   npx tsx scripts/getGmtMinPrice.ts
+ *   npx tsx src/getGmtMinPrice.ts
  */
 
 import * as dotenv from 'dotenv';
 import axios from 'axios';
 
 dotenv.config();
-
-const API_URL = process.env.ORDER_LIST_API_URL;
-if (!API_URL) {
-  console.error('環境変数 ORDER_LIST_API_URL が設定されていません。.env を確認してください。');
-  process.exit(1);
-}
 
 interface OrderItem {
   sellPrice?: number;
@@ -26,37 +20,52 @@ interface OrderListResponse {
   data?: OrderItem[] | { list?: OrderItem[]; [key: string]: unknown };
 }
 
-async function fetchMinGmtPrice(): Promise<void> {
-  const response = await axios.get<OrderListResponse>(API_URL || '');
+export async function fetchMinGmtPrice(chain: string): Promise<number> {
+  if (!chain) {
+    throw new Error('引数 chain が空です。3桁のチェーンIDを指定してください。');
+  }
+
+  const baseUrl = process.env.ORDER_LIST_API_URL;
+  if (!baseUrl) {
+    throw new Error('環境変数 ORDER_LIST_API_URL が設定されていません。.env を確認してください。');
+  }
+
+  const apiUrl = `${baseUrl}${chain}`;
+  const response = await axios.get<OrderListResponse>(apiUrl);
   const body = response.data;
 
   if (body.code !== undefined && body.code !== 0) {
-    console.error(`APIエラー (code=${body.code}): ${body.msg ?? '不明'}`);
-    process.exit(1);
+    throw new Error(`APIエラー (code=${body.code}): ${body.msg ?? '不明'}`);
   }
 
-  // data が配列の場合と {list: [...]} の場合に対応
   const raw = body.data;
   const items: OrderItem[] = Array.isArray(raw) ? raw : (raw?.list ?? []);
 
   if (items.length === 0) {
-    console.error('データが空です。');
-    process.exit(1);
+    throw new Error('データが空です。');
   }
 
-  const prices = items.map((item) => item.sellPrice).filter((p): p is number => typeof p === 'number' && p > 0);
+  const prices = items
+    .map((item) => item.sellPrice)
+    .filter((p): p is number => typeof p === 'number' && p > 0);
 
   if (prices.length === 0) {
-    console.error('sellPrice フィールドが見つかりませんでした。');
-    process.exit(1);
+    throw new Error('sellPrice フィールドが見つかりませんでした。');
   }
 
-  const minPrice = Math.min(...prices) / 100;
-  const now = new Date().toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' });
-  console.log(`[${now}] GMT最安値: ${minPrice}`);
+  return Math.min(...prices) / 100;
 }
 
-fetchMinGmtPrice().catch((err: unknown) => {
-  console.error('エラーが発生しました:', err);
-  process.exit(1);
-});
+// このファイルを直接実行した場合のみ動作する
+if (require.main === module) {
+  const chain = process.argv[2] ?? '';
+  fetchMinGmtPrice(chain)
+    .then((minPrice) => {
+      const now = new Date().toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' });
+      console.log(`[${now}] GMT最安値: ${minPrice}`);
+    })
+    .catch((err: unknown) => {
+      console.error('エラーが発生しました:', err instanceof Error ? err.message : err);
+      process.exit(1);
+    });
+}
