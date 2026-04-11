@@ -3,6 +3,8 @@ import { compareDataAndAssets } from './compareDataAndAssets';
 import { allCheckShopSellTime } from './allCheckShopSellTime';
 import { allCheckChartPatterns } from './chartPatterns';
 import { postWebhook } from './postWebhook';
+import { fetchMinGmtPrice } from './getGmtMinPrice';
+import { SNEAKER_CHAINS } from './lib/constant';
 
 type AllRateCheckAndPostProps = {
   isRegularly?: boolean;
@@ -47,6 +49,15 @@ export async function allRateCheckAndPost({ isRegularly = false }: AllRateCheckA
   if (chartPatternSections.length > 0) {
     await postWebhook(chartPatternSections.join('\n\n'));
   }
+
+  // 最低価格の取得・Slackへの送信
+  const sneakerResults = await Promise.allSettled(SNEAKER_CHAINS.map((chain) => fetchMinGmtPrice(chain.id)));
+  const sneakerLines = SNEAKER_CHAINS.map((chain, i) => {
+    const result = sneakerResults[i];
+    const value = result?.status === 'fulfilled' ? String(result.value) : 'N/A';
+    return `${chain.label}: ${value}`;
+  });
+  await postWebhook(`Sneakerの現在最低値\n${sneakerLines.join('\n')}`);
 }
 
 if (require.main === module) {

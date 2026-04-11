@@ -45,3 +45,9 @@ export const TRANSACTION_TIMEOUT = 20000;
 
 // チャートパターン検出で参照する販売所レート履歴の時間幅（時間）。個別パターンで別ウィンドウが必要なら Detector 側で拡張する。
 export const CHART_PATTERN_HISTORY_HOURS = 96;
+
+// 取得するチェーンの一覧。新しいチェーンを追加する場合はここにオブジェクトを追加する。
+export const SNEAKER_CHAINS = [
+  { id: '106', label: 'POL' },
+  { id: '103', label: 'SOL' }
+] as const;
