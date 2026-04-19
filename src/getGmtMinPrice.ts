@@ -69,6 +69,19 @@ export async function fetchMinGmtPrice(chain: string): Promise<number> {
   return minPrice;
 }
 
+/**
+ * sneakerRateHistory テーブルに記録されている、指定チェーンの歴代最安値を返す。
+ * レコードが存在しない場合は null を返す。
+ */
+export async function fetchRecordMinGmtPrice(chain: string): Promise<number | null> {
+  const result = await prisma.sneakerRateHistory.aggregate({
+    where: { brand: chain },
+    _min: { sneaker_rate: true }
+  });
+  const min = result._min.sneaker_rate;
+  return min !== null ? Number(min) : null;
+}
+
 // このファイルを直接実行した場合のみ動作する
 if (require.main === module) {
   const chain = process.argv[2] ?? '';
