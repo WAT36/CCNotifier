@@ -83,6 +83,13 @@ model priceRateHistory {
   brand_master brand     @relation(fields: [brand], references: [name])
 }
 
+model sneakerRateHistory {
+  id           Int       @id @default(autoincrement())
+  brand        String    @db.VarChar(4)
+  sneaker_rate Decimal?
+  created_time DateTime? @db.Timestamp(6)
+}
+
 model brandId {
   name String  @id @db.VarChar(4)
   id   Decimal
