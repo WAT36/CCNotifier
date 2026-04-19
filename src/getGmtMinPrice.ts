@@ -6,6 +6,9 @@
 
 import * as dotenv from 'dotenv';
 import axios from 'axios';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 dotenv.config();
 
@@ -53,7 +56,17 @@ export async function fetchMinGmtPrice(chain: string): Promise<number> {
     throw new Error('sellPrice フィールドが見つかりませんでした。');
   }
 
-  return Math.min(...prices) / 100;
+  const minPrice = Math.min(...prices) / 100;
+
+  await prisma.sneakerRateHistory.create({
+    data: {
+      brand: chain,
+      sneaker_rate: minPrice,
+      created_time: new Date()
+    }
+  });
+
+  return minPrice;
 }
 
 // このファイルを直接実行した場合のみ動作する
