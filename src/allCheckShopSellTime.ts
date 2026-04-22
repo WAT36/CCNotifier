@@ -1,5 +1,5 @@
 import { BRANDS, messageTemplate } from './config';
-import { CheckShopSellResult, checkShopSellTime } from './checkShopSellTime';
+import { CheckShopSellResult, checkShopSellTime, fetchBrandAskStats } from './checkShopSellTime';
 import {
   MIN_GAIN_YEN_SUM,
   HIGH_GROWTH_RATE_THRESHOLD,
@@ -13,6 +13,25 @@ export async function allCheckShopSellTime(isRegularly: boolean = false) {
   for (const brand of BRANDS) {
     results.push(await checkShopSellTime(brand.toUpperCase()));
   }
+
+  // 全銘柄の購入レート統計を並列取得し、brand → 比較テキスト のマップを作る
+  const askStatsEntries = await Promise.all(
+    BRANDS.map(async (brand) => {
+      const stats = await fetchBrandAskStats(brand.toUpperCase());
+      return [brand.toUpperCase(), stats] as const;
+    })
+  );
+  const askStatsMap = new Map(askStatsEntries);
+
+  const getAskComparisonText = (brand: string): string => {
+    const stats = askStatsMap.get(brand);
+    if (!stats) return '';
+    const { currentAsk, historicalMinAsk } = stats;
+    if (currentAsk === null || historicalMinAsk === null || historicalMinAsk <= 0) return '';
+    const diffPct = ((currentAsk - historicalMinAsk) / historicalMinAsk) * 100;
+    if (Math.abs(diffPct) < 0.01) return ' ★ 購入最安値';
+    return ` (購入最安値比: +${diffPct.toFixed(1)}%  最安値: ${historicalMinAsk})`;
+  };
 
   let messages: string[] = [];
   const gainsYenSum = results
@@ -41,7 +60,7 @@ export async function allCheckShopSellTime(isRegularly: boolean = false) {
             sell.gainsYen,
             sell.gainsGrowthRate,
             diffDaysHours
-          )
+          ) + getAskComparisonText(brand)
         : '';
     });
   messages = messages.concat(sells);
@@ -74,7 +93,8 @@ export async function allCheckShopSellTime(isRegularly: boolean = false) {
               ? '💥'
               : buy.comparisonRate <= -Math.log2(buy.lastBuyYen / PERCENTAGE_MULTIPLIER)
                 ? '🌟'
-                : '')
+                : '') +
+            getAskComparisonText(brand)
         : '';
     });
   messages = messages.concat(buys);
@@ -104,7 +124,7 @@ export async function allCheckShopSellTime(isRegularly: boolean = false) {
             stay.yenBet,
             stay.targetIncreaseRate,
             diffDaysHours
-          )
+          ) + getAskComparisonText(brand)
         : '';
     });
   messages = messages.concat(stays);
@@ -115,7 +135,7 @@ export async function allCheckShopSellTime(isRegularly: boolean = false) {
     .filter((res) => res.recommend === 'none')
     .map((res) => {
       const { brand } = res;
-      return messageTemplate.NONE(brand);
+      return messageTemplate.NONE(brand) + getAskComparisonText(brand);
     });
   messages = messages.concat(nones);
   messages.push('---------------------');

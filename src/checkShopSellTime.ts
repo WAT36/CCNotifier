@@ -165,6 +165,31 @@ export const checkShopSellTime = async (brand: string): Promise<CheckShopSellRes
   }
 };
 
+/**
+ * 指定銘柄の現在の購入レート（直近のask_price）と
+ * 歴代最安の購入レート（ask_priceの最小値）を返す。
+ */
+export async function fetchBrandAskStats(brand: string): Promise<{
+  currentAsk: number | null;
+  historicalMinAsk: number | null;
+}> {
+  const [latest, aggregate] = await Promise.all([
+    prisma.priceRateHistory.findFirst({
+      where: { brand },
+      orderBy: { created_time: 'desc' },
+      select: { ask_price: true }
+    }),
+    prisma.priceRateHistory.aggregate({
+      where: { brand },
+      _min: { ask_price: true }
+    })
+  ]);
+  return {
+    currentAsk: latest?.ask_price != null ? Number(latest.ask_price) : null,
+    historicalMinAsk: aggregate._min.ask_price != null ? Number(aggregate._min.ask_price) : null
+  };
+}
+
 // 引数チェック
 if (process.argv[1] === __filename && process.argv.length !== 3) {
   console.error('Error: Usage: npx ts-node src/checkSellTime.ts brand');
