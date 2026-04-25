@@ -8,14 +8,23 @@ import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as apigw from 'aws-cdk-lib/aws-apigateway';
 import * as cognito from 'aws-cdk-lib/aws-cognito';
+import * as acm from 'aws-cdk-lib/aws-certificatemanager';
+import * as cloudfront from 'aws-cdk-lib/aws-cloudfront';
+import * as origins from 'aws-cdk-lib/aws-cloudfront-origins';
+import * as route53 from 'aws-cdk-lib/aws-route53';
+import * as route53targets from 'aws-cdk-lib/aws-route53-targets';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
 import { Duration, RemovalPolicy } from 'aws-cdk-lib';
 
 dotenv.config({ path: path.join(__dirname, '../../.env') });
 
+interface InfraStackProps extends cdk.StackProps {
+  certificate: acm.ICertificate;
+}
+
 export class InfraStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: Construct, id: string, props: InfraStackProps) {
     super(scope, id, props);
 
     // ECR repository
@@ -151,6 +160,37 @@ export class InfraStack extends cdk.Stack {
         proxy: true
       })
     );
+
+    // Route53 Hosted Zone (既存ドメインをインポート)
+    const hostedZone = route53.HostedZone.fromHostedZoneAttributes(this, 'HostedZone', {
+      hostedZoneId: process.env.HOSTZONE_ID!,
+      zoneName: process.env.HOSTZONE_NAME!
+    });
+
+    // CloudFront Distribution (フロントエンド用)
+    const frontDistribution = new cloudfront.Distribution(this, 'CCNotifierFrontDistribution', {
+      defaultBehavior: {
+        origin: new origins.HttpOrigin(biPageBucket.bucketWebsiteDomainName, {
+          protocolPolicy: cloudfront.OriginProtocolPolicy.HTTP_ONLY
+        }),
+        viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS
+      },
+      domainNames: [process.env.FRONT_DOMAIN_NAME!],
+      certificate: props.certificate
+    });
+
+    // Route53 Aレコード (フロント用ドメイン → CloudFront)
+    const frontDomain = process.env.FRONT_DOMAIN_NAME!;
+    const hostzoneName = process.env.HOSTZONE_NAME!;
+    const subDomain = frontDomain.endsWith(`.${hostzoneName}`)
+      ? frontDomain.slice(0, frontDomain.length - hostzoneName.length - 1)
+      : frontDomain;
+
+    new route53.ARecord(this, 'CCNotifierFrontARecord', {
+      zone: hostedZone,
+      recordName: subDomain,
+      target: route53.RecordTarget.fromAlias(new route53targets.CloudFrontTarget(frontDistribution))
+    });
 
     // Cognito User Pool
     const userPool = new cognito.UserPool(this, 'CCNotifierUserPool', {
