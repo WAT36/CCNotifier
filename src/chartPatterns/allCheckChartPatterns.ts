@@ -1,4 +1,4 @@
-import { BRANDS } from '../config';
+import { getBrands } from '../config';
 import { CHART_PATTERN_HISTORY_HOURS } from '../lib/constant';
 import { loadPriceBarsForBrand } from './loadPriceBars';
 import { CHART_PATTERN_DETECTORS } from './registry';
@@ -8,6 +8,7 @@ import { CHART_PATTERN_DETECTORS } from './registry';
  * 銘柄ごとに priceRateHistory は1回だけ読み、全パターンで同じバーを使う（パターン追加時もDB負荷が増えにくい）。
  */
 export async function allCheckChartPatterns(): Promise<string[]> {
+  const BRANDS = await getBrands();
   const since = new Date(Date.now() - CHART_PATTERN_HISTORY_HOURS * 60 * 60 * 1000);
   const linesByDetectorId = new Map<string, string[]>();
   for (const d of CHART_PATTERN_DETECTORS) {

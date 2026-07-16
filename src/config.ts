@@ -1,25 +1,14 @@
-export const BRANDS = [
-  'btc',
-  'eth',
-  'bch',
-  'ltc',
-  'xrp',
-  'xlm',
-  'dot',
-  'atom',
-  'ada',
-  'link',
-  'doge',
-  'sol',
-  'fil',
-  'sand',
-  'chz',
-  'avax',
-  'sui',
-  'zpg',
-  'zpgag',
-  'zpgpt'
-];
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
+
+export async function getBrands(): Promise<string[]> {
+  const brands = await prisma.brandId.findMany({
+    where: { deleted_at: null },
+    select: { name: true }
+  });
+  return brands.map((b) => b.name);
+}
 
 export const BIDASK = ['bid', 'ask'];
 
