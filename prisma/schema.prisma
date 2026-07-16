@@ -76,7 +76,7 @@ model tradeHistoryRakuten {
 
 model priceRateHistory {
   id           Int       @id @default(autoincrement())
-  brand        String    @db.VarChar(4)
+  brand        String    @db.VarChar(5)
   bid_price    Decimal?
   ask_price    Decimal?
   created_time DateTime? @db.Timestamp(6)
@@ -94,8 +94,8 @@ model brandId {
   name       String    @id @db.VarChar(5)
   id         Decimal
   created_at DateTime  @default(now()) @db.Timestamp(6)
-  updated_at DateTime  @default(now()) @updatedAt @db.Timestamp(6)
   deleted_at DateTime? @db.Timestamp(6)
+  updated_at DateTime  @default(now()) @updatedAt @db.Timestamp(6)
 }
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
@@ -172,7 +172,7 @@ view trade_year_list {
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 view latest_price_rate {
-  brand        String   @unique @db.VarChar(4)
+  brand        String   @unique @db.VarChar(5)
   bid_price    Decimal
   ask_price    Decimal
   created_time DateTime @db.Timestamp(6)
