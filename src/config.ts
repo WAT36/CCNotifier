@@ -14,7 +14,11 @@ export const BRANDS = [
   'fil',
   'sand',
   'chz',
-  'avax'
+  'avax',
+  'sui',
+  'zpg',
+  'zpgag',
+  'zpgpt'
 ];
 
 export const BIDASK = ['bid', 'ask'];
