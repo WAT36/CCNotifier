@@ -103,14 +103,46 @@ export class InfraStack extends cdk.Stack {
     ccnotifierLambda.addToRolePolicy(s3WritePolicy);
 
     // EventBridge
-    const ccnotifierEvent = new events.Rule(this, 'CCNotifier', {
-      ruleName: 'CCNotifier',
+    // 定期バッチはrateCheck/chartPatterns/sneakerの3ジョブに分割し、それぞれ別ルールから
+    // job名をLambdaへの入力として渡す。1回の実行時間を短くしてLambdaタイムアウトのリスクを下げるため
+    const rateCheckEvent = new events.Rule(this, 'CCNotifierRateCheck', {
+      ruleName: 'CCNotifierRateCheck',
       schedule: events.Schedule.cron({
         hour: '0-16,20-23',
         minute: '2'
       })
     });
-    ccnotifierEvent.addTarget(new targets.LambdaFunction(ccnotifierLambda, {}));
+    rateCheckEvent.addTarget(
+      new targets.LambdaFunction(ccnotifierLambda, {
+        event: events.RuleTargetInput.fromObject({ job: 'rateCheck' })
+      })
+    );
+
+    const chartPatternsEvent = new events.Rule(this, 'CCNotifierChartPatterns', {
+      ruleName: 'CCNotifierChartPatterns',
+      schedule: events.Schedule.cron({
+        hour: '0-16,20-23',
+        minute: '4'
+      })
+    });
+    chartPatternsEvent.addTarget(
+      new targets.LambdaFunction(ccnotifierLambda, {
+        event: events.RuleTargetInput.fromObject({ job: 'chartPatterns' })
+      })
+    );
+
+    const sneakerEvent = new events.Rule(this, 'CCNotifierSneaker', {
+      ruleName: 'CCNotifierSneaker',
+      schedule: events.Schedule.cron({
+        hour: '0-16,20-23',
+        minute: '6'
+      })
+    });
+    sneakerEvent.addTarget(
+      new targets.LambdaFunction(ccnotifierLambda, {
+        event: events.RuleTargetInput.fromObject({ job: 'sneaker' })
+      })
+    );
 
     const ccnotifierFileUploadedEvent = new events.Rule(this, 'CCNotifierFileUploaded', {
       ruleName: 'CCNotifierFileUploaded',

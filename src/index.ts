@@ -4,7 +4,7 @@ import * as util from 'util';
 import csv from 'csv-parser';
 import { postWebhook } from './postWebhook';
 import { registerDataByLambda } from './registerTradeHistory';
-import { allRateCheckAndPost } from './allRateCheckAndPost';
+import { allRateCheckAndPost, runRateCheck, runChartPatternCheck, runSneakerCheck } from './allRateCheckAndPost';
 import { routeApiGatewayRequest } from './apiRouter';
 
 const s3 = new S3Client({ region: process.env.REGION });
@@ -77,12 +77,23 @@ export const handler = async (event: any, context: any) => {
       };
     } else {
       // EventBridgeからの定期スケジュール実行
-      await allRateCheckAndPost({ isRegularly: true });
+      // job: 'rateCheck' | 'chartPatterns' | 'sneaker' をEventBridgeルールの入力(Constant JSON text)で指定し、
+      // ジョブごとに個別のLambda実行として動かす。未指定の場合は後方互換で3つまとめて実行する
+      const job = event?.job;
+      if (job === 'rateCheck') {
+        await runRateCheck(true);
+      } else if (job === 'chartPatterns') {
+        await runChartPatternCheck();
+      } else if (job === 'sneaker') {
+        await runSneakerCheck();
+      } else {
+        await allRateCheckAndPost({ isRegularly: true });
+      }
 
       return {
         statusCode: 200,
         body: JSON.stringify({
-          message: 'Scheduled rate check completed'
+          message: `Scheduled job completed: ${job ?? 'all'}`
         }),
         headers: {
           'Content-Type': 'application/json',

@@ -6,12 +6,9 @@ import { postWebhook } from './postWebhook';
 import { fetchMinGmtPrice, fetchRecordMinGmtPrice } from './getGmtMinPrice';
 import { SNEAKER_CHAINS } from './lib/constant';
 
-type AllRateCheckAndPostProps = {
-  isRegularly?: boolean;
-};
-// 定期バッチを手動で実行させる
-export async function allRateCheckAndPost({ isRegularly = false }: AllRateCheckAndPostProps = {}) {
-  // all update rate
+// レート更新・資産比較・売買判定 → Slack投稿。この3つは同一実行内で順番に行う必要がある
+// （compareDataAndAssets・allCheckShopSellTimeはallUpdateShopRateが直前に書いたレートを読むため）
+export async function runRateCheck(isRegularly: boolean = false) {
   try {
     await allUpdateShopRate();
   } catch (e) {
@@ -19,7 +16,6 @@ export async function allRateCheckAndPost({ isRegularly = false }: AllRateCheckA
     return;
   }
 
-  // assets compare
   let compareResult;
   try {
     compareResult = await compareDataAndAssets();
@@ -28,8 +24,7 @@ export async function allRateCheckAndPost({ isRegularly = false }: AllRateCheckA
     return;
   }
 
-  // all check sell time
-  const allCheckResult = await allCheckShopSellTime(isRegularly || false);
+  const allCheckResult = await allCheckShopSellTime(isRegularly);
 
   // slackメッセージの作成（売り時、買い時、比較NG）
   const mainParts: string[] = [];
@@ -45,17 +40,21 @@ export async function allRateCheckAndPost({ isRegularly = false }: AllRateCheckA
     );
   }
 
-  // slackメッセージの送信（売り時、買い時、比較NG）
   if (mainParts.length > 0) {
     await postWebhook(mainParts.join('\n\n'));
   }
+}
 
-  // チャートパターンのチェック・Slackへの送信
+// チャートパターンのチェック・Slackへの送信。priceRateHistoryの直近96時間分を見るだけなので独立して実行可能
+export async function runChartPatternCheck() {
   const chartPatternSections = await allCheckChartPatterns();
   if (chartPatternSections.length > 0) {
     await postWebhook(chartPatternSections.join('\n\n'));
   }
+}
 
+// スニーカーの最低価格取得・Slackへの送信。他のジョブと完全に独立
+export async function runSneakerCheck() {
   // 最低価格の取得（DBへの保存も行われる）
   const sneakerResults = await Promise.allSettled(SNEAKER_CHAINS.map((chain) => fetchMinGmtPrice(chain.id)));
 
@@ -87,6 +86,17 @@ export async function allRateCheckAndPost({ isRegularly = false }: AllRateCheckA
   const hasNewRecord = sneakerLines.some((line) => line.includes('★ 新最安値'));
   const sneakerHeader = hasNewRecord ? 'Sneakerの現在最低値 🎉' : 'Sneakerの現在最低値';
   await postWebhook(`${sneakerHeader}\n${sneakerLines.join('\n')}`);
+}
+
+type AllRateCheckAndPostProps = {
+  isRegularly?: boolean;
+};
+// 3ジョブをまとめて順番に実行する（手動実行・ローカル検証用）。本番のEventBridgeからは
+// job単位（runRateCheck/runChartPatternCheck/runSneakerCheck）で個別に呼び出す想定
+export async function allRateCheckAndPost({ isRegularly = false }: AllRateCheckAndPostProps = {}) {
+  await runRateCheck(isRegularly);
+  await runChartPatternCheck();
+  await runSneakerCheck();
 }
 
 if (require.main === module) {
