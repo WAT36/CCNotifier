@@ -167,4 +167,6 @@ export async function allCheckShopSellTime(isRegularly: boolean = false) {
   return messages;
 }
 
-allCheckShopSellTime();
+if (require.main === module) {
+  allCheckShopSellTime();
+}

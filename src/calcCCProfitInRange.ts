@@ -99,4 +99,6 @@ export async function calcCCProfitinRange(startDateInput?: Date, endDateInput?: 
   );
   return result;
 }
-calcCCProfitinRange();
+if (require.main === module) {
+  calcCCProfitinRange();
+}

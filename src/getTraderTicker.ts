@@ -35,4 +35,6 @@ export const getTradeTicker = async () => {
   });
 };
 
-getTradeTicker();
+if (require.main === module) {
+  getTradeTicker();
+}

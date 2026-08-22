@@ -67,4 +67,6 @@ export async function calcCCTradeCountinRange() {
   console.log(result);
   return result;
 }
-calcCCTradeCountinRange();
+if (require.main === module) {
+  calcCCTradeCountinRange();
+}
