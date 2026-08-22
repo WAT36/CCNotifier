@@ -9,9 +9,12 @@ import { SNEAKER_CHAINS } from './lib/constant';
 // レート更新・資産比較・売買判定 → Slack投稿。この3つは同一実行内で順番に行う必要がある
 // （compareDataAndAssets・allCheckShopSellTimeはallUpdateShopRateが直前に書いたレートを読むため）
 export async function runRateCheck(isRegularly: boolean = false) {
+  console.log('[runRateCheck] start');
   try {
     await allUpdateShopRate();
+    console.log('[runRateCheck] allUpdateShopRate done');
   } catch (e) {
+    console.log('[runRateCheck] allUpdateShopRate failed', e);
     await postWebhook('レート情報を取得できませんでした。メンテナンス中か、APIに問題が発生している可能性があります。');
     return;
   }
@@ -19,12 +22,15 @@ export async function runRateCheck(isRegularly: boolean = false) {
   let compareResult;
   try {
     compareResult = await compareDataAndAssets();
+    console.log('[runRateCheck] compareDataAndAssets done');
   } catch (e) {
+    console.log('[runRateCheck] compareDataAndAssets failed', e);
     await postWebhook('保有資産情報を取得できませんでした。メンテナンス中か、APIに問題が発生している可能性があります。');
     return;
   }
 
   const allCheckResult = await allCheckShopSellTime(isRegularly);
+  console.log('[runRateCheck] allCheckShopSellTime done');
 
   // slackメッセージの作成（売り時、買い時、比較NG）
   const mainParts: string[] = [];
@@ -94,9 +100,13 @@ type AllRateCheckAndPostProps = {
 // 3ジョブをまとめて順番に実行する（手動実行・ローカル検証用）。本番のEventBridgeからは
 // job単位（runRateCheck/runChartPatternCheck/runSneakerCheck）で個別に呼び出す想定
 export async function allRateCheckAndPost({ isRegularly = false }: AllRateCheckAndPostProps = {}) {
+  console.log("--- Start ---")
   await runRateCheck(isRegularly);
+  console.log("--- Rate Check Completed ---")
   await runChartPatternCheck();
+  console.log("--- Chart Pattern Check Completed ---")
   await runSneakerCheck();
+  console.log("--- Sneaker Check Completed ---")
 }
 
 if (require.main === module) {

@@ -2,9 +2,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { readFile } from 'fs/promises';
 import * as dotenv from 'dotenv';
-import { PrismaClient } from '@prisma/client';
 import { TRANSACTION_MAX_WAIT, TRANSACTION_TIMEOUT } from './lib/constant';
-export const prisma: PrismaClient = new PrismaClient();
+import { prisma } from './lib/prisma';
 
 dotenv.config({ path: path.join(__dirname, '../.env') });
 

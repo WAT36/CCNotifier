@@ -1,4 +1,4 @@
-import { prisma } from '../allUpdateShopRate';
+import { prisma } from '../lib/prisma';
 import type { PriceBar } from './types';
 
 export async function loadPriceBarsForBrand(brandUpper: string, since: Date): Promise<PriceBar[]> {

@@ -1,7 +1,6 @@
-import { PrismaClient } from '@prisma/client';
 import { parseYyyyMmDd, parseYyyyMmDdNextDay } from './lib/date';
 import { DEFAULT_START_DATE, DEFAULT_END_DATE, EXCLUDED_BRAND } from './lib/constant';
-export const prisma: PrismaClient = new PrismaClient();
+import { prisma } from './lib/prisma';
 
 //  startDate,endDateがYYYY-MMM-DD形式か確認
 const startDate = parseYyyyMmDd(process.argv[2] || DEFAULT_START_DATE);

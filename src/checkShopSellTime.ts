@@ -1,7 +1,6 @@
-import { PrismaClient } from '@prisma/client';
 import { Decimal } from '@prisma/client/runtime/library';
 import { PERCENTAGE_MULTIPLIER, DECIMAL_PLACES } from './lib/constant';
-export const prisma: PrismaClient = new PrismaClient();
+import { prisma } from './lib/prisma';
 
 /**
  * 銘柄が売り時かを確認する

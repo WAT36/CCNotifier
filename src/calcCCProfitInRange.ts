@@ -1,7 +1,6 @@
-import { PrismaClient } from '@prisma/client';
 import { parseYyyyMmDd, parseYyyyMmDdNextDay } from './lib/date';
 import { DEFAULT_START_DATE, DEFAULT_END_DATE, EXCLUDED_BRAND } from './lib/constant';
-export const prisma: PrismaClient = new PrismaClient();
+import { prisma } from './lib/prisma';
 
 type ProfitResult = {
   brand: {

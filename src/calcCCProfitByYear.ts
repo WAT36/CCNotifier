@@ -1,6 +1,7 @@
-import { calcCCProfitinRange, prisma } from './calcCCProfitInRange';
+import { calcCCProfitinRange } from './calcCCProfitInRange';
 import { parseYyyyMmDd, parseYyyyMmDdNextDay } from './lib/date';
 import { YEAR_START_DATE_FORMAT, YEAR_END_DATE_FORMAT } from './lib/constant';
+import { prisma } from './lib/prisma';
 
 export type YearlyProfitSummary = {
   year: number;

@@ -1,8 +1,7 @@
 import { getAssets } from './getAssets';
-import { PrismaClient } from '@prisma/client';
 import { EXCLUDED_BRAND, ASSETS_COMPARISON_TOLERANCE, ASSETS_DECIMAL_PLACES } from './lib/constant';
 import { AssetsDataType } from './lib/types';
-export const prisma: PrismaClient = new PrismaClient();
+import { prisma } from './lib/prisma';
 
 /**
  * DBにある現保有資産と資産取得APIの結果を比較し、違う場合はアラートを出す

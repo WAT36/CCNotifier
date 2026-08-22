@@ -1,9 +1,8 @@
-import { PrismaClient } from '@prisma/client';
 import { getAssets } from './getAssets';
 import { AssetsDataType } from './lib/types';
 import { EXCLUDED_BRAND } from './lib/constant';
 import { compareDataAndAssets } from './compareDataAndAssets';
-export const prisma: PrismaClient = new PrismaClient();
+import { prisma } from './lib/prisma';
 
 // それぞれの通貨で現保有数量をいくらのレート以上で売れば利回りか（売値の最低価格）確認する
 export async function calcMinTradeRate() {

@@ -1,8 +1,7 @@
 import * as dotenv from 'dotenv';
 import * as path from 'path';
 import { getShopRate } from './getShopRate';
-import { PrismaClient } from '@prisma/client';
-export const prisma: PrismaClient = new PrismaClient();
+import { prisma } from './lib/prisma';
 dotenv.config({ path: path.join(__dirname, '../.env') });
 
 export type ShopRate = {

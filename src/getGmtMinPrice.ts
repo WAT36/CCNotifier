@@ -6,10 +6,8 @@
 
 import * as dotenv from 'dotenv';
 import axios from 'axios';
-import { PrismaClient } from '@prisma/client';
 import { HTTP_TIMEOUT_MS } from './lib/constant';
-
-const prisma = new PrismaClient();
+import { prisma } from './lib/prisma';
 
 dotenv.config();
 
