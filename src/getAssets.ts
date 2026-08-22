@@ -29,7 +29,15 @@ export const getAssets = async () => {
       .then(function (response) {
         //console.log(response.data);
         // response.dataに実際のデータが入っている
-        let result: string = response.data;
+        const result = response.data;
+        // APIはエラー時もHTTP200で { status, messages } を返すため明示的にチェックする
+        if (result?.status !== 0) {
+          const messages = (result?.messages ?? [])
+            .map((m: { message_code?: string; message_string?: string }) => `${m.message_code}: ${m.message_string}`)
+            .join(', ');
+          reject(new Error(`getAssets API error (status: ${result?.status}): ${messages}`));
+          return;
+        }
         resolve(result);
       })
       .catch(function (error) {
@@ -40,4 +48,6 @@ export const getAssets = async () => {
   });
 };
 
-getAssets();
+if (require.main === module) {
+  getAssets();
+}

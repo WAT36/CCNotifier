@@ -63,4 +63,6 @@ export async function compareDataAndAssets() {
   return result;
 }
 
-compareDataAndAssets();
+if (require.main === module) {
+  compareDataAndAssets();
+}

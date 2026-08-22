@@ -20,7 +20,13 @@ export async function allRateCheckAndPost({ isRegularly = false }: AllRateCheckA
   }
 
   // assets compare
-  const compareResult = await compareDataAndAssets();
+  let compareResult;
+  try {
+    compareResult = await compareDataAndAssets();
+  } catch (e) {
+    await postWebhook('保有資産情報を取得できませんでした。メンテナンス中か、APIに問題が発生している可能性があります。');
+    return;
+  }
 
   // all check sell time
   const allCheckResult = await allCheckShopSellTime(isRegularly || false);

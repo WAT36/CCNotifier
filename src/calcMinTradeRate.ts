@@ -41,4 +41,6 @@ export async function calcMinTradeRate() {
   return result;
 }
 
-calcMinTradeRate();
+if (require.main === module) {
+  calcMinTradeRate();
+}
