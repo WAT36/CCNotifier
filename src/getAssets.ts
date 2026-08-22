@@ -2,6 +2,7 @@ import axios from 'axios';
 import crypto from 'crypto';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
+import { HTTP_TIMEOUT_MS } from './lib/constant';
 dotenv.config({ path: path.join(__dirname, '../.env') });
 
 export const getAssets = async () => {
@@ -20,7 +21,8 @@ export const getAssets = async () => {
       'API-KEY': apiKey,
       'API-TIMESTAMP': timestamp,
       'API-SIGN': sign
-    }
+    },
+    timeout: HTTP_TIMEOUT_MS
   };
 
   return await new Promise<any>((resolve, reject) => {

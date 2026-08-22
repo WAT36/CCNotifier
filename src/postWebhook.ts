@@ -1,10 +1,11 @@
 import * as dotenv from 'dotenv';
 import * as path from 'path';
+import { fetchWithTimeout } from './lib/http';
 dotenv.config({ path: path.join(__dirname, '../.env') });
 
 export const postWebhook = async (text: string) => {
   const webHookURL = process.env.WEBHOOK_URL || '';
-  return await fetch(webHookURL, {
+  return await fetchWithTimeout(webHookURL, {
     method: 'POST',
     body: JSON.stringify({
       text

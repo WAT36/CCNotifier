@@ -1,10 +1,11 @@
 import * as dotenv from 'dotenv';
 import * as path from 'path';
+import { fetchWithTimeout } from './lib/http';
 dotenv.config({ path: path.join(__dirname, '../.env') });
 
 export const getShopRate = async () => {
   const url = process.env.SHOP_URL || '';
-  const result = await fetch(url, {
+  const result = await fetchWithTimeout(url, {
     method: 'GET'
   }).then((response) =>
     response.json().then((data) => ({

@@ -7,6 +7,7 @@
 import * as dotenv from 'dotenv';
 import axios from 'axios';
 import { PrismaClient } from '@prisma/client';
+import { HTTP_TIMEOUT_MS } from './lib/constant';
 
 const prisma = new PrismaClient();
 
@@ -34,7 +35,7 @@ export async function fetchMinGmtPrice(chain: string): Promise<number> {
   }
 
   const apiUrl = `${baseUrl}${chain}`;
-  const response = await axios.get<OrderListResponse>(apiUrl);
+  const response = await axios.get<OrderListResponse>(apiUrl, { timeout: HTTP_TIMEOUT_MS });
   const body = response.data;
 
   if (body.code !== undefined && body.code !== 0) {
