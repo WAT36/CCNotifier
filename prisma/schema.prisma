@@ -81,6 +81,8 @@ model priceRateHistory {
   ask_price    Decimal?
   created_time DateTime? @db.Timestamp(6)
   brand_master brand     @relation(fields: [brand], references: [name])
+
+  @@index([brand, created_time])
 }
 
 model sneakerRateHistory {
