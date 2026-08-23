@@ -1,5 +1,5 @@
 import { getBrands, messageTemplate } from './config';
-import { CheckShopSellResult, checkShopSellTime, fetchBrandAskStats } from './checkShopSellTime';
+import { CheckShopSellResult, computeShopSellResult, fetchAllBrandSellData, fetchAskStatsMap } from './checkShopSellTime';
 import {
   MIN_GAIN_YEN_SUM,
   HIGH_GROWTH_RATE_THRESHOLD,
@@ -10,19 +10,16 @@ import { diffDaysHoursFromNow } from './lib/date';
 
 export async function allCheckShopSellTime(isRegularly: boolean = false) {
   const BRANDS = await getBrands();
-  const results: CheckShopSellResult[] = [];
-  for (const brand of BRANDS) {
-    results.push(await checkShopSellTime(brand.toUpperCase()));
-  }
+  const upperBrands = BRANDS.map((brand) => brand.toUpperCase());
 
-  // 全銘柄の購入レート統計を並列取得し、brand → 比較テキスト のマップを作る
-  const askStatsEntries = await Promise.all(
-    BRANDS.map(async (brand) => {
-      const stats = await fetchBrandAskStats(brand.toUpperCase());
-      return [brand.toUpperCase(), stats] as const;
-    })
+  // 銘柄ごとにfindUniqueをループするとN+1になるため、全銘柄分を1回のfindManyでまとめて取得する
+  const brandDataMap = await fetchAllBrandSellData(upperBrands);
+  const results: CheckShopSellResult[] = upperBrands.map((brand) =>
+    computeShopSellResult(brand, brandDataMap.get(brand))
   );
-  const askStatsMap = new Map(askStatsEntries);
+
+  // 全銘柄の購入レート統計もまとめて取得し、brand → 比較テキスト のマップを作る
+  const askStatsMap = await fetchAskStatsMap(upperBrands, brandDataMap);
 
   const getAskComparisonText = (brand: string): string => {
     const stats = askStatsMap.get(brand);

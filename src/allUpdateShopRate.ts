@@ -26,21 +26,21 @@ export const allUpdateShopRate = async () => {
     };
   });
 
-  await prisma.$transaction(async (prisma) => {
-    for (const brandRateData of shopRateData) {
-      // レート履歴登録
-      if (brandIdMapData[String(brandRateData.id)]) {
-        await prisma.priceRateHistory.create({
-          data: {
-            brand: brandIdMapData[brandRateData.id].toUpperCase(),
-            bid_price: brandRateData.bid,
-            ask_price: brandRateData.ask,
-            created_time: new Date()
-          }
-        });
-      }
-    }
-  });
+  // レート履歴登録。1件ずつtransaction内でcreateすると件数分の往復が発生するため、
+  // 一括createManyで1回のINSERTにまとめる（複数件のbulk insertはそれ自体が原子的なのでtransactionも不要）
+  const now = new Date();
+  const rateHistoryData = shopRateData
+    .filter((brandRateData) => brandIdMapData[String(brandRateData.id)])
+    .map((brandRateData) => ({
+      brand: brandIdMapData[brandRateData.id].toUpperCase(),
+      bid_price: brandRateData.bid,
+      ask_price: brandRateData.ask,
+      created_time: now
+    }));
+
+  if (rateHistoryData.length > 0) {
+    await prisma.priceRateHistory.createMany({ data: rateHistoryData });
+  }
 };
 
 // 引数チェック
