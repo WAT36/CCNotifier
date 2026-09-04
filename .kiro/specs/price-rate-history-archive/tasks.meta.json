@@ -12,6 +12,18 @@
         "chatSessionId": "sess_fdfc0a13-8332-47f5-8c6e-c17df3ad4dc2",
         "timestamp": 1788560599641
       }
+    ],
+    "2.1 `calcArchiveThreshold(now: Date): Date` を実装する": [
+      {
+        "executionId": "d8e12855-3bda-43c7-8b98-45542d16a668",
+        "chatSessionId": "sess_70821ad6-c49c-440b-af06-47cf9f04ca1e",
+        "timestamp": 1788561127903
+      },
+      {
+        "executionId": "d8e12855-3bda-43c7-8b98-45542d16a668",
+        "chatSessionId": "sess_70821ad6-c49c-440b-af06-47cf9f04ca1e",
+        "timestamp": 1788561162040
+      }
     ]
   }
 }

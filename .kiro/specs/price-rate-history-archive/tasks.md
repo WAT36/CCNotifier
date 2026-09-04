@@ -20,7 +20,7 @@
   - _Requirements: 5.2（テスト基盤として全要件をカバー）_
 
 - [ ] 2. 純粋関数の実装（`src/archivePriceRateHistory.ts`）
-  - [ ] 2.1 `calcArchiveThreshold(now: Date): Date` を実装する
+  - [x] 2.1 `calcArchiveThreshold(now: Date): Date` を実装する
     - `now` から正確に 6ヶ月前の `Date` を返す
     - _Requirements: 1.1_
 
