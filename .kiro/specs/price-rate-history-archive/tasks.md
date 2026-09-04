@@ -89,8 +89,8 @@
       - **DB 削除失敗**: Slack エラー通知が送られること
     - _Requirements: 1.3, 2.4, 3.2, 3.3, 4.2, 4.3_
 
-- [ ] 5. `src/index.ts` へのルーティング追加
-  - [ ] 5.1 `archivePriceRateHistory` を `src/index.ts` にインポートし、既存の `else if` チェーンに `job === 'archivePriceRateHistory'` の分岐を追加する
+- [x] 5. `src/index.ts` へのルーティング追加
+  - [~] 5.1 `archivePriceRateHistory` を `src/index.ts` にインポートし、既存の `else if` チェーンに `job === 'archivePriceRateHistory'` の分岐を追加する
     - 追加位置は `sneaker` の分岐と `else`（`allRateCheckAndPost`）の間
     - _Requirements: 5.2_
 

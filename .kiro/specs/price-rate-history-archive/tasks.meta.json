@@ -91,6 +91,18 @@
         "chatSessionId": "sess_b0c79c93-7bd8-4ac3-9283-ab8c33b8a153",
         "timestamp": 1788562260904
       }
+    ],
+    "5. `src/index.ts` へのルーティング追加": [
+      {
+        "executionId": "ff8e99a9-a1a3-47b9-939a-06908ceb115d",
+        "chatSessionId": "sess_6c6b3646-3a13-4a51-8e91-53a8ca4396f9",
+        "timestamp": 1788562419662
+      },
+      {
+        "executionId": "ff8e99a9-a1a3-47b9-939a-06908ceb115d",
+        "chatSessionId": "sess_6c6b3646-3a13-4a51-8e91-53a8ca4396f9",
+        "timestamp": 1788562457612
+      }
     ]
   }
 }

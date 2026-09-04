@@ -6,6 +6,7 @@ import { postWebhook } from './postWebhook';
 import { registerDataByLambda } from './registerTradeHistory';
 import { allRateCheckAndPost, runRateCheck, runChartPatternCheck, runSneakerCheck } from './allRateCheckAndPost';
 import { routeApiGatewayRequest } from './apiRouter';
+import { archivePriceRateHistory } from './archivePriceRateHistory';
 
 const s3 = new S3Client({ region: process.env.REGION });
 
@@ -86,6 +87,8 @@ export const handler = async (event: any, context: any) => {
         await runChartPatternCheck();
       } else if (job === 'sneaker') {
         await runSneakerCheck();
+      } else if (job === 'archivePriceRateHistory') {
+        await archivePriceRateHistory();
       } else {
         await allRateCheckAndPost({ isRegularly: true });
       }
