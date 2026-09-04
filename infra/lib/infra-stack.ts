@@ -64,6 +64,23 @@ export class InfraStack extends cdk.Stack {
       ]
     });
 
+    // Archive Bucket（priceRateHistory アーカイブ用）
+    const archiveBucket = new s3.Bucket(this, 'CCNotifierArchiveBucket', {
+      bucketName: 'ccnotifier-price-rate-archive',
+      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
+      removalPolicy: RemovalPolicy.RETAIN,
+      lifecycleRules: [
+        {
+          transitions: [
+            {
+              storageClass: s3.StorageClass.GLACIER,
+              transitionAfter: Duration.days(365)
+            }
+          ]
+        }
+      ]
+    });
+
     // Lambda
     const ccnotifierLambda = new lambda.Function(this, 'CCNotifierImageFunctions', {
       code: new lambda.EcrImageCode(repository, {}),

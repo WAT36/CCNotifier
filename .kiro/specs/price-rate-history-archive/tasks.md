@@ -98,8 +98,8 @@
     - `{ job: 'archivePriceRateHistory' }` イベントで `archivePriceRateHistory()` が呼ばれることを検証する
     - _Requirements: 5.2_
 
-- [ ] 6. CDK インフラの実装（`infra/lib/infra-stack.ts`）
-  - [ ] 6.1 `Archive_Bucket`（`ccnotifier-price-rate-archive`）を追加する
+- [x] 6. CDK インフラの実装（`infra/lib/infra-stack.ts`）
+  - [~] 6.1 `Archive_Bucket`（`ccnotifier-price-rate-archive`）を追加する
     - `blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL`
     - `removalPolicy: RemovalPolicy.RETAIN`
     - ライフサイクルルール: オブジェクト作成から 365 日後に `GLACIER` へ移行

@@ -103,6 +103,13 @@
         "chatSessionId": "sess_6c6b3646-3a13-4a51-8e91-53a8ca4396f9",
         "timestamp": 1788562457612
       }
+    ],
+    "6. CDK インフラの実装（`infra/lib/infra-stack.ts`）": [
+      {
+        "executionId": "0c322aac-4515-4c15-b67e-976c745b3132",
+        "chatSessionId": "sess_f31bab7b-3cf8-42da-8b66-a6e330ef1f3f",
+        "timestamp": 1788562809054
+      }
     ]
   }
 }
