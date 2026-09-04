@@ -168,6 +168,17 @@ export class InfraStack extends cdk.Stack {
       })
     );
 
+    // 月次アーカイブ EventBridge ルール（毎月1日 UTC 0:02）
+    const archivePriceRateHistoryEvent = new events.Rule(this, 'CCNotifierArchivePriceRateHistory', {
+      ruleName: 'CCNotifierArchivePriceRateHistory',
+      schedule: events.Schedule.expression('cron(2 0 1 * ? *)')
+    });
+    archivePriceRateHistoryEvent.addTarget(
+      new targets.LambdaFunction(ccnotifierLambda, {
+        event: events.RuleTargetInput.fromObject({ job: 'archivePriceRateHistory' })
+      })
+    );
+
     const ccnotifierFileUploadedEvent = new events.Rule(this, 'CCNotifierFileUploaded', {
       ruleName: 'CCNotifierFileUploaded',
       eventPattern: {

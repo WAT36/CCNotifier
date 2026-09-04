@@ -122,6 +122,18 @@
         "chatSessionId": "sess_f414510f-2652-460e-8e98-af069441fe93",
         "timestamp": 1788562924757
       }
+    ],
+    "6.3 月次 EventBridge ルールを追加する": [
+      {
+        "executionId": "d6517710-b122-4eab-a76f-78be5e038ab6",
+        "chatSessionId": "sess_f414510f-2652-460e-8e98-af069441fe93",
+        "timestamp": 1788563013306
+      },
+      {
+        "executionId": "d6517710-b122-4eab-a76f-78be5e038ab6",
+        "chatSessionId": "sess_f414510f-2652-460e-8e98-af069441fe93",
+        "timestamp": 1788563053235
+      }
     ]
   }
 }

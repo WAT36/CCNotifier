@@ -109,7 +109,7 @@
     - 対象リソース: `archiveBucket.bucketArn + '/*'`
     - _Requirements: 6.3_
 
-  - [ ] 6.3 月次 EventBridge ルールを追加する
+  - [x] 6.3 月次 EventBridge ルールを追加する
     - cron 式: `cron(2,0,1,*,?,*)`（毎月1日 UTC 0:02）
     - ターゲット入力: `{ job: 'archivePriceRateHistory' }`
     - _Requirements: 5.1, 5.3_
