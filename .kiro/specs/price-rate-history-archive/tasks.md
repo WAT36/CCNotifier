@@ -65,7 +65,7 @@
     - `// Feature: price-rate-history-archive, Property 5: 成功メッセージはすべての必須情報を含む`
     - **Validates: Requirements 4.1**
 
-- [ ] 3. チェックポイント — 純粋関数のテストをすべてパスさせる
+- [x] 3. チェックポイント — 純粋関数のテストをすべてパスさせる
   - `npm test` を実行してすべての純粋関数テストが通ることを確認する。問題があればここで解決する。
 
 - [ ] 4. オーケストレーション関数の実装（`src/archivePriceRateHistory.ts`）

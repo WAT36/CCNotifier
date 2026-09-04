@@ -67,6 +67,18 @@
         "chatSessionId": "sess_7a2e504a-48b6-4585-a773-d42f60d8b651",
         "timestamp": 1788561669724
       }
+    ],
+    "3. チェックポイント — 純粋関数のテストをすべてパスさせる": [
+      {
+        "executionId": "238a09f9-7726-4238-83a3-7f81364c8123",
+        "chatSessionId": "sess_315d6d7a-ee8c-4078-b926-08e72e79d8ea",
+        "timestamp": 1788561743846
+      },
+      {
+        "executionId": "238a09f9-7726-4238-83a3-7f81364c8123",
+        "chatSessionId": "sess_315d6d7a-ee8c-4078-b926-08e72e79d8ea",
+        "timestamp": 1788561894099
+      }
     ]
   }
 }
