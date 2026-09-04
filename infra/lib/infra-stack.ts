@@ -119,6 +119,13 @@ export class InfraStack extends cdk.Stack {
     });
     ccnotifierLambda.addToRolePolicy(s3WritePolicy);
 
+    // IAMポリシーを作成（Archive_Bucket への書き込み権限）
+    const archiveBucketWritePolicy = new iam.PolicyStatement({
+      actions: ['s3:PutObject'],
+      resources: [archiveBucket.bucketArn + '/*']
+    });
+    ccnotifierLambda.addToRolePolicy(archiveBucketWritePolicy);
+
     // EventBridge
     // 定期バッチはrateCheck/chartPatterns/sneakerの3ジョブに分割し、それぞれ別ルールから
     // job名をLambdaへの入力として渡す。1回の実行時間を短くしてLambdaタイムアウトのリスクを下げるため

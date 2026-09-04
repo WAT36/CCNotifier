@@ -105,7 +105,7 @@
     - ライフサイクルルール: オブジェクト作成から 365 日後に `GLACIER` へ移行
     - _Requirements: 6.1, 6.2, 6.4_
 
-  - [ ] 6.2 Lambda ロールに `Archive_Bucket` への `s3:PutObject` ポリシーを追加する
+  - [x] 6.2 Lambda ロールに `Archive_Bucket` への `s3:PutObject` ポリシーを追加する
     - 対象リソース: `archiveBucket.bucketArn + '/*'`
     - _Requirements: 6.3_
 

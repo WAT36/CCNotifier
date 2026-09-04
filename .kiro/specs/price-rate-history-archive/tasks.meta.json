@@ -110,6 +110,18 @@
         "chatSessionId": "sess_f31bab7b-3cf8-42da-8b66-a6e330ef1f3f",
         "timestamp": 1788562809054
       }
+    ],
+    "6.2 Lambda ロールに `Archive_Bucket` への `s3:PutObject` ポリシーを追加する": [
+      {
+        "executionId": "7d1b9998-c884-438e-adac-2540cb354f08",
+        "chatSessionId": "sess_f414510f-2652-460e-8e98-af069441fe93",
+        "timestamp": 1788562890633
+      },
+      {
+        "executionId": "7d1b9998-c884-438e-adac-2540cb354f08",
+        "chatSessionId": "sess_f414510f-2652-460e-8e98-af069441fe93",
+        "timestamp": 1788562924757
+      }
     ]
   }
 }
