@@ -19,7 +19,7 @@
   - `tsconfig.json` に `"esModuleInterop": true` が含まれていることを確認し、必要なら追加する
   - _Requirements: 5.2（テスト基盤として全要件をカバー）_
 
-- [ ] 2. 純粋関数の実装（`src/archivePriceRateHistory.ts`）
+- [x] 2. 純粋関数の実装（`src/archivePriceRateHistory.ts`）
   - [x] 2.1 `calcArchiveThreshold(now: Date): Date` を実装する
     - `now` から正確に 6ヶ月前の `Date` を返す
     - _Requirements: 1.1_
@@ -55,7 +55,7 @@
     - `// Feature: price-rate-history-archive, Property 4: 行数は常にレコード数と一致する`
     - **Validates: Requirements 1.4, 2.1**
 
-  - [ ] 2.7 `buildSuccessMessage(params)` を実装する
+  - [x] 2.7 `buildSuccessMessage(params)` を実装する
     - `archivedCount`・`s3Key`・`deletedCount` をすべて含む文字列を返す
     - _Requirements: 4.1_
 

@@ -48,6 +48,25 @@
         "chatSessionId": "sess_b43001ed-e7bf-40c4-ba8d-1377981b7bde",
         "timestamp": 1788561539231
       }
+    ],
+    "2.7 `buildSuccessMessage(params)` を実装する": [
+      {
+        "executionId": "ac62c79e-b2ee-4f81-8c98-21ceecd4c2ca",
+        "chatSessionId": "sess_7a2e504a-48b6-4585-a773-d42f60d8b651",
+        "timestamp": 1788561630999
+      },
+      {
+        "executionId": "ac62c79e-b2ee-4f81-8c98-21ceecd4c2ca",
+        "chatSessionId": "sess_7a2e504a-48b6-4585-a773-d42f60d8b651",
+        "timestamp": 1788561669698
+      }
+    ],
+    "2. 純粋関数の実装（`src/archivePriceRateHistory.ts`）": [
+      {
+        "executionId": "ac62c79e-b2ee-4f81-8c98-21ceecd4c2ca",
+        "chatSessionId": "sess_7a2e504a-48b6-4585-a773-d42f60d8b651",
+        "timestamp": 1788561669724
+      }
     ]
   }
 }

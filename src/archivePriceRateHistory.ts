@@ -100,3 +100,23 @@ export function toJsonLines(records: PriceRateHistoryRecord[]): string {
     })
     .join('\n');
 }
+
+/**
+ * 正常完了時の Slack 通知メッセージを生成する純粋関数。
+ *
+ * アーカイブ件数・保存先 S3 キー・削除件数をすべて含む文字列を返す。
+ *
+ * Validates: Requirements 4.1
+ */
+export function buildSuccessMessage(params: {
+  archivedCount: number;
+  s3Key: string;
+  deletedCount: number;
+}): string {
+  const { archivedCount, s3Key, deletedCount } = params;
+  return (
+    `[アーカイブ完了] ${archivedCount}件を S3 に保存しました。\n` +
+    `保存先: ${s3Key}\n` +
+    `DB から ${deletedCount}件を削除しました。`
+  );
+}
