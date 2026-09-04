@@ -46,3 +46,21 @@ export function calcArchiveThreshold(now: Date): Date {
     )
   );
 }
+
+/**
+ * 実行時刻から S3 キーを生成する純粋関数。
+ *
+ * `now` の UTC 年月日を使用して以下の形式のキーを返す:
+ * `price-rate-history/YYYY/MM/price-rate-history-YYYY-MM-DD.jsonl`
+ *
+ * 月・日はゼロ埋め2桁で表現する（例: 01, 09）。
+ *
+ * Validates: Requirements 2.2
+ */
+export function buildS3Key(now: Date): string {
+  const yyyy = String(now.getUTCFullYear());
+  const mm = String(now.getUTCMonth() + 1).padStart(2, '0');
+  const dd = String(now.getUTCDate()).padStart(2, '0');
+
+  return `price-rate-history/${yyyy}/${mm}/price-rate-history-${yyyy}-${mm}-${dd}.jsonl`;
+}

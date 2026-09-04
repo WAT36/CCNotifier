@@ -30,7 +30,7 @@
     - `// Feature: price-rate-history-archive, Property 1: 閾値は常に実行時刻の6ヶ月前である`
     - **Validates: Requirements 1.1**
 
-  - [ ] 2.3 `buildS3Key(now: Date): string` を実装する
+  - [x] 2.3 `buildS3Key(now: Date): string` を実装する
     - `price-rate-history/YYYY/MM/price-rate-history-YYYY-MM-DD.jsonl` 形式のキーを返す（`YYYY/MM/DD` は `now` の UTC 年月日）
     - _Requirements: 2.2_
 
