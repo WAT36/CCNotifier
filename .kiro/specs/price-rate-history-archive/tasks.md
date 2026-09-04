@@ -68,8 +68,8 @@
 - [x] 3. チェックポイント — 純粋関数のテストをすべてパスさせる
   - `npm test` を実行してすべての純粋関数テストが通ることを確認する。問題があればここで解決する。
 
-- [ ] 4. オーケストレーション関数の実装（`src/archivePriceRateHistory.ts`）
-  - [ ] 4.1 `archivePriceRateHistory(): Promise<void>` を実装する
+- [x] 4. オーケストレーション関数の実装（`src/archivePriceRateHistory.ts`）
+  - [~] 4.1 `archivePriceRateHistory(): Promise<void>` を実装する
     - `calcArchiveThreshold` で閾値を計算する
     - Prisma で `created_time < threshold` のレコードを `findMany` で抽出する
     - 0 件の場合は「対象データなし」の Slack 通知を送り正常終了する

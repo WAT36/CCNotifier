@@ -79,6 +79,18 @@
         "chatSessionId": "sess_315d6d7a-ee8c-4078-b926-08e72e79d8ea",
         "timestamp": 1788561894099
       }
+    ],
+    "4. オーケストレーション関数の実装（`src/archivePriceRateHistory.ts`）": [
+      {
+        "executionId": "9efd627d-df41-4603-bcbd-fe7f25e89be9",
+        "chatSessionId": "sess_b0c79c93-7bd8-4ac3-9283-ab8c33b8a153",
+        "timestamp": 1788562175146
+      },
+      {
+        "executionId": "9efd627d-df41-4603-bcbd-fe7f25e89be9",
+        "chatSessionId": "sess_b0c79c93-7bd8-4ac3-9283-ab8c33b8a153",
+        "timestamp": 1788562260904
+      }
     ]
   }
 }
