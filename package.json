@@ -5,7 +5,7 @@
   "main": "index.mjs",
   "scripts": {
     "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "format": "prettier --write 'src/**/*.(ts|tsx)'",
     "start:test": "npx ts-node src/ts/tsnodeTest.ts",
     "get:gmt-min-price": "npx tsx src/getGmtMinPrice.ts"
@@ -22,9 +22,13 @@
   "homepage": "https://github.com/WAT36/CCNotifier#readme",
   "devDependencies": {
     "@types/cheerio": "^0.22.35",
+    "@types/jest": "^30.0.0",
     "@types/node": "^20.14.2",
     "@types/superagent": "^8.1.9",
+    "fast-check": "^4.9.0",
+    "jest": "^30.5.1",
     "prettier": "^3.8.1",
+    "ts-jest": "^29.4.12",
     "ts-node": "^10.9.2",
     "tsx": "^4.15.7",
     "typescript": "^5.4.5"

@@ -13,7 +13,7 @@
 
 ## Tasks
 
-- [ ] 1. テスト環境のセットアップ
+- [x] 1. テスト環境のセットアップ
   - ルートの `package.json` に Jest + ts-jest + fast-check を devDependencies として追加する
   - `jest.config.js`（または `jest.config.ts`）をルートに作成し、`src/` 以下を対象とする ts-jest 設定を記述する
   - `tsconfig.json` に `"esModuleInterop": true` が含まれていることを確認し、必要なら追加する
