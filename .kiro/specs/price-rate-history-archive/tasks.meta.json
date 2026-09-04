@@ -36,6 +36,18 @@
         "chatSessionId": "sess_e6cd652c-052d-42d4-a938-5e22144668c5",
         "timestamp": 1788561322452
       }
+    ],
+    "2.5 `toJsonLines(records: PriceRateHistoryRecord[]): string` を実装する": [
+      {
+        "executionId": "d6741217-9a4e-4044-ad55-255c5cb5bd8d",
+        "chatSessionId": "sess_b43001ed-e7bf-40c4-ba8d-1377981b7bde",
+        "timestamp": 1788561385453
+      },
+      {
+        "executionId": "d6741217-9a4e-4044-ad55-255c5cb5bd8d",
+        "chatSessionId": "sess_b43001ed-e7bf-40c4-ba8d-1377981b7bde",
+        "timestamp": 1788561539231
+      }
     ]
   }
 }

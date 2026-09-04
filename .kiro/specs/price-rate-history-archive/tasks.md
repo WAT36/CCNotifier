@@ -40,7 +40,7 @@
     - `// Feature: price-rate-history-archive, Property 2: S3 キーは実行日の UTC 値を正確に反映する`
     - **Validates: Requirements 2.2**
 
-  - [ ] 2.5 `toJsonLines(records: PriceRateHistoryRecord[]): string` を実装する
+  - [x] 2.5 `toJsonLines(records: PriceRateHistoryRecord[]): string` を実装する
     - 各レコードを JSON 文字列に変換して改行区切りで結合する
     - `Decimal` 型は `toString()` で文字列化する
     - `null` フィールドはそのまま JSON の `null` として出力する

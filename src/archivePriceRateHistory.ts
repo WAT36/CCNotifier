@@ -4,9 +4,19 @@
  * priceRateHistory テーブルの古いレートデータを S3（JSON Lines 形式）に
  * アーカイブし DB から削除する月次バッチ処理。
  *
- * 後続タスクで buildS3Key / toJsonLines / buildSuccessMessage /
- * archivePriceRateHistory が順次追加される。
+ * 後続タスクで buildSuccessMessage / archivePriceRateHistory が順次追加される。
  */
+
+import { Decimal } from '@prisma/client/runtime/library';
+
+/** アーカイブ対象レコードの型定義 */
+type PriceRateHistoryRecord = {
+  id: number;
+  brand: string;
+  bid_price: Decimal | null;
+  ask_price: Decimal | null;
+  created_time: Date | null;
+};
 
 /**
  * 実行時刻から Archive_Threshold を計算する純粋関数。
@@ -63,4 +73,30 @@ export function buildS3Key(now: Date): string {
   const dd = String(now.getUTCDate()).padStart(2, '0');
 
   return `price-rate-history/${yyyy}/${mm}/price-rate-history-${yyyy}-${mm}-${dd}.jsonl`;
+}
+
+/**
+ * レコード配列を JSON Lines 文字列に変換する純粋関数。
+ *
+ * - 各レコードを JSON 文字列に変換して `\n` で結合する
+ * - `Decimal` 型は `toString()` で文字列化する
+ * - `null` フィールドはそのまま JSON の `null` として出力する
+ * - 末尾に改行を付けない
+ *
+ * Validates: Requirements 1.4, 2.1
+ */
+export function toJsonLines(records: PriceRateHistoryRecord[]): string {
+  return records
+    .map((record) => {
+      const obj = {
+        id: record.id,
+        brand: record.brand,
+        bid_price: record.bid_price != null ? record.bid_price.toString() : null,
+        ask_price: record.ask_price != null ? record.ask_price.toString() : null,
+        created_time:
+          record.created_time != null ? record.created_time.toISOString() : null,
+      };
+      return JSON.stringify(obj);
+    })
+    .join('\n');
 }
