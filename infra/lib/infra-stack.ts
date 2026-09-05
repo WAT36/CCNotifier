@@ -101,7 +101,8 @@ export class InfraStack extends cdk.Stack {
         WEBHOOK_URL: process.env.WEBHOOK_URL || '',
         REGION: process.env.REGION || '',
         CSV_UPLOAD_BUCKET_NAME: process.env.CSV_UPLOAD_BUCKET_NAME || '',
-        ORDER_LIST_API_URL: process.env.ORDER_LIST_API_URL || ''
+        ORDER_LIST_API_URL: process.env.ORDER_LIST_API_URL || '',
+        ARCHIVE_BUCKET_NAME: archiveBucket.bucketName
       }
     });
 
